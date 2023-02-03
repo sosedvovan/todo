@@ -9,13 +9,15 @@ import {DataHandlerService} from "../../service/data-handler.service";
 })
 export class CategoriesComponent implements OnInit{
 
+  //хотим этот массив или переменную передавать во вьюху
   categories: Category[];
 
+  //инджектим наш сервис и у него получаем нужный массив
   constructor(private dataHandler: DataHandlerService) {
     this.categories = this.dataHandler.getCategories();
   }
 
-  //вызывается автоматически после инициализации компонента
+  //ДЛЯ ПРИМЕРА: вызывается автоматически после инициализации компонента
   ngOnInit(): void {
     console.log(this.categories)
   }
