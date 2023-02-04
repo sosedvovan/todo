@@ -1,6 +1,8 @@
 <div class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3
    ms-3 bg-gradient-dark" id="sidenav-main">
 
+  <!--В ЭТОМ ПРЕДСТАВЛЕНИИ ПОКАЗЫВАЕМ СПИСОК UL-LI ДЕЛАЯ ИЗ КАЖДОГО ПУНКТА - ССЫЛКУ-->
+
   <div class="sidenav-header">
 
     <a class="navbar-brand m-0">
@@ -13,14 +15,24 @@
 
   <div class="w-auto" id="sidenav-collapse-main">
     <ul class="navbar-nav">
-      <li class="nav-item pointer"  (click)="showTaskByCategory(category)"
-                                    *ngFor="let category of categories">
+<!--  .pointer ЭТО НАШ СТИЛЬ В ФАЙЛЕ СТИЛЕЙ ДЛЯ ЭТОГО КОМПОНЕНТА
+(МЫШКА ПРЕВРАЩАЕТСЯ В РУКУ КОГДА НАВОДИМ КУРСОР НА ССЫЛКУ)    -->
+      <li class="nav-item pointer"
+          *ngFor="let category of categories"
+          (click)="showTaskByCategory(category)">
         <a class="nav-link text-white bg-gradient-primary" [class.active]="category === selectedCategory">
           <span class="nav-link-text ms-1">{{category.title}}</span>
         </a>
       </li>
     </ul>
   </div>
-  <!--     -->
-
+  <!--ПОМНИМ ЧТО В ЭТОЙ ВЬЮХЕ МЫ ВИДЕМ 2-Е ПЕРЕМЕННЫЕ: categories: Category[]  И  selectedCategory: Category     -->
+<!--В ТЕГЕ LI: *ngFor="let category of categories" ИДЕМ ЦИКЛОМ ПО ПЕРЕМЕННОЙ categories: Category[] И ТО МНОЖИМ ТЕГИ LI  -->
+<!--ПОСЛЕ ТОГО КАК МЫ РАЗМНОЖИЛИ ТЕГИ LI МЫ ЗАХОТИМ КЛИКНУТЬ ПО ОДНОМУ ИЗ НИХ:  -->
+<!--(click)="showTaskByCategory(category)" , ОЗНАЧАЕТ, ЧТО ПРИ КЛИКЕ ПО ОПРЕДЕЛЕННОЙ КАТЕГОРИИ(ТК ЭТО ССЫЛКА)
+  МЫ ВЫЗЫВАЕМ МЕТОД showTaskByCategory(category) В КОТОРОМ ИНИЦИАЛИЗУЕСЯ ВТОРАЯ ПЕРЕМЕННАЯ selectedCategory: Category
+  и в Observable (Издателе) обновятся раздаваемые им данные (отфильтруются по кликнутой категории)-->
+<!--ПОСЛЕ ТОГО КАК МЫ КЛИКНУЛИ ПО ОДНОМУ ИЗ ПУНКТОВ LI МЫ ХОТИМ ЧТОБЫ ОТ ВИЗУАЛЬНО СТАЛ АКТИВНЫМ:  -->
+<!--В ТЕГЕ А: [class.active]="category === selectedCategory" ОЗНАЧАЕТ, ЧТО ПРИ ВЫПОЛНЕНИИ УСЛОВИЯ: category === selectedCategory
+  К ТЕГУ А ДОБАВИТСЯ ЕЩЕ ПЛЮСОМ И КЛАСС .active, ТЕ ССЫЛКА СТАНЕТ ВИЗУАЛЬНО ВЫБРАННОЙ-->
 </div>
