@@ -28,4 +28,9 @@ export class TasksComponent implements OnInit{
     this.dataHandler.taskSubject.subscribe(tasks => this.tasks = tasks);
   }
 
+  //для галочки(выполненно не выполненно) - меняем булеан на противоположный
+  toggleTaskCompleted(task: Task) {
+    task.completed = !task.completed;
+
+  }
 }

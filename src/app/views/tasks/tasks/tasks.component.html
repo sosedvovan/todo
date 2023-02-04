@@ -15,7 +15,8 @@
 
 
     <tbody>
-    <tr *ngFor="let task of tasks; let i = index">
+    <tr *ngFor="let task of tasks; let i = index"
+        [class.completed]="!task.completed">
 
       <td class="align-middle text-center text-sm">
         <span class="text-xs font-weight-bold"> {{i + 1}} </span>
@@ -30,7 +31,8 @@
       <td class="align-middle text-center text-sm">
         <span class="text-xs font-weight-bold">
           <div class="form-check form-switch ps-0 is-filled">
-                        <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault" [checked]="task.completed">
+                        <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault" [checked]="task.completed"
+                        (click)="toggleTaskCompleted(task)">
                       </div>
         </span>
       </td>
