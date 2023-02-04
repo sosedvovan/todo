@@ -16,14 +16,16 @@ export class TasksComponent implements OnInit{
   // constructor(private dataHandler: DataHandlerService) {
   //   this.tasks = dataHandler.getTasks();
   // }
-  //подписываемся. от taskSubject получаем новые данные и присваиваем
-  //их полю этого класса - tasks, которое видно в html
+  //подписываемся. от taskSubject получаем новые данные tasks=> из сервиса и присваиваем
+  //их полю этого класса - this.tasks = tasks, которое видно в html
   constructor(private dataHandler: DataHandlerService) {
-    this.dataHandler.taskSubject.subscribe(tasks => this.tasks = tasks);
+
   }
 
+  //подписываемся. от taskSubject получаем новые данные tasks=> из сервиса и присваиваем
+  //их полю этого класса - this.tasks = tasks, которое видно в html
   ngOnInit(): void {
-
+    this.dataHandler.taskSubject.subscribe(tasks => this.tasks = tasks);
   }
 
 }

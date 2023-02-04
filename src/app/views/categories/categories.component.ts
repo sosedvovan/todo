@@ -12,21 +12,27 @@ import {DataHandlerService} from "../../service/data-handler.service";
 export class CategoriesComponent implements OnInit{
 
   //хотим этот массив или переменную передавать во вьюху
-  categories: Category[];
+  categories: Category[] | undefined;
+
+  selectedCategory: Category  | undefined;
 
   //инджектим наш сервис и у него получаем нужный массив
   constructor(private dataHandler: DataHandlerService) {
-    this.categories = this.dataHandler.getCategories();
+    // this.categories = this.dataHandler.getCategories();
+
   }
 
   //ДЛЯ ПРИМЕРА: вызывается автоматически после инициализации компонента
   ngOnInit(): void {
-    console.log(this.categories)
+    this.dataHandler.categoriesSubject.subscribe(categories => this.categories = categories);
+    // console.log(this.categories)
   }
 
   //метод вызываем из html кликом
   showTaskByCategory(category: Category){
+    this.selectedCategory = category;
     this.dataHandler.fillTasksByCategory(category);
+
 
   }
 }

@@ -3,7 +3,7 @@
 
     <thead>
     <tr>
-      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">№</th>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">#</th>
       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Название</th>
       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Выполнение</th>
       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Приоритет</th>
@@ -15,10 +15,10 @@
 
 
     <tbody>
-    <tr *ngFor="let task of tasks">
+    <tr *ngFor="let task of tasks; let i = index">
 
       <td class="align-middle text-center text-sm">
-        <span class="text-xs font-weight-bold"> {{task.id}} </span>
+        <span class="text-xs font-weight-bold"> {{i + 1}} </span>
       </td>
 
       <td class="align-middle text-center text-sm">
@@ -30,15 +30,15 @@
       </td>
 
       <td class="align-middle text-center text-sm">
-        <span class="text-xs font-weight-bold"> {{task.priority}} </span>
+        <span class="text-xs font-weight-bold"> {{task.priority != null ? task.priority.title : 'Без приоритета'}} </span>
       </td>
 
       <td class="align-middle text-center text-sm">
-        <span class="text-xs font-weight-bold"> {{task.category}} </span>
+        <span class="text-xs font-weight-bold"> {{task.category != null ? task.category.title : 'Без категории'}} </span>
       </td>
 
       <td class="align-middle text-center text-sm">
-        <span class="text-xs font-weight-bold"> {{task.date}} </span>
+        <span class="text-xs font-weight-bold"> {{task.date != null ? (task.date | date : 'short') : 'Без даты'}} </span>
       </td>
 
 
