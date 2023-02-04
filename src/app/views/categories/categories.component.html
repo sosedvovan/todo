@@ -15,7 +15,7 @@
 
 <!--     -->
     <ul class="navbar-nav">
-      <li class="nav-item"  (click)="showTaskByCategory(category)"
+      <li class="nav-item pointer"  (click)="showTaskByCategory(category)"
                             *ngFor="let category of categories"
                             [class.active]="category === selectedCategory">
         <a class="nav-link text-white bg-gradient-primary">
