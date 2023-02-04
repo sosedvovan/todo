@@ -11,19 +11,16 @@
 
   <hr class="horizontal light mt-0 mb-2">
 
-  <div class="w-auto " id="sidenav-collapse-main">
-
-<!--     -->
+  <div class="w-auto" id="sidenav-collapse-main">
     <ul class="navbar-nav">
       <li class="nav-item pointer"  (click)="showTaskByCategory(category)"
-                            *ngFor="let category of categories"
-                            [class.active]="category === selectedCategory">
-        <a class="nav-link text-white bg-gradient-primary">
+                                    *ngFor="let category of categories">
+        <a class="nav-link text-white bg-gradient-primary" [class.active]="category === selectedCategory">
           <span class="nav-link-text ms-1">{{category.title}}</span>
         </a>
       </li>
     </ul>
   </div>
-
+  <!--     -->
 
 </div>

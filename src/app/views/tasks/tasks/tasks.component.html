@@ -25,9 +25,16 @@
         <span class="text-xs font-weight-bold"> {{task.title}} </span>
       </td>
 
+<!--      галочка на выполнение-->
+<!--      вместо {{task.completed}} ставим <div class="form-check...-->
       <td class="align-middle text-center text-sm">
-        <span class="text-xs font-weight-bold"> {{task.completed}} </span>
+        <span class="text-xs font-weight-bold">
+          <div class="form-check form-switch ps-0 is-filled">
+                        <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault" [checked]="task.completed">
+                      </div>
+        </span>
       </td>
+
 
       <td class="align-middle text-center text-sm">
         <span class="text-xs font-weight-bold"> {{task.priority != null ? task.priority.title : 'Без приоритета'}} </span>
