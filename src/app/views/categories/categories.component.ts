@@ -42,6 +42,5 @@ export class CategoriesComponent implements OnInit{
     //и в Observable (Издателе) обновятся раздаваемые им данные (отфильтруются по кликнутой категории)
     this.dataHandler.fillTasksByCategory(category);
 
-
   }
 }

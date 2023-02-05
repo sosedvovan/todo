@@ -1,0 +1,73 @@
+<div class="table-responsive">
+  <table class="table  mb-0">
+    <!--В ЭТОМ ПРЕДСТАВЛЕНИИ ПОКАЗЫВАЕМ ТАБЛИЦУ-->
+    <thead>
+    <tr>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">#</th>
+      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Название</th>
+      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Выполнение</th>
+      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Приоритет</th>
+      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Категория</th>
+      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Дата</th>
+    </tr>
+    </thead>
+
+<!--ПОМНИМ, ЧТО В ЭТА ВЬЮХА ВИДИТ МАССИВ tasks, НАМ НАДО ПО НЕМУ ПРОИТЕРИРОВАТЬСЯ-->
+    <tbody>
+<!--НАЧИНАЕМ ДЕЛАТЬ СТРОКУ ТАБЛИЦЫ С ТЭГА tr:    -->
+<!--let i = index ЭТО СВОЙ СОБСТВЕННЫЙ СЧЕТЧИК АНГУЛЯРА-->
+<!--[class.completed]="!task.completed" ДОБАВИТ В СТРОКУ tr - class.completed ПРИ ВЫПОЛНЕНИИ БУЛЕВА УСЛОВИЯ
+     ЭТО НАШ СОБСТВЕННЫЙ СТИЛЬ - ПЕРЕЧЕРКНЕТ СТРОКУ ЕСЛИ ЗАДАНИЕ УЖЕ ВЫПОЛНЕННО-->
+    <tr *ngFor="let task of tasks; let i = index"
+        [class.completed]="!task.completed">
+
+<!--В ПЕРВОЙ ЯЧЕЙКЕ БУДЕТ:      -->
+      <td class="align-middle text-center text-sm">
+        <span class="text-xs font-weight-bold"> {{i + 1}} </span>
+      </td>
+
+<!--ВО ВТОРОЙ ЯЧЕЙКЕ БУДЕТ:      -->
+      <td class="align-middle text-center text-sm">
+        <span class="text-xs font-weight-bold"> {{task.title}} </span>
+      </td>
+
+<!--В ТРЕТЬЕЙ ЯЧЕЙКЕ БУДЕТ:      -->
+<!--      галочка на выполнение-->
+<!--      вместо {{task.completed}} ставим <div class="form-check...-->
+<!--[checked]="task.completed" - ГАЛОЧКА СТОИТ(ВЫБРАНО) ЕСЛИ ЗАДАНИЕ ВЫПОЛНЕННО ТЕ БУЛЬ == TRUE(У НАС ВОЗМОЖНО НАОБОРОТ)      -->
+<!--МЫ ХОТИМ ЧТОБЫ ПРИ НАЖАТИИ НА ЧЕКБОКС ИЗМЕНЯЛСЯ ЕГО СТАТУС(ВЫБРАНО-НЕВЫБРАНО) - ЗНАЧИТ В ПРЕДИДУЩЕМ ВЫРАЖЕНИИ
+[checked]="task.completed" НАДО ПОМЕНЯТЬ БУЛЬ НА ПРОТИВОПОЛОЖНЫЙ. ДЕЛАЕМ ЭТО В МЕТОДЕ: toggleTaskCompleted(task)
+КОТОРЫЙ ВЫЗЫВАЕМ ПО КЛИКУ ПО ЧЕКБОКСУ: (click)="toggleTaskCompleted(task)"-->
+      <td class="align-middle text-center text-sm">
+        <span class="text-xs font-weight-bold">
+          <div class="form-check form-switch ps-0 is-filled">
+                        <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault" [checked]="task.completed"
+                        (click)="toggleTaskCompleted(task)">
+                      </div>
+        </span>
+      </td>
+
+<!--В ЧЕТВЕРТОЙ ЯЧЕЙКЕ БУДЕТ:      -->
+<!--В ЭТУ ЯЧЕЙКУ td И ПОСЛЕДУЮЩИЕ  БУДЕТ ДОБАВЛЯТЬСЯ НАШ КЛАСС СТИЛЯ .novalue
+ПРИ УСЛОВИИ - ЕСЛИ КАТЕГОРИЯ НЕ УКАЗАННА-->
+      <td class="align-middle text-center text-sm" [class.novalue]="task.category == null">
+        <span class="text-xs font-weight-bold"> {{task.priority != null ? task.priority.title : 'Без приоритета'}} </span>
+      </td>
+
+<!--В ПЯТОЙ ЯЧЕЙКЕ БУДЕТ:      -->
+      <td class="align-middle text-center text-sm" [class.novalue]="task.category == null">
+        <span class="text-xs font-weight-bold"> {{task.category != null ? task.category.title : 'Без категории'}} </span>
+      </td>
+
+<!--В ШЕСТОЙ ЯЧЕЙКЕ БУДЕТ:      -->
+      <td class="align-middle text-center text-sm" [class.novalue]="task.category == null">
+        <span class="text-xs font-weight-bold"> {{task.date != null ? (task.date | date : 'short') : 'Без даты'}} </span>
+      </td>
+
+
+    </tr>
+
+    </tbody>
+  </table>
+</div>
+

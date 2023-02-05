@@ -1,73 +1,112 @@
-<div class="table-responsive">
-  <table class="table  mb-0">
-    <!--В ЭТОМ ПРЕДСТАВЛЕНИИ ПОКАЗЫВАЕМ ТАБЛИЦУ-->
-    <thead>
-    <tr>
-      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">#</th>
-      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Название</th>
-      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Выполнение</th>
-      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Приоритет</th>
-      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Категория</th>
-      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Дата</th>
-    </tr>
-    </thead>
+<div class="card">
+  <div class="card-header card-header-warning">
+    <h4 class="card-title">Список задач</h4>
+  </div>
+  <div class="card-body table-responsive">
 
-<!--ПОМНИМ, ЧТО В ЭТА ВЬЮХА ВИДИТ МАССИВ tasks, НАМ НАДО ПО НЕМУ ПРОИТЕРИРОВАТЬСЯ-->
-    <tbody>
-<!--НАЧИНАЕМ ДЕЛАТЬ СТРОКУ ТАБЛИЦЫ С ТЭГА tr:    -->
-<!--let i = index ЭТО СВОЙ СОБСТВЕННЫЙ СЧЕТЧИК АНГУЛЯРА-->
-<!--[class.completed]="!task.completed" ДОБАВИТ В СТРОКУ tr - class.completed ПРИ ВЫПОЛНЕНИИ БУЛЕВА УСЛОВИЯ
-     ЭТО НАШ СОБСТВЕННЫЙ СТИЛЬ - ПЕРЕЧЕРКНЕТ СТРОКУ ЕСЛИ ЗАДАНИЕ УЖЕ ВЫПОЛНЕННО-->
-    <tr *ngFor="let task of tasks; let i = index"
-        [class.completed]="!task.completed">
+<!--[dataSource]="dataSource" переменной даем значение из класса
+   теперь таблица будет знать откуда брать данные-->
+<!--mat-table сказали, что таблица из Материи   -->
+    <table [dataSource]="dataSource" mat-table>
 
-<!--В ПЕРВОЙ ЯЧЕЙКЕ БУДЕТ:      -->
-      <td class="align-middle text-center text-sm">
-        <span class="text-xs font-weight-bold"> {{i + 1}} </span>
-      </td>
+<!--далее будем заполнять таблицу с пом ng-container:     -->
 
-<!--ВО ВТОРОЙ ЯЧЕЙКЕ БУДЕТ:      -->
-      <td class="align-middle text-center text-sm">
-        <span class="text-xs font-weight-bold"> {{task.title}} </span>
-      </td>
-
-<!--В ТРЕТЬЕЙ ЯЧЕЙКЕ БУДЕТ:      -->
-<!--      галочка на выполнение-->
-<!--      вместо {{task.completed}} ставим <div class="form-check...-->
-<!--[checked]="task.completed" - ГАЛОЧКА СТОИТ(ВЫБРАНО) ЕСЛИ ЗАДАНИЕ ВЫПОЛНЕННО ТЕ БУЛЬ == TRUE(У НАС ВОЗМОЖНО НАОБОРОТ)      -->
-<!--МЫ ХОТИМ ЧТОБЫ ПРИ НАЖАТИИ НА ЧЕКБОКС ИЗМЕНЯЛСЯ ЕГО СТАТУС(ВЫБРАНО-НЕВЫБРАНО) - ЗНАЧИТ В ПРЕДИДУЩЕМ ВЫРАЖЕНИИ
-[checked]="task.completed" НАДО ПОМЕНЯТЬ БУЛЬ НА ПРОТИВОПОЛОЖНЫЙ. ДЕЛАЕМ ЭТО В МЕТОДЕ: toggleTaskCompleted(task)
-КОТОРЫЙ ВЫЗЫВАЕМ ПО КЛИКУ ПО ЧЕКБОКСУ: (click)="toggleTaskCompleted(task)"-->
-      <td class="align-middle text-center text-sm">
-        <span class="text-xs font-weight-bold">
-          <div class="form-check form-switch ps-0 is-filled">
-                        <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault" [checked]="task.completed"
-                        (click)="toggleTaskCompleted(task)">
-                      </div>
-        </span>
-      </td>
-
-<!--В ЧЕТВЕРТОЙ ЯЧЕЙКЕ БУДЕТ:      -->
-<!--В ЭТУ ЯЧЕЙКУ td И ПОСЛЕДУЮЩИЕ  БУДЕТ ДОБАВЛЯТЬСЯ НАШ КЛАСС СТИЛЯ .novalue
-ПРИ УСЛОВИИ - ЕСЛИ КАТЕГОРИЯ НЕ УКАЗАННА-->
-      <td class="align-middle text-center text-sm" [class.novalue]="task.category == null">
-        <span class="text-xs font-weight-bold"> {{task.priority != null ? task.priority.title : 'Без приоритета'}} </span>
-      </td>
-
-<!--В ПЯТОЙ ЯЧЕЙКЕ БУДЕТ:      -->
-      <td class="align-middle text-center text-sm" [class.novalue]="task.category == null">
-        <span class="text-xs font-weight-bold"> {{task.category != null ? task.category.title : 'Без категории'}} </span>
-      </td>
-
-<!--В ШЕСТОЙ ЯЧЕЙКЕ БУДЕТ:      -->
-      <td class="align-middle text-center text-sm" [class.novalue]="task.category == null">
-        <span class="text-xs font-weight-bold"> {{task.date != null ? (task.date | date : 'short') : 'Без даты'}} </span>
-      </td>
+      <!--1-я колонка:  цвет приоритета  -->
+<!--matColumnDef="color" - указали как будет называться столбец
+    (берем из спец массива из класса) (присваиваем именно стрингу- те без [...])     -->
+<!--*matHeaderCellDef - структурная директива отвечает за содержание элемента
+      - здесь означает что "color" будет заголовком столбца(именно здесь нет заголовка столбца)-->
+<!--mat-header-cell - атрибут-директива отвечает за стиль элемента в заглавной ячейки     -->
+<!--*matCellDef="let task" - определили переменную с пом которой будем итеририваться      -->
+<!--[style.background-color]="getPriorityColor(task)" - цвет бекграунда ячейки
+      будем получать из метода getPriorityColor(task)-->
+<!--class="col-color" - определяем ширину ячейки в нашем css файле      -->
+<!--mat-cell - атрибут-директива отвечает за стиль элемента в ячейке     -->
+      <ng-container matColumnDef="color">
+        <th *matHeaderCellDef mat-header-cell></th>
+        <td *matCellDef="let task" [style.background-color]="getPriorityColor(task)" class="col-color"
+            mat-cell></td>
+      </ng-container>
 
 
-    </tr>
+      <!--2-я колонка: нумерация-->
+<!--let index = index(эту секвенцию предоставляет Ангуляр)       -->
+      <ng-container matColumnDef="id">
+        <th *matHeaderCellDef mat-header-cell></th>
+        <td *matCellDef="let index = index;" class="col-id" mat-cell>
 
-    </tbody>
-  </table>
+          {{index + 1}}
+
+        </td>
+      </ng-container>
+
+
+      <!--3-я колонка: название задачи-->
+<!--Название - начиная с этого столбца даем названия столбцам      -->
+<!--[class.completed]="task.completed" - добавляем наш силь(перечеркивание) если выполнен буль      -->
+      <ng-container matColumnDef="title">
+        <th *matHeaderCellDef mat-header-cell> Название</th>
+        <td *matCellDef="let task" [class.completed]="task.completed" class="col-title" mat-cell>
+
+          {{task.title}}
+
+        </td>
+      </ng-container>
+
+      <!--4-я колонка: дата выполнения-->
+<!--[ngClass]="... - массив с нашими стилями(.селекторами) и условиями их применения     -->
+<!--task.date | date: - это Pipe - спец класс, через который проходят данные и как то изменяютя      -->
+      <ng-container matColumnDef="date">
+        <th *matHeaderCellDef mat-header-cell> Срок</th>
+        <td *matCellDef="let task" [ngClass]="{'completed': task.completed, 'nodate': task.date == null}"
+            class="col-date"
+            mat-cell>
+
+          {{task.date | date: "medium"}}
+
+        </td>
+      </ng-container>
+
+      <!--5-я колонка: приоритет-->
+      <ng-container matColumnDef="priority">
+        <th *matHeaderCellDef mat-header-cell> Приоритет</th>
+        <td *matCellDef="let task" class="col-priority"
+            [ngClass]="{'completed': task.completed, 'nopriority': task.priority == null}"
+            mat-cell
+        >
+
+          {{task.priority ? task.priority.title : "Без приоритета"}}
+
+
+        </td>
+      </ng-container>
+
+      <!--6-я колонка: категория-->
+      <ng-container matColumnDef="category">
+        <th *matHeaderCellDef mat-header-cell> Категория</th>
+        <td *matCellDef="let task" class="col-category"
+            [ngClass]="{'completed': task.completed, 'nocategory': task.category == null, 'link': !task.completed && task.category}"
+            mat-cell
+        >
+
+          {{task.category ? task.category.title : "Без категории"}}
+
+        </td>
+      </ng-container>
+
+<!--СЛЕДУЮЩИЕ 2-Е СТРОЧКИ ЗАПУСКАЮТ МЕХАНИЗМ ОТОБРАЖЕНИЯ КОНТЕЙНЕРОВ
+1-Я tr - ЗАПУСКАЕТ ЗАГОЛОВОК ТАБЛИЦЫ
+2-Я tr - ДЕЛАЕТ СТРОКИ (ВСЕ ЯЧЕЙКИ ОПИСАННЫЕ ВЫШЕ В ОДНОЙ ИТЕРАЦИИ) ИЗ ВСЕХ ТАСКОВ-->
+<!--displayedColumns - ЭТО СПЕЦ МАССИВ В КЛАССЕ С НАИМЕНОВАНИЕМ СТОЛБЦОВ      -->
+<!--*matRowDef="let row; СОЗДАЛИ ЭТУ ПЕРЕМЕННУЮ ЧТОБЫ ИМЕТЬ В ДАЛЬНЕЙШЕМ ДОСТУП К КАЖДОЙ СТРОКЕ      -->
+      <!--  заголовок таблицы-->
+      <tr *matHeaderRowDef="displayedColumns; " mat-header-row></tr>
+
+      <!--  строки таблицы - набор строк из тегов td (порядок указывается в переменной displayedColumns) -->
+      <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+
+    </table>
+
+
+  </div>
 </div>
-

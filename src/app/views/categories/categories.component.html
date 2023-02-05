@@ -16,11 +16,16 @@
   <div class="w-auto" id="sidenav-collapse-main">
     <ul class="navbar-nav">
 <!--  .pointer ЭТО НАШ СТИЛЬ В ФАЙЛЕ СТИЛЕЙ ДЛЯ ЭТОГО КОМПОНЕНТА
-(МЫШКА ПРЕВРАЩАЕТСЯ В РУКУ КОГДА НАВОДИМ КУРСОР НА ССЫЛКУ)    -->
+(МЫШКА ПРЕВРАЩАЕТСЯ В РУКУ КОГДА НАВОДИМ КУРСОР НА ССЫЛКУ)
+
+ выражение [class.active]="category === selectedCategory" аналогично
+ выражению [ngClass]="{'active': category === selectedCategory}"
+ -->
       <li class="nav-item pointer"
           *ngFor="let category of categories"
           (click)="showTaskByCategory(category)">
-        <a class="nav-link text-white bg-gradient-primary" [class.active]="category === selectedCategory">
+        <a class="nav-link text-white bg-gradient-primary"
+           [ngClass]="{'active': category !== selectedCategory, 'noactive': category === selectedCategory}">
           <span class="nav-link-text ms-1">{{category.title}}</span>
         </a>
       </li>

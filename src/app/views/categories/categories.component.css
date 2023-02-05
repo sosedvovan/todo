@@ -1,3 +1,8 @@
 .pointer {
   cursor: pointer;
 }
+
+.noactive {
+
+  font-size: x-large;
+}
