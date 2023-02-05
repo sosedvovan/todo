@@ -26,6 +26,7 @@ export class DataHandlerService {
 
 
   //пробую получить доступ к методу другого компонента
+  //https://question-it.com/questions/318904/kak-vyzvat-metod-iz-odnogo-komponenta-v-drugoj-komponent-v-angular-2
   // @ViewChild(TasksComponent) private _child: { refreshTable: () => void; };
 
 

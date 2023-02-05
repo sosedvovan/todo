@@ -66,15 +66,22 @@ export class TasksComponent implements OnInit{
   // в зависимости от статуса задачи - вернуть цвет названия
   public getPriorityColor(task: Task) {
 
-    // цвет завершенной задачи
+    //блеклый цвет завершенной задачи
     if (task.completed) {
+      // console.log('task.priority');
+      // console.log(task.priority);
       return '#F8F9FA'; // TODO вынести цвета в константы (magic strings, magic numbers)
+
     }
 
-    if (task.priority && task.priority.color) {
+    //заданный цвет в не завершенной задаче
+    if (task.priority != null && task.priority.color != null) {
       return task.priority.color;
+
     }
 
+
+    //белый цвет если приоритет не задан
     return '#fff'; // TODO вынести цвета в константы (magic strings, magic numbers)
 
   }
