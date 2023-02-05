@@ -7,7 +7,8 @@
 <!--[dataSource]="dataSource" переменной даем значение из класса
    теперь таблица будет знать откуда брать данные-->
 <!--mat-table сказали, что таблица из Материи   -->
-    <table [dataSource]="dataSource" mat-table>
+<!--matSort включаем сортировку в таблице    -->
+    <table [dataSource]="dataSource" mat-table matSort>
 
 <!--далее будем заполнять таблицу с пом ng-container:     -->
 
@@ -44,8 +45,9 @@
       <!--3-я колонка: название задачи-->
 <!--Название - начиная с этого столбца даем названия столбцам      -->
 <!--[class.completed]="task.completed" - добавляем наш силь(перечеркивание) если выполнен буль      -->
+<!--mat-sort-header - эту директиву добавляем к колоке которая должна уметь сортироваться      -->
       <ng-container matColumnDef="title">
-        <th *matHeaderCellDef mat-header-cell> Название</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Название</th>
         <td *matCellDef="let task" [class.completed]="task.completed" class="col-title" mat-cell>
 
           {{task.title}}
@@ -57,25 +59,25 @@
 <!--[ngClass]="... - массив с нашими стилями(.селекторами) и условиями их применения     -->
 <!--task.date | date: - это Pipe - спец класс, через который проходят данные и как то изменяютя      -->
       <ng-container matColumnDef="date">
-        <th *matHeaderCellDef mat-header-cell> Срок</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Срок</th>
         <td *matCellDef="let task" [ngClass]="{'completed': task.completed, 'nodate': task.date == null}"
             class="col-date"
             mat-cell>
 
-          {{task.date | date: "medium"}}
+          {{task.date != null ? (task.date | date: "medium") : "Без даты"}}
 
         </td>
       </ng-container>
 
       <!--5-я колонка: приоритет-->
       <ng-container matColumnDef="priority">
-        <th *matHeaderCellDef mat-header-cell> Приоритет</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Приоритет</th>
         <td *matCellDef="let task" class="col-priority"
             [ngClass]="{'completed': task.completed, 'nopriority': task.priority == null}"
             mat-cell
         >
 
-          {{task.priority ? task.priority.title : "Без приоритета"}}
+          {{task.priority != null ? task.priority.title : "Без приоритета"}}
 
 
         </td>
@@ -83,7 +85,7 @@
 
       <!--6-я колонка: категория-->
       <ng-container matColumnDef="category">
-        <th *matHeaderCellDef mat-header-cell> Категория</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Категория</th>
         <td *matCellDef="let task" class="col-category"
             [ngClass]="{'completed': task.completed, 'nocategory': task.category == null, 'link': !task.completed && task.category}"
             mat-cell
@@ -107,6 +109,8 @@
 
     </table>
 
+<!--    этой строчкой включаем и настраиваем пагинацию -->
+    <mat-paginator [pageSizeOptions]="[10, 20, 50, 100]" showFirstLastButtons></mat-paginator>
 
   </div>
 </div>

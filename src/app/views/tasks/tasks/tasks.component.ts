@@ -1,7 +1,9 @@
-import {Component, Injectable, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Injectable, OnInit, ViewChild} from '@angular/core';
 import { Task } from 'src/app/model/Task';
 import {DataHandlerService} from "../../../service/data-handler.service";
 import {MatTableDataSource} from "@angular/material/table";
+import {MatPaginator} from "@angular/material/paginator";
+import {MatSort} from "@angular/material/sort";
 
 // @Injectable({
 //   providedIn: 'root'
@@ -11,13 +13,32 @@ import {MatTableDataSource} from "@angular/material/table";
   templateUrl: './tasks.component.html',
   styleUrls: ['./tasks.component.css']
 })
-export class TasksComponent implements OnInit{
+export class TasksComponent implements OnInit, AfterViewInit{
 
   //подготавливаем данные для таблицы-материал с тасками:
   // поля для таблицы (те, что отображают данные из задачи - должны совпадать с названиями переменных класса)
   public displayedColumns: string[] = ['color', 'id', 'title', 'date', 'priority', 'category'];
   // контейнер - источник данных для таблицы - ПОЛУЧИТ МАССИВ tasks В ngOnInit(), НА КОТОРЫЙ МЫ ПОДПИСАНЫ
+  //в dataSource надо будет дать значение полям: dataSource.data, dataSource.sort, dataSource.paginator.
   public dataSource: MatTableDataSource<Task> = new MatTableDataSource<Task>();
+  //далее подготавливаем ссылки для пагинации и сортировки:
+  // ссылки на компоненты таблицы (добавляем декоратор @ViewChild - присваивает переменной из класса - тег из html.
+  // здесь в скобках обращаемся по типу тега (MatPaginator,...) и (MatSort,...) но можно и по названию тега:
+  // ('matPaginator',...), а в html в теге прописать в теге название: #matPaginator)
+  //эти переменные ссылаются на теги mat-paginator и matSort указанные в html компоненте
+  //и теперь им можно присвоить в dataSource.sort и dataSource.paginator эти переменные в методе addTableObjects()
+  //далее надо заимплементить интерфейс AfterViewInit(сработает после инициализации) и чз него запустить addTableObjects()
+  @ViewChild(MatPaginator, {static: false}) private paginator: MatPaginator;
+  @ViewChild(MatSort, {static: false}) private sort: MatSort;
+  private addTableObjects() {
+    this.dataSource.sort = this.sort; // компонент для сортировки данных (если необходимо)
+    this.dataSource.paginator = this.paginator; // обновить компонент постраничности (кол-во записей, страниц)
+  }
+  ngAfterViewInit(): void {
+    this.addTableObjects();
+  }
+
+  //----------------------------------------------------------------------------------------
 
   //хотим этот массив или переменную передавать во вьюху
   tasks: Task[] = [];
@@ -52,6 +73,37 @@ export class TasksComponent implements OnInit{
 // обновить источник данных (т.к. данные массива tasks обновились)
     this.dataSource.data = this.tasks;
 
+    //обновим сортировку и пагинацию (но и без этого работает?)
+    this.addTableObjects();
+
+
+    //следующий код даст значение полю dataSource.sortingDataAccessor(для правильной работы сортировки):
+    //то dataSource будет знать по каким полям сортировать объект task при нажатии
+    // на стрелочки сортировки над разными колонками таблицы (типа кампаратору говорим по каким полям сравниваем).
+    // когда получаем новые данные..
+    // чтобы можно было сортировать по столбцам "категория" и "приоритет", т.к. там не примитивные типы, а объекты
+    // @ts-ignore - показывает ошибку для типа даты, но так работает, т.к. можно возвращать любой тип
+    this.dataSource.sortingDataAccessor = (task, colName) => {
+      // по каким полям выполнять сортировку для каждого столбца
+      switch (colName) {
+        case 'priority': {
+          return task.priority ? task.priority.id : null;
+        }
+        case 'category': {
+          return task.category ? task.category.title : null;
+        }
+        case 'date': {
+          return task.date ? task.date : null;
+        }
+
+        //title обязательное поле - на null проверять не надо
+        case 'title': {
+          return task.title;
+        }
+      }
+    };
+
+
     console.log('call dataSource');
     console.log(this.dataSource.data);
 
@@ -85,4 +137,6 @@ export class TasksComponent implements OnInit{
     return '#fff'; // TODO вынести цвета в константы (magic strings, magic numbers)
 
   }
+
+
 }
