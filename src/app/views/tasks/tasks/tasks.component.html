@@ -4,6 +4,9 @@
   </div>
   <div class="card-body table-responsive">
 
+<!--    обернем таблицу в этот div - показываем таблицу если есть данные в массиве tasks-->
+    <div *ngIf="tasks.length > 0" class="card-body table-responsive">
+
 <!--[dataSource]="dataSource" переменной даем значение из класса
    теперь таблица будет знать откуда брать данные-->
 <!--mat-table сказали, что таблица из Материи   -->
@@ -57,10 +60,10 @@
 
       <!--4-я колонка: дата выполнения-->
 <!--[ngClass]="... - массив с нашими стилями(.селекторами) и условиями их применения     -->
-<!--task.date | date: - это Pipe - спец класс, через который проходят данные и как то изменяютя      -->
+<!--task.date | date: "medium" - это Pipe - спец класс, через который проходят данные и как то изменяютя      -->
       <ng-container matColumnDef="date">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Срок</th>
-        <td *matCellDef="let task" [ngClass]="{'completed': task.completed, 'nodate': task.date == null}"
+        <td *matCellDef="let task" [ngClass]="{'completed': task.completed, 'novalue': task.date == null}"
             class="col-date"
             mat-cell>
 
@@ -73,7 +76,7 @@
       <ng-container matColumnDef="priority">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Приоритет</th>
         <td *matCellDef="let task" class="col-priority"
-            [ngClass]="{'completed': task.completed, 'nopriority': task.priority == null}"
+            [ngClass]="{'completed': task.completed, 'novalue': task.priority == null}"
             mat-cell
         >
 
@@ -87,7 +90,7 @@
       <ng-container matColumnDef="category">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Категория</th>
         <td *matCellDef="let task" class="col-category"
-            [ngClass]="{'completed': task.completed, 'nocategory': task.category == null, 'link': !task.completed && task.category}"
+            [ngClass]="{'completed': task.completed, 'novalue': task.category == null, 'link': !task.completed && task.category}"
             mat-cell
         >
 
@@ -111,6 +114,10 @@
 
 <!--    этой строчкой включаем и настраиваем пагинацию -->
     <mat-paginator [pageSizeOptions]="[10, 20, 50, 100]" showFirstLastButtons></mat-paginator>
+    </div>
 
+<!--    этот див покажем вместо таблице если нет данных для отображения в массиве tasks-->
+    <div *ngIf="tasks.length == 0"><p class="not-found">Ничего не найдено</p></div>
   </div>
 </div>
+
