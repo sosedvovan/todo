@@ -3,7 +3,7 @@ import {
   AfterViewChecked,
   AfterViewInit,
   Component,
-  Injectable,
+  Injectable, Input,
   OnInit,
   ViewChild
 } from '@angular/core';
@@ -14,20 +14,15 @@ import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
 import {DataSource} from "@angular/cdk/collections";
 
-// @Injectable({
-//   providedIn: 'root'
-// })
 @Component({
   selector: 'app-tasks',
   templateUrl: './tasks.component.html',
   styleUrls: ['./tasks.component.css']
 })
+//это дочерний компонент
 export class TasksComponent implements OnInit, AfterViewInit{
 
-  //хотим этот массив или переменную передавать во вьюху
-  tasks: Task[] = [];
-
-  //подготавливаем данные для таблицы-материал с тасками:
+  //подготавливаем данные для таблицы-материал с тасками(+для сортировки и пагинации):
   // поля для таблицы (те, что отображают данные из задачи - должны совпадать с названиями переменных класса)
   public displayedColumns: string[] = ['color', 'id', 'title', 'date', 'priority', 'category'];
   // контейнер - источник данных для таблицы - ПОЛУЧИТ МАССИВ tasks В ngOnInit(), НА КОТОРЫЙ МЫ ПОДПИСАНЫ
@@ -46,17 +41,21 @@ export class TasksComponent implements OnInit, AfterViewInit{
   private addTableObjects() {
     this.dataSource.sort = this.sort; // компонент для сортировки данных (если необходимо)
     this.dataSource.paginator = this.paginator; // обновить компонент постраничности (кол-во записей, страниц)
-    // this.dataSource.data = this.tasks;
   }
   //вызовется сразу после инициализации представления(объектов и переменных) и его дочек
   //те на этом этапе можно будет обращаться к сылкам в html
   ngAfterViewInit(): void {
     this.addTableObjects();
-    // this.dataSource.data = this.tasks;
   }
 
   //----------------------------------------------------------------------------------------
 
+  //хотим этот массив или переменную передавать во вьюху
+  //это текущие таски для отображения на странице
+  //напрямую не присваиваем значения в переменную, только через @Input
+  @Input()
+  tasks: Task[];
+  // tasks: Task[] = [];
 
 
   // инджектим наш сервис и у него получаем нужный массив
@@ -78,20 +77,23 @@ export class TasksComponent implements OnInit, AfterViewInit{
     //                                                             this.dataSource.data = tasks;});
     //начали использовать дао -> подписываемся на возврат из метода: getAllTasks(): Observable<Task[]>
     //а не на taskSubject = new BehaviorSubject<Task[]>(TestData.tasks);
-    this.dataHandler.getAllTasks().subscribe(tasks => {this.tasks = tasks;
-                                              this.dataSource.data = tasks;});
+    // this.dataHandler.getAllTasks().subscribe(tasks => {this.tasks = tasks;
+    //                                           this.dataSource.data = tasks;});
 
     // датасорс обязательно нужно создавать для таблицы, в него присваивается любой источник (БД, массивы, JSON и пр.)
     // this.dataSource = new MatTableDataSource();
     // this.dataSource.data = this.tasks;
 
+
+    // датасорс обязательно нужно создавать для таблицы, в него присваивается любой источник (БД, массивы, JSON и пр.)
+    // this.dataSource = new MatTableDataSource();//я инициализировал при декларации выше
     //и вызываем такой метод:
-    this.refreshTable();
+    this.fillTable();
   }
 
 
   // показывает задачи с применением всех текущий условий (категория, поиск, фильтры и пр.)
-  public refreshTable() {
+  public fillTable() {
 // обновить источник данных (т.к. данные массива tasks обновились)
     this.dataSource.data = this.tasks;
 

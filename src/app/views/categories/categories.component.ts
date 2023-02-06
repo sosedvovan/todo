@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {Category} from "../../model/Category";
 import {DataHandlerService} from "../../service/data-handler.service";
 
@@ -8,9 +8,13 @@ import {DataHandlerService} from "../../service/data-handler.service";
   templateUrl: './categories.component.html',
   styleUrls: ['./categories.component.css']
 })
+//это дочерний компонент
 export class CategoriesComponent implements OnInit{
 
   //хотим чтобы такой массив был виден во вьюхе
+  //это текущие категории для отображения на странице
+  //с помощью директивы @Input() принимаем массив categories из родительского html
+  @Input()
   categories: Category[] | undefined;
 
   //хотим чтобы такая переменная была видна во вьюхе (для выделения выбранного пункта из списка ul-li)
@@ -27,7 +31,7 @@ export class CategoriesComponent implements OnInit{
     //подписываемся с помощью метода subscribe() в параметрах которого и происходит инициализация поля этого класса - categories
     // this.dataHandler.categoriesSubject.subscribe(categories => this.categories = categories);
     //начали пользоваться ДАО методами, возвращающими объект Observable<Category[]> - подписываемся на него:
-    this.dataHandler.getAllCategories().subscribe(categories => this.categories = categories);
+    // this.dataHandler.getAllCategories().subscribe(categories => this.categories = categories);
 
   }
 
@@ -40,10 +44,10 @@ export class CategoriesComponent implements OnInit{
   //метод получает категорию по которой кликнули мышкой (обратная связь с пользователем)
   showTaskByCategory(category: Category){
     //этой полученной в параметрах категорией инициализируем поле этого класса, которое тоже видно во вьюхе
-    this.selectedCategory = category;
+    // this.selectedCategory = category;
     //в вызываемый метод Сервиса попадет категория по которой кликнул пользователь
     //и в Observable (Издателе) обновятся раздаваемые им данные (отфильтруются по кликнутой категории)
-    this.dataHandler.fillTasksByCategory(category);
+    // this.dataHandler.fillTasksByCategory(category);
 
   }
 }

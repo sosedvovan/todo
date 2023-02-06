@@ -6,14 +6,46 @@ import {BehaviorSubject, Observable, Subject} from "rxjs";
 import {TasksComponent} from "../views/tasks/tasks/tasks.component";
 import {TaskDAOArray} from "../data/dao/impl/TaskDAOArray";
 import {CategoryDAOArray} from "../data/dao/impl/CategoryDAOArray";
+import {Priority} from "../model/Priority";
 // import {CommonService} from './common.service';
 
-
+//@Injectable - означает, что мы объект этого класса можем заинджектить
+//в любой другой класс (а тк providedIn: 'root' - можно его в модуле не прописывать)
 @Injectable({
   providedIn: 'root'
 })
 //Сервис - постоянный поставщик данных из дб (или inMemory дб)
 export class DataHandlerService {
+
+  //Инджектим наши ДАО классы, методы которых будут возвращать нам Observable<...>
+  // реализации работы с данными с помощью массива
+  // (можно подставлять любые реализации, в том числе с БД. Главное - соблюдать интерфейсы)
+  private taskDaoArray = new TaskDAOArray();
+  private categoryDaoArray = new CategoryDAOArray();
+
+  constructor() {
+    // this.fillTasks()
+  }
+
+  //начали использовать Dao
+  //метод возвращает объект Observable<Task[]> со всеми тасками
+  // на который можно подписываться с помощью метода subscribe() в классе главного компонента
+  //метод возвращает все таски
+  getAllTasks(): Observable<Task[]> {
+    return this.taskDaoArray.getAll();
+  }
+  //метод возвращает все категории
+  getAllCategories(): Observable<Category[]>{
+    return this.categoryDaoArray.getAll();
+  }
+
+
+  // поиск задач по параметрам
+  searchTodos(category: Category, searchText: string, status: boolean, priority: Priority): Observable<Task[]> {
+    return this.taskDaoArray.search(category, searchText, status, priority);
+  }
+
+
 
   //Subject - данные на которые подписываются (на него будут подписываться)
   // taskSubject = new Subject<Task[]>();
@@ -23,17 +55,14 @@ export class DataHandlerService {
   //BehaviorSubject - данные на которые подписываются (на него будут подписываться)
   //+ BehaviorSubject имеет начальное состояние, задаем в (...), например: (TestData.tasks)
   //+ не надо запускать раздачу методом nexy() - автоматом раздает
-  taskSubject = new BehaviorSubject<Task[]>(TestData.tasks);
-  categoriesSubject = new BehaviorSubject<Category[]>(TestData.categories);
+  // taskSubject = new BehaviorSubject<Task[]>(TestData.tasks);
+  // categoriesSubject = new BehaviorSubject<Category[]>(TestData.categories);
 
   //вручную инджектим класс в поле этого класса:
   //начали использовать Dao методы которого уже возвращают объект Observable -
   // - те объект который постоянно транслирует(издает) данные -
   // - и подписчики могут постоянно считывать обновление этих данных:
-  // релизации работы с данными с помощью массива
-  // (можно подставлять любые релизации, в том числе с БД. Главное - соблюдать интерфейсы)
-  private taskDaoArray = new TaskDAOArray();
-  private categoryDaoArray = new CategoryDAOArray();
+
 
 
   //пробую получить доступ к методу другого компонента
@@ -44,21 +73,9 @@ export class DataHandlerService {
   //при старте приложения издатель уже сигнализирует подписчикам, что есть в подписке TestData.tasks,
   // но при использовании BehaviorSubject, а не Subject метод next() необязателен?
 
-  constructor() {
 
-    // this.fillTasks()
-  }
 
-  //начали использовать Dao
-  //метод возвращает объект Observable<Task[]> со всеми тасками
-  // на который можно подписываться с помощью метода subscribe() в классах-компонентах
-  getAllTasks(): Observable<Task[]> {
-    return this.taskDaoArray.getAll();
-  }
-  //метод возвращает все категории
-  getAllCategories(): Observable<Category[]>{
-    return this.categoryDaoArray.getAll();
-  }
+
 
 
   // getCategories(): Category[] {
@@ -87,15 +104,15 @@ export class DataHandlerService {
   // }
   //возвращаем массив тасков отфильтрованных по выбранной категории
   //сигнализируем всем подписчикам, что поступило новое значение, отсылая им tasks
-  fillTasksByCategory(category: Category){
-    //получаем массив отфильтрованных по category тасков
-    const tasks = TestData.tasks.filter(task => task.category === category);
-    //осуществляем раздачу отфильтрованных тасков (далее можно поискать - кто их слушает)
-    this.taskSubject.next(tasks);
-    console.log('coll servis');
-    console.log(tasks);
-
-    // this.tasksComponent.refreshTable();
-  }
+  // fillTasksByCategory(category: Category){
+  //   //получаем массив отфильтрованных по category тасков
+  //   const tasks = TestData.tasks.filter(task => task.category === category);
+  //   //осуществляем раздачу отфильтрованных тасков (далее можно поискать - кто их слушает)
+  //   this.taskSubject.next(tasks);
+  //   console.log('coll servis');
+  //   console.log(tasks);
+  //
+  //   // this.tasksComponent.refreshTable();
+  // }
 
 }
