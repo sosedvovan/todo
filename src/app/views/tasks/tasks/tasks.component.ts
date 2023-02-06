@@ -1,9 +1,18 @@
-import {AfterViewInit, Component, Injectable, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterContentInit,
+  AfterViewChecked,
+  AfterViewInit,
+  Component,
+  Injectable,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { Task } from 'src/app/model/Task';
 import {DataHandlerService} from "../../../service/data-handler.service";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
+import {DataSource} from "@angular/cdk/collections";
 
 // @Injectable({
 //   providedIn: 'root'
@@ -15,11 +24,15 @@ import {MatSort} from "@angular/material/sort";
 })
 export class TasksComponent implements OnInit, AfterViewInit{
 
+  //хотим этот массив или переменную передавать во вьюху
+  tasks: Task[] = [];
+
   //подготавливаем данные для таблицы-материал с тасками:
   // поля для таблицы (те, что отображают данные из задачи - должны совпадать с названиями переменных класса)
   public displayedColumns: string[] = ['color', 'id', 'title', 'date', 'priority', 'category'];
   // контейнер - источник данных для таблицы - ПОЛУЧИТ МАССИВ tasks В ngOnInit(), НА КОТОРЫЙ МЫ ПОДПИСАНЫ
-  //в dataSource надо будет дать значение полям: dataSource.data, dataSource.sort, dataSource.paginator.
+  //в dataSource надо будет дать значение полям: dataSource.data, dataSource.sort, dataSource.paginator
+  //и dataSource.sortingDataAccessor(для правильной работы сортировки).
   public dataSource: MatTableDataSource<Task> = new MatTableDataSource<Task>();
   //далее подготавливаем ссылки для пагинации и сортировки:
   // ссылки на компоненты таблицы (добавляем декоратор @ViewChild - присваивает переменной из класса - тег из html.
@@ -33,15 +46,18 @@ export class TasksComponent implements OnInit, AfterViewInit{
   private addTableObjects() {
     this.dataSource.sort = this.sort; // компонент для сортировки данных (если необходимо)
     this.dataSource.paginator = this.paginator; // обновить компонент постраничности (кол-во записей, страниц)
+    // this.dataSource.data = this.tasks;
   }
+  //вызовется сразу после инициализации представления(объектов и переменных) и его дочек
+  //те на этом этапе можно будет обращаться к сылкам в html
   ngAfterViewInit(): void {
     this.addTableObjects();
+    // this.dataSource.data = this.tasks;
   }
 
   //----------------------------------------------------------------------------------------
 
-  //хотим этот массив или переменную передавать во вьюху
-  tasks: Task[] = [];
+
 
   // инджектим наш сервис и у него получаем нужный массив
   // constructor(private dataHandler: DataHandlerService) {
@@ -53,11 +69,17 @@ export class TasksComponent implements OnInit, AfterViewInit{
 
   }
 
+  //метод вызывается до отрисовки визуальных компонентов(html) и подходит для
+  //инициализации объектов и переменных.
   //подписываемся. от taskSubject получаем новые данные tasks=> из сервиса и присваиваем
   //их полю этого класса - this.tasks = tasks, которое видно в html и полю dataSource
   ngOnInit(): void {
-    this.dataHandler.taskSubject.subscribe(tasks => {this.tasks = tasks;
-                                                                this.dataSource.data = tasks;});
+    // this.dataHandler.taskSubject.subscribe(tasks => {this.tasks = tasks;
+    //                                                             this.dataSource.data = tasks;});
+    //начали использовать дао -> подписываемся на возврат из метода: getAllTasks(): Observable<Task[]>
+    //а не на taskSubject = new BehaviorSubject<Task[]>(TestData.tasks);
+    this.dataHandler.getAllTasks().subscribe(tasks => {this.tasks = tasks;
+                                              this.dataSource.data = tasks;});
 
     // датасорс обязательно нужно создавать для таблицы, в него присваивается любой источник (БД, массивы, JSON и пр.)
     // this.dataSource = new MatTableDataSource();
@@ -137,6 +159,10 @@ export class TasksComponent implements OnInit, AfterViewInit{
     return '#fff'; // TODO вынести цвета в константы (magic strings, magic numbers)
 
   }
+
+  // ngAfterViewChecked(): void {
+  //   this.dataSource.data = this.tasks;
+  // }
 
 
 }

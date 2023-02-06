@@ -2,8 +2,9 @@ import {Injectable, ViewChild} from '@angular/core';
 import {Category} from "../model/Category";
 import {TestData} from "../data/TestData";
 import {Task} from "../model/Task";
-import {BehaviorSubject, Subject} from "rxjs";
+import {BehaviorSubject, Observable, Subject} from "rxjs";
 import {TasksComponent} from "../views/tasks/tasks/tasks.component";
+import {TaskDAOArray} from "../data/dao/impl/TaskDAOArray";
 // import {CommonService} from './common.service';
 
 
@@ -24,6 +25,14 @@ export class DataHandlerService {
   taskSubject = new BehaviorSubject<Task[]>(TestData.tasks);
   categoriesSubject = new BehaviorSubject<Category[]>(TestData.categories);
 
+  //вручную инджектим класс в поле этого класса:
+  //начали использовать Dao методы которого уже возвращают объект Observable -
+  // - те объект который постоянно транслирует(издает) данные -
+  // - и подписчики могут постоянно считывать обновление этих данных:
+  // релизации работы с данными с помощью массива
+  // (можно подставлять любые релизации, в том числе с БД. Главное - соблюдать интерфейсы)
+  private taskDaoArray = new TaskDAOArray();
+
 
   //пробую получить доступ к методу другого компонента
   //https://question-it.com/questions/318904/kak-vyzvat-metod-iz-odnogo-komponenta-v-drugoj-komponent-v-angular-2
@@ -36,6 +45,13 @@ export class DataHandlerService {
   constructor() {
 
     // this.fillTasks()
+  }
+
+  //начали использовать Dao
+  //метод возвращает объект Observable<Task[]> со всеми тасками
+  // на который можно подписываться с помощью метода subscribe() в классах-компонентах
+  getAllTasks(): Observable<Task[]> {
+    return this.taskDaoArray.getAll();
   }
 
   // getCategories(): Category[] {
@@ -67,7 +83,7 @@ export class DataHandlerService {
   fillTasksByCategory(category: Category){
     //получаем массив отфильтрованных по category тасков
     const tasks = TestData.tasks.filter(task => task.category === category);
-    //осуществляем раздачу отфильтрованных тасков
+    //осуществляем раздачу отфильтрованных тасков (далее можно поискать - кто их слушает)
     this.taskSubject.next(tasks);
     console.log('coll servis');
     console.log(tasks);

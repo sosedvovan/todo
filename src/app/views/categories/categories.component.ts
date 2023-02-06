@@ -26,6 +26,7 @@ export class CategoriesComponent implements OnInit{
     //чтобы этими данными инициализировать поле этого класса - categories(которое видно во вьюхе).
     //подписываемся с помощью метода subscribe() в параметрах которого и происходит инициализация поля этого класса - categories
     this.dataHandler.categoriesSubject.subscribe(categories => this.categories = categories);
+
   }
 
   //ДЛЯ ПРИМЕРА: вызывается автоматически после инициализации компонента
