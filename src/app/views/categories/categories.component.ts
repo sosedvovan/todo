@@ -25,7 +25,9 @@ export class CategoriesComponent implements OnInit{
     //тк в Сервисе осуществляется постоянная раздача данных, здесь мы подпишемся на получение этих данных
     //чтобы этими данными инициализировать поле этого класса - categories(которое видно во вьюхе).
     //подписываемся с помощью метода subscribe() в параметрах которого и происходит инициализация поля этого класса - categories
-    this.dataHandler.categoriesSubject.subscribe(categories => this.categories = categories);
+    // this.dataHandler.categoriesSubject.subscribe(categories => this.categories = categories);
+    //начали пользоваться ДАО методами, возвращающими объект Observable<Category[]> - подписываемся на него:
+    this.dataHandler.getAllCategories().subscribe(categories => this.categories = categories);
 
   }
 

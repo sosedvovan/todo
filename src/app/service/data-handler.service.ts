@@ -5,6 +5,7 @@ import {Task} from "../model/Task";
 import {BehaviorSubject, Observable, Subject} from "rxjs";
 import {TasksComponent} from "../views/tasks/tasks/tasks.component";
 import {TaskDAOArray} from "../data/dao/impl/TaskDAOArray";
+import {CategoryDAOArray} from "../data/dao/impl/CategoryDAOArray";
 // import {CommonService} from './common.service';
 
 
@@ -32,6 +33,7 @@ export class DataHandlerService {
   // релизации работы с данными с помощью массива
   // (можно подставлять любые релизации, в том числе с БД. Главное - соблюдать интерфейсы)
   private taskDaoArray = new TaskDAOArray();
+  private categoryDaoArray = new CategoryDAOArray();
 
 
   //пробую получить доступ к методу другого компонента
@@ -53,6 +55,11 @@ export class DataHandlerService {
   getAllTasks(): Observable<Task[]> {
     return this.taskDaoArray.getAll();
   }
+  //метод возвращает все категории
+  getAllCategories(): Observable<Category[]>{
+    return this.categoryDaoArray.getAll();
+  }
+
 
   // getCategories(): Category[] {
   //   return TestData.categories;
