@@ -50,9 +50,13 @@
 <!--Название - начиная с этого столбца даем названия столбцам      -->
 <!--[class.completed]="task.completed" - добавляем наш силь(перечеркивание) если выполнен буль      -->
 <!--mat-sort-header - эту директиву добавляем к колоке которая должна уметь сортироваться      -->
+<!--(click)="openEditTaskDialog(task)" при клике по одной таске вызываем метод класса     -->
+<!--.pointer - стиль в глобальных стилях - мышка превращ в руку при наведении      -->
       <ng-container matColumnDef="title">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Название</th>
-        <td *matCellDef="let task" [class.completed]="task.completed" class="col-title" mat-cell>
+        <td *matCellDef="let task"
+            (click)="openEditTaskDialog(task)"
+            [class.completed]="task.completed" class="col-title pointer" mat-cell>
 
           {{task.title}}
 

@@ -2,9 +2,9 @@ import {
   AfterContentInit,
   AfterViewChecked,
   AfterViewInit,
-  Component,
+  Component, EventEmitter,
   Injectable, Input,
-  OnInit,
+  OnInit, Output,
   ViewChild
 } from '@angular/core';
 import { Task } from 'src/app/model/Task';
@@ -13,6 +13,7 @@ import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
 import {DataSource} from "@angular/cdk/collections";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-tasks',
@@ -65,13 +66,25 @@ export class TasksComponent implements OnInit, AfterViewInit{
   }
 
 
+  //переменная updateTask должна хранить ссылку на EventEmitter<Task>
+  //тип передаваемого параметра - <Task>
+  //@Output() запускается с помощью : this.updateTask.emit(task);
+  //и отправляет (task) в родительский html где : (updateTask)="onUpdateTask($event)"
+  //и уже запускается метод onUpdateTask в родительском компоненте
+  @Output()
+  updateTask = new EventEmitter<Task>();
+
+
+
   // инджектим наш сервис и у него получаем нужный массив
   // constructor(private dataHandler: DataHandlerService) {
   //   this.tasks = dataHandler.getTasks();
   // }
 
   //инджектим наш сервис и у него получаем нужный массив
-  constructor(private dataHandler: DataHandlerService) {
+  //так же инджектим : работу с диалоговым окном
+  constructor(private dataHandler: DataHandlerService,
+              private dialog: MatDialog) {
 
   }
 
@@ -176,6 +189,22 @@ export class TasksComponent implements OnInit, AfterViewInit{
     //белый цвет если приоритет не задан
     return '#fff'; // TODO вынести цвета в константы (magic strings, magic numbers)
 
+  }
+
+  //!!!НАДО ДОБАВИТЬ MatDialogModule В app.module.ts
+  // диалоговое редактирования для добавления задачи
+  public openEditTaskDialog(task: Task): void {
+
+    this.updateTask.emit(task);
+
+    // открытие диалогового окна
+    // const dialogRef = this.dialog.open(EditTaskDialogComponent, {data: [task, 'Редактирование задачи'], autoFocus: false});
+
+    // dialogRef.afterClosed().subscribe(result => {
+      // обработка результатов
+
+
+    // });
   }
 
   // ngAfterViewChecked(): void {
