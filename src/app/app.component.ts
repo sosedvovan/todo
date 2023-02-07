@@ -36,6 +36,8 @@ export class AppComponent {
   tasks: Task[];
   categories: Category[];
 
+  //завели эту переменную - она придет из @Output() из дочки
+  selectedCategory: Category;
 
 //в конструкторе инджектим наш инджектабельный сервис
 // фасад для работы с данными
@@ -52,4 +54,26 @@ export class AppComponent {
     this.dataHandler.getAllCategories().subscribe(categories => this.categories = categories);
   }
 
+
+  // изменение категории
+  //метод запускается из html этого класса : (selectCategory)="onSelectCategory($event)
+  public onSelectCategory(category: Category) {
+
+    this.selectedCategory = category;
+
+    this.dataHandler.searchTasks(
+      this.selectedCategory
+      // ,
+      // null,
+      // null,
+      // null
+    ).subscribe(tasks => {
+      this.tasks = tasks;
+    });
+  }
+
+//метод запускается из html этого класса : (updateTask)="onUpdateTask($event)
+  private onUpdateTask(task: Task) {
+    console.log(task);
+  }
 }

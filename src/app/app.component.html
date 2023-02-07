@@ -130,18 +130,24 @@
 <!--ЭТО HTML ГЛАВНОГО КОМПАНЕНТА, КОТОРЫЙ АККУМУЛИРУЕТ В СЕБЕ ДОЧЕРНИЕ КОМПАНЕНТЫ-->
 <!--ЗДЕСЬ В ТЕГАХ <app-... ПЕРЕДАЕМ В КЛАССЫ ДОЧЕК МАССИВЫ categories И tasks   -->
 <!--А В КЛАССАХ ДОЧЕК ПРИМЕМ ЭТИ МАССИВЫ С ПОМ ДЕКОРАТОРА @Input() -->
+<!--[categories]="categories" это передаем к дочернему в @Input()    -->
+<!--(selectCategory)="onSelectCategory($event)" это получаем из дочернего @Output()
+    и в родительском app.component.ts запустится метод onSelectCategory($event)-->
     <div class="col-lg-2 col-md-6 mb-md-0 mb-4">
-      <app-categories [categories]="categories"></app-categories>
+      <app-categories [categories]="categories"
+                      (selectCategory)="onSelectCategory($event)"></app-categories>
     </div>
 
     <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
       <div class="card">
         <div class="card-body px-0 pb-2">
-          <app-tasks [tasks]="tasks"></app-tasks>
+          <app-tasks [tasks]="tasks"
+
+          ></app-tasks>
         </div>
       </div>
     </div>
-
+<!--    (updateTask)="onUpdateTask($event)"-->
 
   </div>
 </div>

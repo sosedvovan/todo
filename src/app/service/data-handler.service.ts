@@ -7,6 +7,7 @@ import {TasksComponent} from "../views/tasks/tasks/tasks.component";
 import {TaskDAOArray} from "../data/dao/impl/TaskDAOArray";
 import {CategoryDAOArray} from "../data/dao/impl/CategoryDAOArray";
 import {Priority} from "../model/Priority";
+import {PriorityDAOArray} from "../data/dao/impl/PriorityDAOArray";
 // import {CommonService} from './common.service';
 
 //@Injectable - означает, что мы объект этого класса можем заинджектить
@@ -22,6 +23,7 @@ export class DataHandlerService {
   // (можно подставлять любые реализации, в том числе с БД. Главное - соблюдать интерфейсы)
   private taskDaoArray = new TaskDAOArray();
   private categoryDaoArray = new CategoryDAOArray();
+  private priorityDaoArray = new PriorityDAOArray();
 
   constructor() {
     // this.fillTasks()
@@ -41,7 +43,7 @@ export class DataHandlerService {
 
 
   // поиск задач по параметрам
-  searchTodos(category: Category, searchText: string, status: boolean, priority: Priority): Observable<Task[]> {
+  searchTasks(category: Category, searchText?: string, status?: boolean, priority?: Priority): Observable<Task[]> {
     return this.taskDaoArray.search(category, searchText, status, priority);
   }
 

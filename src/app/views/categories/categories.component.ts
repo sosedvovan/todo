@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Category} from "../../model/Category";
 import {DataHandlerService} from "../../service/data-handler.service";
 
@@ -16,6 +16,13 @@ export class CategoriesComponent implements OnInit{
   //с помощью директивы @Input() принимаем массив categories из родительского html
   @Input()
   categories: Category[] | undefined;
+
+  // выбрали категорию из списка
+  //когда emit() запускает этот @Output() - в родительском app.component.html
+  //сработает директива (selectCategory)="onSelectCategory($event)"
+  //где $event это то что передали в методе : emit(this.selectedCategory)
+  @Output()
+  selectCategory = new EventEmitter<Category>();
 
   //хотим чтобы такая переменная была видна во вьюхе (для выделения выбранного пункта из списка ul-li)
   selectedCategory: Category  | undefined;
@@ -43,6 +50,18 @@ export class CategoriesComponent implements OnInit{
   //метод вызываем из html кликом (причем название метода придумываем при работе с html файлом)
   //метод получает категорию по которой кликнули мышкой (обратная связь с пользователем)
   showTaskByCategory(category: Category){
+    // если не изменилось значение, ничего не делать (чтобы лишний раз не делать запрос данных)
+    if (this.selectedCategory === category) {
+      return;
+    }
+
+    this.selectedCategory = category; // сохраняем выбранную категорию
+
+    // вызываем внешний обработчик и передаем туда выбранную категорию
+    //emit() запускает @Output()
+    this.selectCategory.emit(this.selectedCategory);
+
+
     //этой полученной в параметрах категорией инициализируем поле этого класса, которое тоже видно во вьюхе
     // this.selectedCategory = category;
     //в вызываемый метод Сервиса попадет категория по которой кликнул пользователь

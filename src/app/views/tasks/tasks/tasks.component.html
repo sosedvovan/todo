@@ -4,8 +4,9 @@
   </div>
   <div class="card-body table-responsive">
 
-<!--    обернем таблицу в этот div - показываем таблицу если есть данные в массиве tasks-->
-    <div *ngIf="tasks.length > 0" class="card-body table-responsive">
+<!--    обернем таблицу в этот div - показываем таблицу если есть данные в массиве tasks
+        но первым условием убедимся что tasks != null, что есть у чего брать length - иначе undefined-->
+    <div *ngIf="tasks && tasks.length > 0" class="card-body table-responsive">
 
 <!--[dataSource]="dataSource" переменной даем значение из класса
    теперь таблица будет знать откуда брать данные-->
@@ -117,7 +118,7 @@
     </div>
 
 <!--    этот див покажем вместо таблице если нет данных для отображения в массиве tasks-->
-    <div *ngIf="tasks.length == 0"><p class="not-found">Ничего не найдено</p></div>
+    <div *ngIf="tasks && tasks.length == 0"><p class="not-found">Ничего не найдено</p></div>
   </div>
 </div>
 

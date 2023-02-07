@@ -8,54 +8,67 @@ import {TestData} from "../../TestData";
 export class TaskDAOArray implements TaskDAO {
 
 
-    getAll(): Observable<Task[]> {
-        return of(TestData.tasks);
+  getAll(): Observable<Task[]> {
+    return of(TestData.tasks);
+  }
+
+  get(id: number): Observable<Task> {
+    const task: Task | any = TestData.tasks.find(todo => todo.id === id);
+    return of(task);
+  }
+
+
+  add(arg0: Task): Observable<Task> {
+    //return undefined; пока метод не реализован - возвращаем Observable с абы чем
+    return of(TestData.tasks[0]);
+  }
+
+  delete(id: number): Observable<Task> {
+    //return undefined; пока метод не реализован - возвращаем Observable с абы чем
+    return of(TestData.tasks[0]);
+  }
+
+  getCompletedCountInCategory(category: Category): Observable<number> {
+    //return undefined; пока метод не реализован - возвращаем Observable с абы чем
+    return of(1);
+  }
+
+  getTotalCount(): Observable<number> {
+    //return undefined; пока метод не реализован - возвращаем Observable с абы чем
+    return of(1);
+  }
+
+  getTotalCountInCategory(category: Category): Observable<number> {
+    //return undefined; пока метод не реализован - возвращаем Observable с абы чем
+    return of(1);
+  }
+
+  getUncompletedCountInCategory(category: Category): Observable<number> {
+    //return undefined; пока метод не реализован - возвращаем Observable с абы чем
+    return of(1);
+  }
+
+
+
+  search(category: Category, searchText?: string, status?: boolean, priority?: Priority): Observable<Task[]> {
+    //return undefined; пока метод не реализован - возвращаем Observable с абы чем
+    return of(this.searchTodos(category, searchText, status, priority));
+  }
+  private searchTodos(category: Category, searchText?: string, status?: boolean, priority?: Priority): Task[] {
+    let allTasks = TestData.tasks;
+
+    if (category != null) {
+      allTasks = allTasks.filter(todo => todo.category === category);
     }
 
-    get(id: number): Observable<Task> {
-      const task: Task | any  = TestData.tasks.find(todo => todo.id === id);
-        return of(task);
-    }
+    return allTasks; // отфильтрованный массив
+  }
 
 
-    add(arg0: Task): Observable<Task> {
-      //return undefined; пока метод не реализован - возвращаем Observable с абы чем
-      return of(TestData.tasks[0]);
-    }
 
-    delete(id: number): Observable<Task> {
-      //return undefined; пока метод не реализован - возвращаем Observable с абы чем
-      return of(TestData.tasks[0]);
-    }
-
-    getCompletedCountInCategory(category: Category): Observable<number> {
-      //return undefined; пока метод не реализован - возвращаем Observable с абы чем
-      return of(1);
-    }
-
-    getTotalCount(): Observable<number> {
-      //return undefined; пока метод не реализован - возвращаем Observable с абы чем
-      return of(1);
-    }
-
-    getTotalCountInCategory(category: Category): Observable<number> {
-      //return undefined; пока метод не реализован - возвращаем Observable с абы чем
-      return of(1);
-    }
-
-    getUncompletedCountInCategory(category: Category): Observable<number> {
-      //return undefined; пока метод не реализован - возвращаем Observable с абы чем
-      return of(1);
-    }
-
-    search(category: Category, searchText: string, status: boolean, priority: Priority): Observable<Task[]> {
-      //return undefined; пока метод не реализован - возвращаем Observable с абы чем
-      return of(TestData.tasks);
-    }
-
-    update(arg0: Task): Observable<Task> {
-      //return undefined; пока метод не реализован - возвращаем Observable с абы чем
-        return of(TestData.tasks[0]);
-    }
+  update(arg0: Task): Observable<Task> {
+    //return undefined; пока метод не реализован - возвращаем Observable с абы чем
+    return of(TestData.tasks[0]);
+  }
 
 }
