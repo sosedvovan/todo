@@ -21,33 +21,40 @@ import {MatDialog} from "@angular/material/dialog";
   styleUrls: ['./tasks.component.css']
 })
 //это дочерний компонент
-export class TasksComponent implements OnInit, AfterViewInit{
+export class TasksComponent implements OnInit{
 
-  //подготавливаем данные для таблицы-материал с тасками(+для сортировки и пагинации):
+  //подготавливаем данные для таблицы-матЕриал с тасками(+для сортировки и пагинации):
   // поля для таблицы (те, что отображают данные из задачи - должны совпадать с названиями переменных класса)
   public displayedColumns: string[] = ['color', 'id', 'title', 'date', 'priority', 'category'];
-  // контейнер - источник данных для таблицы - ПОЛУЧИТ МАССИВ tasks В ngOnInit(), НА КОТОРЫЙ МЫ ПОДПИСАНЫ
+  // контейнер dataSource - источник данных для таблицы - ПОЛУЧИТ МАССИВ tasks В ngOnInit(), НА КОТОРЫЙ МЫ ПОДПИСАНЫ
   //в dataSource надо будет дать значение полям: dataSource.data, dataSource.sort, dataSource.paginator
   //и dataSource.sortingDataAccessor(для правильной работы сортировки).
   public dataSource: MatTableDataSource<Task> = new MatTableDataSource<Task>();
   //далее подготавливаем ссылки для пагинации и сортировки:
-  // ссылки на компоненты таблицы (добавляем декоратор @ViewChild - присваивает переменной из класса - тег из html.
+  // ссылки на компоненты таблицы (добавляем декоратор @ViewChild - присваивает
+  // переменной из класса - атрибут тега или сам тег из html.
   // здесь в скобках обращаемся по типу тега (MatPaginator,...) и (MatSort,...) но можно и по названию тега:
   // ('matPaginator',...), а в html в теге прописать в теге название: #matPaginator)
   //эти переменные ссылаются на теги mat-paginator и matSort указанные в html компоненте
   //и теперь им можно присвоить в dataSource.sort и dataSource.paginator эти переменные в методе addTableObjects()
   //далее надо заимплементить интерфейс AfterViewInit(сработает после инициализации) и чз него запустить addTableObjects()
-  @ViewChild(MatPaginator, {static: false}) private paginator: MatPaginator;
-  @ViewChild(MatSort, {static: false}) private sort: MatSort;
+  @ViewChild(MatPaginator, {static: false}) //здесь MatPaginator это тег <mat-paginator
+  private paginator: MatPaginator;          //то эта переменная paginator будет связанна с тегом <mat-paginator
+  @ViewChild(MatSort, {static: false}) //здесь MatSort это атрибут matSort в теге <table
+  private sort: MatSort;               //то эта переменная sort будет связанна с атрибутом matSort в теге <table
+  //СРАБАТЫВАЕТ ngOnInit() И ИНИЦИАЛИЗИРУЮТСЯ: dataSource.data, dataSource.sort, dataSource.paginator, dataSource.sortingDataAccessor
   private addTableObjects() {
     this.dataSource.sort = this.sort; // компонент для сортировки данных (если необходимо)
     this.dataSource.paginator = this.paginator; // обновить компонент постраничности (кол-во записей, страниц)
   }
+
+
   //вызовется сразу после инициализации представления(объектов и переменных) и его дочек
   //те на этом этапе можно будет обращаться к сылкам в html
-  ngAfterViewInit(): void {
-    this.addTableObjects();
-  }
+  //ЭТОТ МЕТОД РЕАЛИЗУЕМ ОТ ИНТЕРФЕЙСА : AfterViewInit
+  // ngAfterViewInit(): void {
+  //   this.addTableObjects();
+  // }
 
   //----------------------------------------------------------------------------------------
 
@@ -120,9 +127,6 @@ export class TasksComponent implements OnInit, AfterViewInit{
       return;
     }
 
-// обновить источник данных (т.к. данные массива tasks обновились)
-    this.dataSource.data = this.tasks;
-
     // обновить источник данных (т.к. данные массива tasks обновились)
     this.dataSource.data = this.tasks;
 
@@ -132,7 +136,7 @@ export class TasksComponent implements OnInit, AfterViewInit{
 
     //следующий код даст значение полю dataSource.sortingDataAccessor(для правильной работы сортировки):
     //то dataSource будет знать по каким полям сортировать объект task при нажатии
-    // на стрелочки сортировки над разными колонками таблицы (типа кампаратору говорим по каким полям сравниваем).
+    // на стрелочки сортировки над разными колонками таблицы (типа компаратору говорим по каким полям сравниваем).
     // когда получаем новые данные..
     // чтобы можно было сортировать по столбцам "категория" и "приоритет", т.к. там не примитивные типы, а объекты
     // @ts-ignore - показывает ошибку для типа даты, но так работает, т.к. можно возвращать любой тип
@@ -164,9 +168,9 @@ export class TasksComponent implements OnInit, AfterViewInit{
 
 
     //для галочки(выполнено не выполнено) - меняем булеан на противоположный вызывая из вьюхи
-  toggleTaskCompleted(task: Task) {
-    task.completed = !task.completed;
-  }
+  // toggleTaskCompleted(task: Task) {
+  //   task.completed = !task.completed;
+  // }
 
   // в зависимости от статуса задачи - вернуть цвет названия
   public getPriorityColor(task: Task) {
