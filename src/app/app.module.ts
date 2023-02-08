@@ -10,12 +10,14 @@ import {MatTableModule} from "@angular/material/table";
 import {MatSortModule} from "@angular/material/sort";
 import {MatPaginatorModule} from "@angular/material/paginator";
 import {MatDialogModule} from "@angular/material/dialog";
+import { EditTaskDialogComponent } from './dialog/edit-task-dialog/edit-task-dialog.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CategoriesComponent,
-    TasksComponent
+    TasksComponent,
+    EditTaskDialogComponent
   ],
   imports: [
     MatTableModule,
@@ -27,6 +29,9 @@ import {MatDialogModule} from "@angular/material/dialog";
     MatDialogModule
   ],
   providers: [],
+  entryComponents: [
+    EditTaskDialogComponent
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

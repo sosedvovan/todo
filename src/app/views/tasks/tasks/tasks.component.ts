@@ -14,6 +14,7 @@ import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
 import {DataSource} from "@angular/cdk/collections";
 import {MatDialog} from "@angular/material/dialog";
+import {EditTaskDialogComponent} from "../../../dialog/edit-task-dialog/edit-task-dialog.component";
 
 @Component({
   selector: 'app-tasks',
@@ -75,7 +76,7 @@ export class TasksComponent implements OnInit{
 
   //переменная updateTask должна хранить ссылку на EventEmitter<Task>
   //тип передаваемого параметра - <Task>
-  //@Output() запускается с помощью : this.updateTask.emit(task);
+  //@Output() запускается с помощью : this.updateTask.emit(task); (необязательно и автоматом срабатывает?)
   //и отправляет (task) в родительский html где : (updateTask)="onUpdateTask($event)"
   //и уже запускается метод onUpdateTask в родительском компоненте
   @Output()
@@ -199,16 +200,25 @@ export class TasksComponent implements OnInit{
   // диалоговое редактирования для добавления задачи
   public openEditTaskDialog(task: Task): void {
 
+    //запускает @Output(), кот в родительском классе вызывает метод
+    //кот просто печатает в консоль
     this.updateTask.emit(task);
 
     // открытие диалогового окна
-    // const dialogRef = this.dialog.open(EditTaskDialogComponent, {data: [task, 'Редактирование задачи'], autoFocus: false});
+    //метод open открывает наш компонент EditTaskDialog
+    //и передает в объекте - MatDialogConfig в массиве в него параметры - data
+    //(кроме data в MatDialogConfig есть много других параметров - ширина...)
+    //с const dialogRef будем работать в компоненте диалогового окна : edit-task-dialog.component.ts
+    const dialogRef = this.dialog.open(EditTaskDialogComponent, {data: [task, 'Редактирование задачи'], autoFocus: false});
 
-    // dialogRef.afterClosed().subscribe(result => {
+    //далее подписываемся на событие закрытия диалогового окна: afterClosed().subscribe()
+    //и в анонимном методе выполняем все что нам нужно
+    //в result будет то, что мы вернем из диалогового окна
+    dialogRef.afterClosed().subscribe(result => {
       // обработка результатов
 
 
-    // });
+    });
   }
 
   // ngAfterViewChecked(): void {

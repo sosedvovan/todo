@@ -78,7 +78,12 @@ export class AppComponent {
   }
 }
 
-/**
+/**  В файле app.module.ts: Импорт:
+ *       ● MatTableModule
+ *       ● MatPaginatorModule
+ *       ● MatSortModule
+ *       ● BrowserAnimationsModule
+ *
  * ПРИНЦИП РАБОТЫ @Input('...') (идем от родителя к дочке):
  * 1. Допустим, мы хотим в 2-а дочерние html передать 2-а массива: tasks и categories :
  *    В РОДИТЕЛЬСКИЙ КОМПОНЕНТ ИНДЖЕКТИМ НУЖНЫЕ РЕАЛИЗАЦИИ РЕПОЗИТОРИЯ
@@ -130,7 +135,7 @@ export class AppComponent {
  *     Теперь при нажатии мышкой на контент тега <li> в классе дочки вызовется
  *     метод showTaskByCategory(category) и в аргументах передастся текущая в
  *     итерации категория.
- *  2. Вот этот метод который вызовится и в котором мы вызовем @Output() обработчик:
+ *  2. Вот этот метод который вызовется и в котором мы вызовем @Output() обработчик:
  *           showTaskByCategory(category: Category){
  *           if (this.selectedCategory === category) {
  *            return;
@@ -174,3 +179,46 @@ export class AppComponent {
  *       передаст в свой html и страница обновится с новыми данными -
  *       этого мы и хотели - получить такое действие)
  */
+
+/**
+ *      Диалоговые окна- готовое решения для работы с диалоговыми
+ *      окнами из Angular Material. Гибкие настройки, передача данных,
+ *      изменение внешнего вида
+ *  1. В папке dialog создали новый компонент: EditTaskDialog
+ *  2. В файле app.module.ts:
+ *        ● Импорт MatDialogModule
+ *        ● Добавить в entryComponents компоненту EditTaskDialogComponent
+ *          (сказали что это динамический компонент- создается по необходимости)
+ *  3. Мы с этим диалоговым окном EditTaskDialog будем работать из tasks.component.html
+ *     В tasks.component.html :
+ *      -В конструкторе заинджектим private dialog: MatDialog
+ *      -В колонку таблицы "Название" мы добавляем событие по клику мышкой:
+ *       (click)="openEditTaskDialog(task) - при клике на названии таски вызовется метод
+ *       openEditTaskDialog() и в параметрах передастся текущая таска
+ *
+ *     В tasks.component.ts метод openEditTaskDialog(task) :
+ *            public openEditTaskDialog(task: Task): void {
+ *
+ *               // открытие диалогового окна в которое будет помещен наш компонент EditTaskDialog
+ *               //метод open() открывает наш компонент EditTaskDialog в диалоговом окне
+ *               //и передает в объекте - MatDialogConfig в массиве в него(в компонент) параметры - data
+ *               //(кроме data в MatDialogConfig есть много других параметров - ширина...)
+ *               //с const dialogRef будем работать в компоненте диалогового окна : edit-task-dialog.component.ts
+ *               const dialogRef = this.dialog.open(EditTaskDialogComponent, {data: [task, 'Редактирование задачи'], autoFocus: false});
+ *
+ *               //далее подписываемся на событие закрытия диалогового окна: afterClosed().subscribe()
+ *               //и в анонимном методе выполняем все что нам нужно
+ *               //в result будет то, что мы вернем из диалогового окна
+ *               dialogRef.afterClosed().subscribe(result => {
+ *                     // здесь будет обработка результатов после закрытия диалогового окна
+ *                });
+ *               }
+ *  4. В компоненте нашего диалогового окна edit-task-dialog.component.ts :
+ *       см в edit-task-dialog.component.ts
+ *       и то, что будет отображаться в открывшемся диалоговом окне
+ *       см в edit-task-dialog.component.html
+ *
+ *
+ *
+ */
+
