@@ -42,12 +42,12 @@
        и двустороннее связывание сработает-->
     <button
       *ngIf="tmpTitle.trim().length > 0"
-      mat-button matSuffix mat-icon-button aria-label="Clear"
+      matSuffix mat-icon-button aria-label="Clear"
       (click)="tmpTitle= ''"
         class="size25">
       <mat-icon>clear</mat-icon>
     </button>
-
+<!--атрибуты mat-button и mat-icon-button конфликтовали -> оставил один из них  -->
   </mat-form-field>
 
 </mat-dialog-content>
