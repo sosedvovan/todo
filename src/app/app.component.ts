@@ -117,8 +117,8 @@ export class AppComponent {
  * ПРИНЦИП РАБОТЫ @Input('...') (идем от родителя к дочке):
  * 1. Допустим, мы хотим в 2-а дочерние html передать 2-а массива: tasks и categories :
  *    В РОДИТЕЛЬСКИЙ КОМПОНЕНТ ИНДЖЕКТИМ НУЖНЫЕ РЕАЛИЗАЦИИ РЕПОЗИТОРИЯ
- *    и заводим 2-е переменные которые хотим "видеть" в дочерних html: asks и categories
- * 2. Подписывается на все необходимые данные (subscribe) В ngOnInit()
+ *    и заводим 2-е переменные которые хотим "видеть" в дочерних html: tasks и categories
+ * 2. Подписываем эти 2-е переменные на все необходимые данные (subscribe) В ngOnInit()
  * 3. В родительском html создаем связи с дочками :
  *           <app-categories
  *          [categories]="categories"  //данные для @Input
@@ -136,7 +136,8 @@ export class AppComponent {
  *    массивы categories и tasks из родительского html :
  *         @Input()
  *         categories: Category[] | undefined;
- *    (Ангуляр сам автоматом выполнит присвоение с помощью @Input())
+ *    (Ангуляр сам автоматом выполнит присвоение с помощью @Input()).
+ *    Те связываем родителя и дочку чз родительский html.
  *    ----------------------------------------------------
  *    @Input() можно ставить и над сеттером, для вызовов других методов:
  *
@@ -144,7 +145,7 @@ export class AppComponent {
  *
  *        //сделали сеттер для этой переменной
  *        @Input('tasks')  //в ('...') имя переменной для которой этот сеттер
- *        public set setTasks(tasks: Task[]) {
+ *        public set setTasks(tasks: Task[]) { //то же имя tasks: в параметрах сеттера
  *        this.tasks = tasks; //инициализируем переменную
  *        this.fillTable();   //вызываем другой метод
  *        }
@@ -158,9 +159,9 @@ export class AppComponent {
  *
  *  ПРИНЦИП РАБОТЫ @Output() :
  *  (идем от дочки к родителю):
- *  Допустим мы в html точки хотим нажать мышкой в браузере по одной из категорий
+ *  Допустим мы в html дочки хотим нажать мышкой в браузере по одной из категорий
  *  и в результате такого нажатия мы хотим получить какой то результат:
- *  1. В html дочки, в нужном теге <li> прописываем дериктиву -
+ *  1. В html дочки, в нужном теге <li> прописываем директиву -
  *     событие по клику мышки : (click)="showTaskByCategory(category)"
  *     Теперь при нажатии мышкой на контент тега <li> в классе дочки вызовется
  *     метод showTaskByCategory(category) и в аргументах передастся текущая в
@@ -170,8 +171,9 @@ export class AppComponent {
  *           if (this.selectedCategory === category) {
  *            return;
  *           }
- *           this.selectedCategory = category; // сохраняем выбранную категорию
- *           // вызываем внешний обработчик и передаем туда выбранную категорию
+ *           // сохраняем выбранную категорию
+ *           this.selectedCategory = category;
+ *           // вызываем внешний обработчик(объект помеченный @Output()) и передаем туда выбранную категорию
  *           this.selectCategory.emit(this.selectedCategory); //emit() запускает @Output()
  *           }
  *      А вот и сам @Output() обработчик - это поле класса дочки :
@@ -190,6 +192,9 @@ export class AppComponent {
  *      причем в его аргументы попадет то, что было в методе emit(this.selectedCategory)
  *
  *      Вот метод, который автоматом вызовется в родителе :
+ *          //метод принимает категорию и переподпишет родительское поле tasks
+ *          //на новый отфильтрованный по категории массив тасков ->
+ *          //-> в результате в браузере мы увидем таблицу с тасками только выбранной категории
  *         public onSelectCategory(category: Category) {
  *           this.selectedCategory = category;
  *           this.dataHandler.searchTasks(
@@ -212,13 +217,19 @@ export class AppComponent {
 
 /**
  *  Теория
+ *
  *  One-way data binding (read-only):
- *    1) Interpolation{{  }}- считать свойство и отобразить в HTML
- *    2) Property Binding [ ] - считать свойство в атрибут
- *    3) Event Binding ( ) - обработка действия пользователя (метод)
+ *    1) Interpolation{{  }}- считать свойство(поле класса) и отобразить в HTML: <p>{{task.title}}</p>
+ *    2) Property Binding [ ] - считать свойство(поле класса) в атрибут: [ngClass]="{'active': category !== selectedCategory}"
+ *    3) Event Binding ( ) - обработка действия пользователя (метод): (clic)->method()
+ *
  *  Two-way binding:
- *    4) [()] - (считывает и записывает если изменение - банан в коробке)
- *    совмещает 2 и 3, сокращает запись - Двустороннее связывание
+ *    4) [()] - (считывает и записывает если изменение - банан в коробке):
+ *    [(ngModel)]="tmpTitle" - сначала считает св-во(tmpTitle) в атрибут ngModel
+ *    потом если атрибут ngModel изменится пользователем,
+ *    тогда запишет атрибут ngModel в то же свойство tmpTitle
+ *    ----------------------------------------------------
+ *    те совмещает 2) и 3), сокращает запись - Двустороннее связывание
  *    Считывает и при изменении в HTML (пользователь ввел данные) -
  *    записывает значение,
  *    используется везде, где пользователь изменяет значения,
@@ -231,23 +242,24 @@ export class AppComponent {
 
 
 /**
- *      Диалоговые окна- готовое решения для работы с диалоговыми
+ *  Диалоговые окна:
+ *      - это готовое решения для работы с диалоговыми
  *      окнами из Angular Material. Гибкие настройки, передача данных,
  *      изменение внешнего вида
- *  1. В папке dialog создали новый компонент: EditTaskDialog
+ *  1. В папке dialog создали новый компонент: EditTaskDialog (new->AngularShematics->component)
  *  2. В файле app.module.ts:
  *        ● Импорт MatDialogModule
  *        ● Добавить в entryComponents компоненту EditTaskDialogComponent
  *          (сказали Ангуляру, что это динамический компонент- создается по необходимости)
  *          (все нужные зависимости смотри в app.module.ts)
  *  3. Мы с этим диалоговым окном EditTaskDialog будем работать из tasks.component.html
- *     В tasks.component.html :
+ *     В родительском tasks.component.html :
  *      -В классе в конструкторе заинджектим private dialog: MatDialog
  *      -В html в колонку таблицы "Название" мы добавляем событие по клику мышкой:
  *       (click)="openEditTaskDialog(task) - при клике на названии таски вызовется метод
  *       openEditTaskDialog() и в параметрах передастся текущая таска
  *
- *     В tasks.component.ts : метод : openEditTaskDialog(task) :
+ *     В родительском tasks.component.ts : метод : openEditTaskDialog(task) :
  *            public openEditTaskDialog(task: Task): void {
  *
  *               // открытие диалогового окна в которое будет помещен наш компонент EditTaskDialog
@@ -255,20 +267,30 @@ export class AppComponent {
  *               //и передает в объекте{MatDialogConfig} в массиве[task, 'Редактирование задачи']
  *               //в него(в EditTaskDialog) параметры - data
  *               //(кроме data в MatDialogConfig есть много других параметров - ширина...)
- *               //с const dialogRef будем работать в компоненте диалогового окна : edit-task-dialog.component.ts
+ *               //с const dialogRef далее будем работать в компоненте диалогового окна : edit-task-dialog.component.ts
  *               const dialogRef = this.dialog.open(EditTaskDialogComponent, {data: [task, 'Редактирование задачи'], autoFocus: false});
  *
  *               //далее подписываемся на событие закрытия диалогового окна: afterClosed().subscribe()
  *               //и в анонимном методе выполняем все что нам нужно
- *               //в result будет то, что мы вернем из диалогового окна
+ *               //в result будет то, что мы вернем из диалогового окна как результат
+ *               //действий пользователя в диалоговом окне
  *               dialogRef.afterClosed().subscribe(result => {
  *                     // здесь будет обработка результатов после закрытия диалогового окна
  *                });
  *               }
  *  4. В компоненте нашего диалогового окна edit-task-dialog.component.ts :
- *       см в edit-task-dialog.component.ts
+ *       см в edit-task-dialog.component.ts - автоматом запускается это диалоговое окно -
+ *       а в его ngOnInit() все что надо инициализируется
  *       и то, что будет отображаться в открывшемся диалоговом окне
  *       см в edit-task-dialog.component.html
+ *
+ *       --пользователь в диалоговом окне редактирует данные
+ *       --и нажимает СОХРАНИТЬ ->
+ *       -> в edit-task-dialog.component.html сработает (click)="onConfirm()"
+ *       -в котором закроется диалоговое окно: this.dialogRef.close(this.task);
+ *       -и в родительский метод openEditTaskDialog()-(который открыл это диалоговое окно) отправится
+ *       -в ответ новая измененная task.
+ *       Там эта task обработается в dialogRef.afterClosed()...(сохранится в дб и обновления перепокажутся в браузере)
  *
  *
  *

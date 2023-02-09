@@ -24,7 +24,9 @@ export class CategoriesComponent implements OnInit{
   @Output()
   selectCategory = new EventEmitter<Category>();
 
-  //хотим чтобы такая переменная была видна во вьюхе (для выделения выбранного пункта из списка ul-li)
+  //хотим чтобы такая переменная была видна во вьюхе
+  // (для выделения выбранного пункта из списка ul-li)
+  // [ngClass]="{'active': category !== selectedCategory
   selectedCategory: Category  | undefined;
 
   //инжектим с помощью конструктора из контекста наш единственный сервис
