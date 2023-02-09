@@ -47,6 +47,11 @@ export class DataHandlerService {
     return this.taskDaoArray.search(category, searchText, status, priority);
   }
 
+  //обновление задачи из диалогового окна
+  updateTask(task: Task): Observable<Task> {
+    return this.taskDaoArray.update(task);
+  }
+
 
 
   //Subject - данные на которые подписываются (на него будут подписываться)

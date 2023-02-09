@@ -1,3 +1,74 @@
-<p>{{task.title}}</p>
+<!--<p>{{task.title}}</p>-->
 <!--в этом html отображаем то, что хотим видеть в
 открывающемся диалоговом окне, вызываемом из tasks.component.html-->
+
+<!--диалоговое окно состоит из 2-х частей - контент и экшен-->
+
+<!--редактирование/создания задачи-->
+<!--<mat-dialog-content> 1-я часть - контент-->
+<!--mat-dialog-title>{{dialogTitle}} - выводим название диалогового окна-->
+<mat-dialog-content>
+  <p mat-dialog-title>{{dialogTitle}}</p>
+
+  <!--название задачи - область, куда добавляем компоненты для ввода данных   -->
+  <mat-form-field>
+
+<!--<mat-label> - динамический лейбл для поля <input (работает и как плейсхолдер)  -->
+    <mat-label>Название (обязательно)</mat-label>
+<!--matInput - атрибут - делает из обычного <input - материальный <input    -->
+<!--#inputTitle - альяс для переменной tmpTitle чтобы сослаться в части экшена на tmpTitle    -->
+<!--(keydown.enter)="onConfirm()" - при нажатии клавиши Enter - вызывается метод onConfirm()   -->
+<!--[(ngModel)]="tmpTitle" - атрибут для 2-х стороннего связывания
+    ngModel(атрибут получения данных из-в DOModel) - позволяет связать атрибут с переменной
+    если пользователь вводит данные, тогда данные сохранятся в переменной "tmpTitle".
+    [(ngModel)] : [ngModel]сначала считывает данные из переменной "tmpTitle"(название задачи)
+    и эти данные отображаются в диалоговом окне,
+    а (ngModel)далее, когда пользователь введет данные, эти данные автоматически
+     сохранятся в переменной "tmpTitle"-->
+    <input
+      #inputTitle
+      matInput
+
+      [(ngModel)]="tmpTitle"
+
+      >
+<!--(keydown.enter)="onConfirm()"    -->
+    <!-- по нажатию на enter можем сразу сохранить задачу
+    добавь в атрибут инпута-->
+
+<!--кнопка очистки поля ввода -
+    *ngIf="tmpTitle.trim().length > 0" - показывается если что-то отображается в поле ввода
+    (click)="tmpTitle= ''" - при клике по полю - переменную tmpTitle приравниваем к ''
+       и двустороннее связывание сработает-->
+    <button
+      *ngIf="tmpTitle.trim().length > 0"
+      mat-button matSuffix mat-icon-button aria-label="Clear"
+      (click)="tmpTitle= ''"
+        class="size25">
+      <mat-icon>clear</mat-icon>
+    </button>
+
+  </mat-form-field>
+
+</mat-dialog-content>
+
+
+<!--  кнопки возможных действий 2-я часть - экшен-->
+<mat-dialog-actions>
+
+<!--кнопка - сохранить  -->
+<!--(click)="onConfirm()" - тоже вызывает метод onConfirm()  -->
+<!--[disabled]="inputTitle.value.trim().length==0" - не активна при условии
+(inputTitle это альяс для tmpTitle)  -->
+  <button
+    (click)="onConfirm()" [disabled]="inputTitle.value.trim().length==0"
+    color="primary"
+    mat-raised-button>  <!-- если пустой текст - кнопка "Сохранить" будет недоступна -->
+    Сохранить
+  </button>
+
+<!--кнопка отмена - вызывает метод onCancel()-->
+  <button (click)="onCancel()" mat-raised-button>Отмена</button>
+
+
+</mat-dialog-actions>

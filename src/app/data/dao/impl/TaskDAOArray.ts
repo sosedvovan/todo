@@ -66,9 +66,17 @@ export class TaskDAOArray implements TaskDAO {
 
 
 
-  update(arg0: Task): Observable<Task> {
-    //return undefined; пока метод не реализован - возвращаем Observable с абы чем
-    return of(TestData.tasks[0]);
+  //обновление задачи из диалогового окна
+  update(task: Task): Observable<Task> {
+    //находим задачу, которую хотим обновить по id
+    const taskTmp = TestData.tasks.find(t => t.id === task.id); // обновляем по id
+    //удаляем(splice) эту задачу - с какого индекса, сколько удалить, чем заменить
+    if (taskTmp instanceof Task) {
+      TestData.tasks.splice(TestData.tasks.indexOf(taskTmp), 1, task);
+    }
+    //возвращаем  Observable<Task>
+    return of(task);
+
   }
 
 }

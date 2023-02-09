@@ -72,9 +72,25 @@ export class AppComponent {
     });
   }
 
+  // обновление задачи из диалогового окна
 //метод запускается из html этого класса : (updateTask)="onUpdateTask($event)
   public onUpdateTask(task: Task) {
-    console.log(task);
+    //как только задача обновленна - вернет  Observable<Task>
+    this.dataHandler.updateTask(task)
+      //на него подписываемся (не передавая подписку "никуда")
+      .subscribe(() => {
+        //и тут же обновляем список задач (получаем новый обновленный массив)
+      this.dataHandler.searchTasks(
+        this.selectedCategory
+        // ,
+        // null,
+        // null,
+        // null
+        //и подписываем this.tasks на подписку "в никуда" (на обновленный массив)
+      ).subscribe(tasks => {
+        this.tasks = tasks;
+      });
+    });
   }
 }
 
@@ -181,6 +197,27 @@ export class AppComponent {
  */
 
 /**
+ *  Теория
+ *  One-way data binding (read-only):
+ *    1) Interpolation{{  }}- считать свойство и отобразить в HTML
+ *    2) Property Binding [ ] - считать свойство в атрибут
+ *    3) Event Binding ( ) - обработка действия пользователя (метод)
+ *  Two-way binding:
+ *    4) [()] - (считывает и записывает если изменение - банан в коробке)
+ *    совмещает 2 и 3, сокращает запись - Двустороннее связывание
+ *    Считывает и при изменении в HTML (пользователь ввел данные) -
+ *    записывает значение,
+ *    используется везде, где пользователь изменяет значения,
+ *    в формах, input - компонентах.
+ *
+ *    Директива [(ngModel)] - Используется в тегах, где можно изменить/выбрать
+ *    данные (текстовое поле, списки и пр.). Считывает значение в элемент и
+ *    при изменении - записывает в переменную
+ */
+
+
+
+/**
  *      Диалоговые окна- готовое решения для работы с диалоговыми
  *      окнами из Angular Material. Гибкие настройки, передача данных,
  *      изменение внешнего вида
@@ -188,20 +225,22 @@ export class AppComponent {
  *  2. В файле app.module.ts:
  *        ● Импорт MatDialogModule
  *        ● Добавить в entryComponents компоненту EditTaskDialogComponent
- *          (сказали что это динамический компонент- создается по необходимости)
+ *          (сказали Ангуляру, что это динамический компонент- создается по необходимости)
+ *          (все нужные зависимости смотри в app.module.ts)
  *  3. Мы с этим диалоговым окном EditTaskDialog будем работать из tasks.component.html
  *     В tasks.component.html :
- *      -В конструкторе заинджектим private dialog: MatDialog
- *      -В колонку таблицы "Название" мы добавляем событие по клику мышкой:
+ *      -В классе в конструкторе заинджектим private dialog: MatDialog
+ *      -В html в колонку таблицы "Название" мы добавляем событие по клику мышкой:
  *       (click)="openEditTaskDialog(task) - при клике на названии таски вызовется метод
  *       openEditTaskDialog() и в параметрах передастся текущая таска
  *
- *     В tasks.component.ts метод openEditTaskDialog(task) :
+ *     В tasks.component.ts : метод : openEditTaskDialog(task) :
  *            public openEditTaskDialog(task: Task): void {
  *
  *               // открытие диалогового окна в которое будет помещен наш компонент EditTaskDialog
  *               //метод open() открывает наш компонент EditTaskDialog в диалоговом окне
- *               //и передает в объекте - MatDialogConfig в массиве в него(в компонент) параметры - data
+ *               //и передает в объекте{MatDialogConfig} в массиве[task, 'Редактирование задачи']
+ *               //в него(в EditTaskDialog) параметры - data
  *               //(кроме data в MatDialogConfig есть много других параметров - ширина...)
  *               //с const dialogRef будем работать в компоненте диалогового окна : edit-task-dialog.component.ts
  *               const dialogRef = this.dialog.open(EditTaskDialogComponent, {data: [task, 'Редактирование задачи'], autoFocus: false});
