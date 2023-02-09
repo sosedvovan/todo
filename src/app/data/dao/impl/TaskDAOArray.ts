@@ -13,7 +13,7 @@ export class TaskDAOArray implements TaskDAO {
   }
 
   get(id: number): Observable<Task> {
-    const task: Task | any = TestData.tasks.find(todo => todo.id === id);
+    const task: Task | any = TestData.tasks.find(task => task.id === id);
     return of(task);
   }
 
@@ -49,26 +49,30 @@ export class TaskDAOArray implements TaskDAO {
   }
 
 
-
+//поиск Observable<Task[]> по всем параметрам(полям)(кроме id и data)
   search(category: Category, searchText?: string, status?: boolean, priority?: Priority): Observable<Task[]> {
     //return undefined; пока метод не реализован - возвращаем Observable с абы чем
     return of(this.searchTodos(category, searchText, status, priority));
   }
   private searchTodos(category: Category, searchText?: string, status?: boolean, priority?: Priority): Task[] {
+    //заводим новый массив с тасками, присваивая ему уже имеющийся массив с тасками
     let allTasks = TestData.tasks;
 
+    //фильтруем уже имеющийся массив с тасками по категории
     if (category != null) {
-      allTasks = allTasks.filter(todo => todo.category === category);
+      allTasks = allTasks.filter(task => task.category === category);
     }
 
-    return allTasks; // отфильтрованный массив
+    // возвращаем отфильтрованный массив
+    return allTasks;
   }
 
 
 
   //обновление задачи из диалогового окна
+  //в параметры метода приходит таска с обновленными данными(id только не изменяется никогда)
   update(task: Task): Observable<Task> {
-    //находим задачу, которую хотим обновить по id
+    //находим старую задачу, которую хотим обновить по id и записываем ее в переменную taskTmp
     const taskTmp = TestData.tasks.find(t => t.id === task.id); // обновляем по id
     //удаляем(splice) эту задачу - с какого индекса, сколько удалить, чем заменить
     if (taskTmp instanceof Task) {

@@ -29,26 +29,28 @@ import {Task} from "./model/Task";
 
 //это класс родительского  компонента
 export class AppComponent {
-  title = 'todo';
 
-//в классе родительского компонента заводим 2-е переменные
-//которые хотим "видеть" в дочерних html
+  //в классе родительского компонента заводим 2-е переменные
+  //которые хотим "видеть" в дочерних html
   tasks: Task[];
   categories: Category[];
 
   //завели эту переменную - она придет из @Output() из дочки
   selectedCategory: Category;
 
-//в конструкторе инджектим наш инджектабельный сервис
-// фасад для работы с данными
+  //в конструкторе инджектим наш инджектабельный сервис, чтобы получать данные
+  // фасад для работы с данными
   constructor(
     private dataHandler: DataHandlerService) {
   }
 
-//инициализируем и подписываем(subscribe) наши 2-е переменные этого класса
-// на объекты Observable<Task[]> и Observable<Category[]>
-// с помощью методов нашего сервиса getAllTasks() и getAllCategories()
-// которые эти объекты и возвращают
+  //инициализируем и подписываем(subscribe) наши 2-е переменные этого класса
+  // на объекты Observable<Task[]> и Observable<Category[]>
+  // с помощью методов нашего сервиса getAllTasks() и getAllCategories()
+  // которые эти объекты и возвращают
+  //то переменные tasks и categories будут содержать в себе актуальные данные
+  //при создании объекта этого класса
+  //(данные в этих переменных будут изменяться при переподписке - subscribe() из других методах )
   ngOnInit(): void {
     this.dataHandler.getAllTasks().subscribe(tasks => this.tasks = tasks);
     this.dataHandler.getAllCategories().subscribe(categories => this.categories = categories);
@@ -57,10 +59,15 @@ export class AppComponent {
 
   // изменение категории
   //метод запускается из html этого класса : (selectCategory)="onSelectCategory($event)
+  //в параметры из @Output приходит категория(по которой клацнули) и далее..
   public onSelectCategory(category: Category) {
 
+    //инициализируем спец. поле этого класса этой пришедшей категорией
     this.selectedCategory = category;
 
+    //получаем из дао массив с тасками, относящимися только к этой категории
+    //и переподписываем поле этого класса на этот массив с отфильтрованными тасками
+    //то на странице будут отображаться таски, только с этой категорией
     this.dataHandler.searchTasks(
       this.selectedCategory
       // ,
@@ -73,24 +80,31 @@ export class AppComponent {
   }
 
   // обновление задачи из диалогового окна
-//метод запускается из html этого класса : (updateTask)="onUpdateTask($event)
+  //метод запускается из html этого класса : (updateTask)="onUpdateTask($event)
+  //в параметры из @Output приходит новая таска(которую изменили в диалоговом окне,
+  //и которую надо сохранить в дб) и далее..
   public onUpdateTask(task: Task) {
-    //как только задача обновленна - вернет  Observable<Task>
-    this.dataHandler.updateTask(task)
-      //на него подписываемся (не передавая подписку "никуда")
+    //используем метод updateTask() передав ему новую таску
+    //чтобы ее сохранить и из возврата метода получить Observable<Task>
+    this.dataHandler.updateTask(task)//вернет Observable<Task>
+      //на полученной Observable<Task> вызовем subscribe()
+      //и этом subscribe() переделаем издателя из Observable<Task> на издателя Observable<Task[]>
       .subscribe(() => {
         //и тут же обновляем список задач (получаем новый обновленный массив)
-      this.dataHandler.searchTasks(
-        this.selectedCategory
-        // ,
-        // null,
-        // null,
-        // null
-        //и подписываем this.tasks на подписку "в никуда" (на обновленный массив)
-      ).subscribe(tasks => {
-        this.tasks = tasks;
+        this.dataHandler.searchTasks(
+          this.selectedCategory//по любому иже инициирована клацнутой до таски категорией
+          // ,
+          // null,
+          // null,
+          // null
+          //и далее метод subscribe() переподпишет поле этого класса tasks на Observable<Task[]>
+        ).subscribe(tasks => {
+          this.tasks = tasks;
+        });
       });
-    });
+    //то метод subscribe(), вызванный на объекте Observable<...> может как и
+    //вернуть другой объект Observable<,,,>, так и
+    //подписать на Observable<,,,> поле класса.
   }
 }
 
@@ -214,7 +228,6 @@ export class AppComponent {
  *    данные (текстовое поле, списки и пр.). Считывает значение в элемент и
  *    при изменении - записывает в переменную
  */
-
 
 
 /**
