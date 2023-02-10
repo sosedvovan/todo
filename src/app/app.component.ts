@@ -110,6 +110,9 @@ export class AppComponent {
   // удаление задачи - в параметры приходит таска, которую надо удалить из дб
   public onDeleteTask(task: Task) {
 
+    console.log('coll onDeleteTask')
+    console.log(task)
+
     //удаляем таску с пом метода Сервиса (возвращается Observable<Task>)
     this.dataHandler.deleteTask(task.id)
       //на Observable<Task> вызываем subscribe в котором вернется

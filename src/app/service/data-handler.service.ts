@@ -57,6 +57,8 @@ export class DataHandlerService {
   }
 
   deleteTask(id: number): Observable<Task> {
+    console.log('coll Service-DeleteTask')
+    console.log(id)
     return this.taskDaoArray.delete(id);
   }
 

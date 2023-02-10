@@ -24,8 +24,13 @@ export class TaskDAOArray implements TaskDAO {
   }
 
   delete(id: number): Observable<Task> {
+    // console.log('coll TaskDAOArray-DeleteTask-ID')
+    // console.log(id)
     const taskTmp: Task | any  = TestData.tasks.find(t => t.id === id); // удаляем по id
-    if (taskTmp instanceof Task) {
+    // console.log('coll TaskDAOArray-DeleteTask-taskTmp')
+    // console.log(taskTmp)
+    // console.log(taskTmp instanceof Task) //всегда false ?
+    if (taskTmp != null) {
       TestData.tasks.splice(TestData.tasks.indexOf(taskTmp), 1);
     }
     return of(taskTmp);
