@@ -8,9 +8,11 @@
 <!--<mat-dialog-content> 1-я часть - контент-->
 <!--mat-dialog-title>{{dialogTitle}} - выводим название диалогового окна-->
 <mat-dialog-content>
+<!--название задачи(таски)  -->
   <p mat-dialog-title>{{dialogTitle}}</p>
 
-  <!--название задачи - область, куда добавляем компоненты для ввода данных   -->
+  <!--область, куда добавляем компоненты для ввода данных
+  (в этой области только лейбл для инпута, сам инпут, и кнопочка - очистить текстовое поле импута)  -->
   <mat-form-field>
 
 <!--<mat-label> - динамический лейбл для поля <input (работает и как плейсхолдер)  -->
@@ -33,9 +35,8 @@
       matInput
 
       [(ngModel)]="tmpTitle"
-      (keydown.enter)="onConfirm()"
-    >
-<!--   -->
+      (keydown.enter)="onConfirm()">
+<!-- (keyup.enter)="onConfirm()"   -->
     <!-- по нажатию на enter можем сразу сохранить задачу
     добавь в атрибут инпута-->
 
@@ -53,7 +54,7 @@
 <!--атрибуты mat-button и mat-icon-button конфликтовали -> оставил один из них  -->
   </mat-form-field>
 
-</mat-dialog-content>
+
 
 
 <!--    выпадающий список категорий-->
@@ -93,7 +94,7 @@
 </mat-form-field>
 
 
-
+</mat-dialog-content>
 
 
 
@@ -116,6 +117,20 @@
 
 <!--кнопка отмена - вызывает метод onCancel()-->
   <button (click)="onCancel()" mat-raised-button>Отмена</button>
+
+
+<!--кнопка Удалить задачу - вызывает метод delete() в котором
+    вызывается диалоговое окно для подтверждения удаления
+    class="red" - добавили в глобальные стили-->
+  <button
+    mat-button
+    class="red"
+    (click)="delete()"
+
+  >
+    Удалить задачу
+
+  </button>
 
 
 </mat-dialog-actions>

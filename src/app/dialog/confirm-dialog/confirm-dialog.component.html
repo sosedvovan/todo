@@ -1,0 +1,18 @@
+<!--диалоговое окно подтверждения действия-->
+
+<!--заголовок диалогового окна берем из класса-->
+<h1 mat-dialog-title>
+  {{dialogTitle}}
+</h1>
+
+<!--задаем здесь универсальное вопросительное сообщение-->
+<div mat-dialog-content>
+  <p>{{message}}</p>
+</div>
+
+<!--раздел - экшен с кнопками ок и отмена-->
+<!--  кнопки возможных действий-->
+<div mat-dialog-actions>
+  <button mat-raised-button color="primary" (click)="onConfirm()">Ок</button>
+  <button mat-button (click)="onCancel()">Отмена</button>
+</div>

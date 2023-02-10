@@ -35,3 +35,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   width: 400px !important;
   /*margin: 0% 30% !important;*/
 }
+
+.red {
+  color: red;
+}

@@ -106,7 +106,30 @@ export class AppComponent {
     //вернуть другой объект Observable<,,,>, так и
     //подписать на Observable<,,,> поле класса.
   }
-}
+
+  // удаление задачи - в параметры приходит таска, которую надо удалить из дб
+  public onDeleteTask(task: Task) {
+
+    //удаляем таску с пом метода Сервиса (возвращается Observable<Task>)
+    this.dataHandler.deleteTask(task.id)
+      //на Observable<Task> вызываем subscribe в котором вернется
+      //объект Observable<Task[]> (массив со всеми имеющимися тасками)
+      .subscribe(() => {
+      this.dataHandler.searchTasks(
+        this.selectedCategory
+        // ,
+        // null,
+        // null,
+        // null
+        //подписываем поле этого класса на возврат
+        //из предидущего метода (Observable<Task[]> - на массив всех тасок)
+      ).subscribe(tasks => {
+        this.tasks = tasks;
+      });
+    });
+  }
+
+}//конец класса
 
 /**  В файле app.module.ts: Импорт:
  *       ● MatTableModule
@@ -254,12 +277,12 @@ export class AppComponent {
  *          (все нужные зависимости смотри в app.module.ts)
  *  3. Мы с этим диалоговым окном EditTaskDialog будем работать из tasks.component.html
  *     В родительском tasks.component.html :
- *      -В классе в конструкторе заинджектим private dialog: MatDialog
+ *      -В классе в конструкторе заинджектим private dialog: MatDialog(для вызова у него метода open())
  *      -В html в колонку таблицы "Название" мы добавляем событие по клику мышкой:
  *       (click)="openEditTaskDialog(task) - при клике на названии таски вызовется метод
  *       openEditTaskDialog() и в параметрах передастся текущая таска
  *
- *     В родительском tasks.component.ts : метод : openEditTaskDialog(task) :
+ *     В родительском tasks.component.ts : этот вызываемый из html метод : openEditTaskDialog(task) :
  *            public openEditTaskDialog(task: Task): void {
  *
  *               // открытие диалогового окна в которое будет помещен наш компонент EditTaskDialog
@@ -279,10 +302,10 @@ export class AppComponent {
  *                });
  *               }
  *  4. В компоненте нашего диалогового окна edit-task-dialog.component.ts :
- *       см в edit-task-dialog.component.ts - автоматом запускается это диалоговое окно -
+ *       СМ в edit-task-dialog.component.ts - автоматом запускается это диалоговое окно -
  *       а в его ngOnInit() все что надо инициализируется
  *       и то, что будет отображаться в открывшемся диалоговом окне
- *       см в edit-task-dialog.component.html
+ *       СМ в edit-task-dialog.component.html
  *
  *       --пользователь в диалоговом окне редактирует данные
  *       --и нажимает СОХРАНИТЬ ->
@@ -339,8 +362,67 @@ export class AppComponent {
  *             </mat-option>
  *         </mat-select>
  *         </mat-form-field>
+ */
+
+/**
+ *    Диалоговое окно с выпадающим списком выбора приоритетов
+ *    сделал по аналогии с выпадающим списком категорий.
+ */
+
+/**
+ *    В диалоговое окно добавим кнопку - удалить задачу -
+ *    и новое диалоговое окно - Подтверждение удаления
+ *    1. В папке dialog создадим новый компонент : ConfirmDialog
+ *       пкм->new->AngularSchematic->component.
+ *       Этот компонент будет представлять - универсальное диалоговое окно для
+ *       подтверждения удаления.
  *
+ *       В app.module.ts НЕЗАБУДЕМ добавить этот компонент ConfirmDialog
+ *       чтобы это окно все-таки появлялось:
+ *           entryComponents: [
+ *         EditTaskDialogComponent,
+ *         ConfirmDialogComponent]
  *
+ *    2. СМ confirm-dialog.component.html
+ *       СМ confirm-dialog.component.ts
+ *       таким образом мы создали саму компоненту диалогового
+ *       окна - универсального подтверждения которое пригодится для
+ *       удаления таски
+ *     3. В диалоговом окне для редактирования таски: edit-task-dialog.component.html
+ *       добавим кнопку УДАЛИТЬ для вызова диалогового окна универсального подтверждения:
+ *              <button
+ *                 mat-button
+ *                 class="red"
+ *                 (click)="delete()">
+ *                 Удалить задачу
+ *              </button>
+ *       те эта кнопка вызывает метод  delete() в  edit-task-dialog.component.ts :
+ *       СМ метод delete() в  edit-task-dialog.component.ts
+ *       в котором в случае если пользователь нажал ОК ->
+ *       -> закроется текущее диалоговое окно(окно для изменения таски)
+ *       и передастся стринга 'delete' в родительский-вызывающий компонент tasks.component.ts ->
+ *       -> в родительский метод openEditTaskDialog()
+ *     4. В родительском tasks.component.ts:
+ *        в методе openEditTaskDialog() добавится условие :
+ *             if (result === 'delete') {
+ *                 this.deleteTask.emit(task);
+ *                 return;
+ *             }
+ *        причем emit(task) вызывает:
+ *           @Output()
+ *           deleteTask = new EventEmitter<Task>();
+ *        и происходит передача события в главный app.component.html:
+ *             <app-tasks [tasks]="tasks"
+ *                      (updateTask)="onUpdateTask($event)"
+ *                      (deleteTask)="onDeleteTask($event)"  //сюда смотри
+ *              ></app-tasks>
+ *        ...и в главном компоненте app.component.ts (в этом классе)
+ *        вызывается метод onDeleteTask($event) в параметры которого
+ *        передается текущая task.
+ *        И уже в этом методе onDeleteTask(task){...} происходит
+ *        удаление этой задачи из дб и подписка на обновленный список
+ *        всех задач(тасок).
+ *        СМ onDeleteTask(task) в app.component.ts(этот классе)
  *
  */
 

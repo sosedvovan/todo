@@ -143,6 +143,7 @@
         <div class="card-body px-0 pb-2">
           <app-tasks [tasks]="tasks"
                      (updateTask)="onUpdateTask($event)"
+                     (deleteTask)="onDeleteTask($event)"
           ></app-tasks>
         </div>
       </div>

@@ -82,6 +82,9 @@ export class TasksComponent implements OnInit{
   @Output()
   updateTask = new EventEmitter<Task>();
 
+  @Output()
+  deleteTask = new EventEmitter<Task>();
+
 
 
   // инджектим наш сервис и у него получаем нужный массив
@@ -216,6 +219,12 @@ export class TasksComponent implements OnInit{
     //в result будет то, что мы вернем из диалогового окна
     dialogRef.afterClosed().subscribe(result => {
       // обработка результатов
+
+      if (result === 'delete') {
+        this.deleteTask.emit(task);
+        return;
+      }
+
       //если result не пустой -> преобразуем его в as Task
       if (result as Task) { // если нажали ОК в диалоговом окне и есть результат
         this.updateTask.emit(task);//сохраняем обновленные данные в репозитории -> попадаем в app.component.html в метод onUpdateTask(task: Task)

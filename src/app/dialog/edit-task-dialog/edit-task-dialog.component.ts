@@ -4,6 +4,7 @@ import { Task } from 'src/app/model/Task';
 import {DataHandlerService} from "../../service/data-handler.service";
 import {Category} from "../../model/Category";
 import {Priority} from "../../model/Priority";
+import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: 'app-edit-task-dialog',
@@ -97,6 +98,36 @@ export class EditTaskDialogComponent implements OnInit {
   //и в родительский компонент возвращаем null
   public onCancel(): void {
     this.dialogRef.close(null);
+  }
+
+
+  // нажали Удалить -> надо открыть окно подтверждения удаления
+  public delete() {
+
+    //указываем ConfirmDialogComponent - окно, которое надо открыть
+    //в спец. объекте {...} в открываемое окно передаем:
+    //ширину окна и 2-е стринги: название окна и вопрос о действии, и без фокуса
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      maxWidth: '500px',
+      data: {
+        dialogTitle: 'Подтвердите действие',
+        message: `Вы действительно хотите удалить задачу: "${this.task.title}"?`
+      },
+      autoFocus: false
+    });
+
+    //как только пользователь закрыл окно нажав на одну из кнопок(ок, отмена)-
+    //в result будет true(если пользователь OK нажал)
+    //и будет false, если пользователь ОТМЕНА нажал
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        //если нажал ОК->тогда закрываем текущее диалоговое окно
+        //(окно редактирования таски) и стрингу 'delete' по цепочки
+        //передаем в родительский-вызывающий компонент tasks.component.ts ->
+        //-> в родительский метод openEditTaskDialog()
+        this.dialogRef.close('delete'); // нажали удалить
+      }
+    });
   }
 
 }
