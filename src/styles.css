@@ -21,3 +21,17 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .size25 {
   font-size: 25px;
 }
+
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+.mat-mdc-dialog-content {
+  padding: 30px !important;
+  width: 500px !important;
+}
+
+.mat-mdc-form-field-infix {
+  width: 400px !important;
+  /*margin: 0% 30% !important;*/
+}

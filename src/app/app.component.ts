@@ -291,6 +291,54 @@ export class AppComponent {
  *       -и в родительский метод openEditTaskDialog()-(который открыл это диалоговое окно) отправится
  *       -в ответ новая измененная task.
  *       Там эта task обработается в dialogRef.afterClosed()...(сохранится в дб и обновления перепокажутся в браузере)
+ */
+
+/**
+ *   В диалоговое окно добавляем выпадающий список выбора категорий
+ *     1. В app.module.ts добавили:
+ *         MatOptionModule,
+ *         MatSelectModule
+ *     2. В глобальные стили добавили .mat-mdc-form-field и .mat-mdc-dialog-content
+ *     они подправят настройки размеров диалогового окна(в html эти теги формируются
+ *     автоматически при рендере страницы)
+ *     3. В data-handler.service.ts -> сделали метод получения всех категорий
+ *         getAllCategories(): Observable<Category[]> {
+ *         return this.categoryDaoArray.getAll();
+ *     }
+ *     4. А в CategoryDAOArray.ts :
+ *        getAll(): Observable<Category[]> {
+ *         return of(TestData.categories);
+ *     }
+ *     5.  -В edit-task-dialog.component.ts(это класс выпадающего диалогового окна) инджектим:
+ *            private dataHandler: DataHandlerService
+ *         -создаем переменную-массив по которому будем итерироваться в html для выпадающего списка:
+ *            private categories: Category[];
+ *         -в ngOnInit() получаем для этой переменной значение:
+ *            this.dataHandler.getAllCategories().subscribe(items => this.categories = items);
+ *         -создаем временную переменную для [(ngModel)]
+ *         (через нее получим категорию, кот выбрал пользователь в выпадающем списке):
+ *            private tmpCategory: Category;
+ *         -и в ngOnInit() даем ей первоначальное значение
+ *            this.tmpCategory = this.task.category;
+ *         -в методе сохранения - onConfirm() измененную пользователем категорию назначаем полю в task
+ *            this.task.category = this.tmpCategory;
+ *
+ *         -далее сработает механизм сохранения в родительском(-вызывающем диалоговое окно) tasks.component.ts
+ *            в методе openEditTaskDialog : действие при закрытии диалогового окна
+ *            dialogRef.afterClosed().subscribe(...
+ *
+ *     6. Далее редактируем edit-task-dialog.component.html (создаем выпадающий список для категорий)
+ *            <!--    выпадающий список категорий-->
+ *         <mat-form-field>
+ *         <mat-label>Укажите категорию</mat-label>
+ *
+ *         <mat-select [(ngModel)]="tmpCategory">
+ *             <mat-option [value]="null">Без категории</mat-option>
+ *             <mat-option *ngFor="let cat of categories" [value]="cat">
+ *                 {{cat.title}}
+ *             </mat-option>
+ *         </mat-select>
+ *         </mat-form-field>
  *
  *
  *

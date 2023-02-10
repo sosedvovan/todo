@@ -2,6 +2,8 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import { Task } from 'src/app/model/Task';
 import {DataHandlerService} from "../../service/data-handler.service";
+import {Category} from "../../model/Category";
+import {Priority} from "../../model/Priority";
 
 @Component({
   selector: 'app-edit-task-dialog',
@@ -18,6 +20,15 @@ export class EditTaskDialogComponent implements OnInit {
   public dialogTitle: string; // заголовок окна
   public task: Task; // задача для редактирования/создания
 
+  //по этой переменной мы будем итерироваться  html в выпадающем списке
+  //для выбора категории для таски
+  public categories: Category[];
+
+//-создаем переменную-массив по которому будем итерироваться в html для выпадающего списка
+// для выбора приоритета для таски:
+    public priorities: Priority[];
+
+
   //эту переменную завели в html: [(ngModel)]="tmpTitle"
   // чтобы изменения не сказывались на самой задаче и можно было отменить изменения
   //завели доп переменную для атрибута ngModel для хранения временного значения,
@@ -26,6 +37,8 @@ export class EditTaskDialogComponent implements OnInit {
   //если пользователь изменит данные и нажмет сохранить - в методе onConfirm() данные
   //из этой временной переменной присвоются полю this.task.title
   public tmpTitle: string;
+  public tmpCategory: Category | any;
+  public tmpPriority: Priority | any;
 
   // сохраняем все значения в отдельные переменные
 
@@ -53,6 +66,13 @@ export class EditTaskDialogComponent implements OnInit {
     // инициализация начальных значений (записывам в отдельные переменные
     // чтобы можно было отменить изменения, а то будут сразу записываться в задачу)
     this.tmpTitle = this.task.title;
+    this.tmpCategory = this.task.category;
+    this.tmpPriority = this.task.priority;
+
+    //переменную categories подписываем на лист со всеми категориями для итерации по ней в html
+    this.dataHandler.getAllCategories().subscribe(items => this.categories = items);
+    //переменную priorities подписываем на лист со всеми приоритетами для итерации по ней в html
+    this.dataHandler.getAllPriorities().subscribe(items => this.priorities = items);
 
     console.log(this.task);
     console.log(this.dialogTitle);
@@ -63,6 +83,8 @@ export class EditTaskDialogComponent implements OnInit {
 
     // считываем все значения для сохранения в поля задачи
     this.task.title = this.tmpTitle;
+    this.task.category = this.tmpCategory;
+    this.task.priority = this.tmpPriority;
 
 
     // передаем добавленную/измененную задачу в обработчик - в родительский компанент

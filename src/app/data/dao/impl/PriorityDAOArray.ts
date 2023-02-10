@@ -21,7 +21,6 @@ export class PriorityDAOArray implements PriorityDAO {
     }
 
     getAll(): Observable<Priority[]> {
-      //return undefined; пока метод не реализован - возвращаем Observable с абы чем
       return of(TestData.priorities);
     }
 
