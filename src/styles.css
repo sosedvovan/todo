@@ -27,7 +27,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .mat-mdc-dialog-content {
-  padding: 30px !important;
+  padding: 20px !important;
   width: 500px !important;
 }
 
@@ -37,5 +37,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .red {
-  color: red;
+  background-color: red !important;
+}
+
+.green {
+  background-color: green !important;
 }

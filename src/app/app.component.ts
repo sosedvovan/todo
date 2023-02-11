@@ -426,6 +426,57 @@ export class AppComponent {
  *        удаление этой задачи из дб и подписка на обновленный список
  *        всех задач(тасок).
  *        СМ onDeleteTask(task) в app.component.ts(этот классе)
+ */
+
+/**
+ *   В диалоговое окно edit-task-dialog.component.html
+ *   добавили кнопки Завершить задачу и Активировать задачу
+ *   1. В edit-task-dialog.component.html добавили эти кнопки:
+ *          <button
+ *           mat-button class="green"
+ *           *ngIf="!task.completed"
+ *          (click)="complete()">
+ *          Завершить задачу
+ *         </button>
+ *
+ *         <button
+ *          mat-button class="green"
+ *          (click)="activate()"
+ *          *ngIf="task.completed">
+ *          Активировать
+ *        </button>
+ *    2. В класс этого же компонента edit-task-dialog.component.ts
+ *       добавили 2-а метода которые будут реагировать на нажатие этих кнопок
+ *       и итправлять стрингу с результатом в метод родительского компонента,
+ *       открывшего это диалоговое окно:
+ *             public complete() {
+ *             this.dialogRef.close('complete');
+ *
+ *             }
+ *             public activate() {
+ *             this.dialogRef.close('activate');
+ *             }
+ *     3. В родительской компоненте tasks.component.ts,
+ *     в методе, открывшем это диалоговое окно - openEditTaskDialog -
+ *     мы и обрабатываем результат:
+ *        if (result === 'complete') {
+ *         task.completed = true; // ставим статус задачи как выполненная
+ *         this.updateTask.emit(task);
+ *         }
+ *       if (result === 'activate') {
+ *         task.completed = false; // возвращаем статус задачи как невыполненная
+ *         this.updateTask.emit(task);
+ *         return;
+ *         }
+ *     где изменяем поле: task.completed = true и с помощью метода  emit()
+ *     запускаем @Output() и передаем событие в главный компонент:
+ *          (updateTask)="onUpdateTask($event)"
+ *          (deleteTask)="onDeleteTask($event)",
+ *     отвечающий за коммуникацию с дб, и в этом в главной компоненте app.component.html:
+ *     запустится метод "onUpdateTask(task)" или (deleteTask)="onDeleteTask(task)"
+ *     которые приведут к изменениям в дб и переподписке на обновленный массив тасок
+ *     (а в браузере завершенная задача будет перечеркнута если у таски task.completed = false)
+ *     СМ эти методы в этом классе.
  *
  */
 

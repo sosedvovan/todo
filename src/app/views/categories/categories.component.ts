@@ -71,4 +71,6 @@ export class CategoriesComponent implements OnInit{
     // this.dataHandler.fillTasksByCategory(category);
 
   }
+
+
 }

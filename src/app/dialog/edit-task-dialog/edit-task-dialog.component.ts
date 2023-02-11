@@ -130,4 +130,17 @@ export class EditTaskDialogComponent implements OnInit {
     });
   }
 
+  // нажали кнопку "Выполнить" (завершить) задачу ->
+  //close() - закрываем диалоговое окно и в родительский-вызывающий  компонент tasks.component.ts,
+  //в метод открывший это окно openEditTaskDialog отсылаем стрингу : 'complete' для
+  //дальнейшей обработки логики
+  public complete() {
+    this.dialogRef.close('complete');
+
+  }
+  // делаем статус задачи "незавершенным" (активируем)
+  public activate() {
+    this.dialogRef.close('activate');
+  }
+
 }

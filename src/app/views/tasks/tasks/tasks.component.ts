@@ -207,7 +207,7 @@ export class TasksComponent implements OnInit{
     //кот просто печатает в консоль
     this.updateTask.emit(task);
 
-    // открытие диалогового окна
+    // открытие диалогового окна(и обработка результата от этого окна после его закрытия)
     //метод open открывает наш компонент EditTaskDialog
     //и передает в объекте - MatDialogConfig в массиве в него параметры - data
     //(кроме data в MatDialogConfig есть много других параметров - ширина...)
@@ -219,6 +219,18 @@ export class TasksComponent implements OnInit{
     //в result будет то, что мы вернем из диалогового окна
     dialogRef.afterClosed().subscribe(result => {
       // обработка результатов
+
+      if (result === 'complete') {
+        task.completed = true; // ставим статус задачи как выполненная
+        this.updateTask.emit(task);
+      }
+
+
+      if (result === 'activate') {
+        task.completed = false; // возвращаем статус задачи как невыполненная
+        this.updateTask.emit(task);
+        return;
+      }
 
       if (result === 'delete') {
         this.deleteTask.emit(task);
