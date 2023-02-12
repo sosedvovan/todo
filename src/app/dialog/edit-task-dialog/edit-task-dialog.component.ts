@@ -27,7 +27,7 @@ export class EditTaskDialogComponent implements OnInit {
 
 //-создаем переменную-массив по которому будем итерироваться в html для выпадающего списка
 // для выбора приоритета для таски:
-    public priorities: Priority[];
+  public priorities: Priority[];
 
 
   //эту переменную завели в html: [(ngModel)]="tmpTitle"
@@ -40,6 +40,7 @@ export class EditTaskDialogComponent implements OnInit {
   public tmpTitle: string;
   public tmpCategory: Category | any;
   public tmpPriority: Priority | any;
+  public tmpDate: Date | any;
 
   // сохраняем все значения в отдельные переменные
 
@@ -69,6 +70,7 @@ export class EditTaskDialogComponent implements OnInit {
     this.tmpTitle = this.task.title;
     this.tmpCategory = this.task.category;
     this.tmpPriority = this.task.priority;
+    this.tmpDate = this.task.date;
 
     //переменную categories подписываем на лист со всеми категориями для итерации по ней в html
     this.dataHandler.getAllCategories().subscribe(items => this.categories = items);
@@ -86,9 +88,10 @@ export class EditTaskDialogComponent implements OnInit {
     this.task.title = this.tmpTitle;
     this.task.category = this.tmpCategory;
     this.task.priority = this.tmpPriority;
+    this.task.date = this.tmpDate;
 
 
-    // передаем добавленную/измененную задачу в обработчик - в родительский компанент
+    // передаем добавленную/измененную задачу в обработчик - в родительский компонент tasks.component.ts
     // и что с ней будут делать дальше  - уже задача этого родительского компонента
     this.dialogRef.close(this.task);
 
@@ -138,9 +141,9 @@ export class EditTaskDialogComponent implements OnInit {
     this.dialogRef.close('complete');
 
   }
+
   // делаем статус задачи "незавершенным" (активируем)
   public activate() {
-    this.dialogRef.close('activate');
+    this.dialogRef.close('activate')
   }
-
 }

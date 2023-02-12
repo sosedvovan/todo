@@ -72,7 +72,9 @@
             class="col-date"
             mat-cell>
 
-          {{task.date != null ? (task.date | date: "medium") : "Без даты"}}
+<!--          {{task.date != null ? (task.date | date: "medium") : "Без даты"}}-->
+
+          {{task.date | taskDate}}
 
         </td>
       </ng-container>

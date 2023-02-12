@@ -134,6 +134,7 @@ export class AppComponent {
 
 }//конец класса
 
+
 /**  В файле app.module.ts: Импорт:
  *       ● MatTableModule
  *       ● MatPaginatorModule
@@ -477,6 +478,39 @@ export class AppComponent {
  *     которые приведут к изменениям в дб и переподписке на обновленный массив тасок
  *     (а в браузере завершенная задача будет перечеркнута если у таски task.completed = false)
  *     СМ эти методы в этом классе.
- *
  */
 
+/**
+ *     Добавляем в диалоговое окно выбор даты
+ *     1. В app.module.ts +
+ *         MatDatepickerModule,
+ *         MatNativeDateModule
+ *     2. В edit-task-dialog.component.html добавили <mat-form-field>
+ *       с календарем. СМ edit-task-dialog.component.html
+ *     3. В edit-task-dialog.component.html добавили поле
+ *        для хранения временной даты : public tmpDate: Date | any;
+ *        далее в ngOnInit() tmpDate получает начальное значение(это
+ *        текущая дата в таске) : this.tmpDate = this.task.date;
+ *        далее в onConfirm() обновленная таска(которая отправится на сохранение
+ *        в родительский класс : tasks.component.ts) получит обновленное поле
+ *        с датой : this.task.date = this.tmpDate;
+ */
+
+/**
+ *     Для даты создаем Pipe(форматтер) для нужного нам отображении даты
+ *     1. В app.module.ts :
+ *          import {registerLocaleData} from '@angular/common';
+ *          import localeRu from '@angular/common/locales/ru';
+ *          registerLocaleData(localeRu);
+ *
+ *          @NgModule({
+ *          declarations: [
+ *           TaskDatePipe
+ *          ],
+ *      2. Создаем pipe : TaskDatePipe
+ *         создаем папку pipe -> new->Angular Structure->pipe
+ *         СМ : task-date-pipe.pipe.ts
+ *      3. В task-date-pipe.pipe.ts используем pipe в колонке с датой
+ *         интерполяция теперь будет выглядеть так : {{task.date | taskDate}}
+ *
+ */

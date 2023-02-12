@@ -92,7 +92,57 @@
   </mat-form-field>
 
 
+  <!--    календарь - срок выполнения
+  здесь фишка в том, что надо связать <input и mat-datepicker(сам календарь)-->
+<!--matInput - сказали что этот <inpu - материальный  -->
+<!--#inputDate это альяс для этого тега <input, чтобы к нему обращаться далее  -->
+<!--readonly="true" - чтобы вручную дату нельзя было вводить  -->
+<!--[matDatepicker]="picker" - мы связали <input(его свойство [matDatepicker]) с календарем(по альясу календаря - #picker)  -->
+<!--[(ngModel)]="tmpDate" - в ngModel считываем значение даты и показываем старую
+ дату в форме, если дату-ngModel изменит пользователь, тогда новое значение запишется в tmpDate-->
+  <mat-form-field>
+
+    <input
+      matInput placeholder="Укажите срок выполнения" #inputDate
+      readonly="true"
+
+      [matDatepicker]="picker"
+      [(ngModel)]="tmpDate"
+
+      (click)="picker.open()">
+
+    <!-- иконка календаря (для открытия календаря) -->
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+
+    <!-- компонент календаря (открывается по нажатию)-->
+    <mat-datepicker #picker></mat-datepicker>
+
+    <!--кнопка очистки даты -->
+    <!--*ngIf="inputDate.value.trim().length > 0" - показываем кнопку очистки
+      если в поле есть какая то дата в текстовом поле <input-->
+<!--(click)="tmpDate = null" - по нажатию на эту кнопку, мы дату очищаем    -->
+    <button
+      *ngIf="inputDate.value.trim().length > 0"
+
+      mat-button matSuffix mat-icon-button aria-label="Clear"
+
+      (click)="tmpDate = null" class="size25">
+
+      <mat-icon>clear</mat-icon>
+
+    </button>
+<!--mat-button  и mat-icon-button  как то коефликтуют и
+подчеркивается красным, но работает-->
+
+  </mat-form-field>
+
 </mat-dialog-content>
+
+
+
+
+
+
 
 
 <!--  кнопки возможных действий 2-я часть - экшен-->
