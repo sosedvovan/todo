@@ -24,7 +24,7 @@ import {Category} from "../../../model/Category";
   styleUrls: ['./tasks.component.css']
 })
 //это дочерний компонент
-export class TasksComponent implements OnInit{
+export class TasksComponent implements OnInit, AfterViewInit{
 
   //подготавливаем данные для таблицы-матЕриал с тасками(+для сортировки и пагинации):
   //перечисляем поля таблицы (те, что отображают поля тасок - должны совпадать с названиями переменных
@@ -33,12 +33,12 @@ export class TasksComponent implements OnInit{
   // контейнер dataSource - источник данных для таблицы - ПОЛУЧИТ МАССИВ tasks В ngOnInit(), НА КОТОРЫЙ МЫ ПОДПИСАНЫ
   //в dataSource надо будет дать значение полям: dataSource.data, dataSource.sort, dataSource.paginator
   //и dataSource.sortingDataAccessor(для правильной работы сортировки).
-  public dataSource: MatTableDataSource<Task> = new MatTableDataSource<Task>();
+  public dataSource: MatTableDataSource<Task>;
   //далее подготавливаем ссылки для пагинации и сортировки:
   // ссылки на компоненты таблицы (добавляем декоратор @ViewChild - присваивает
   // переменной из класса - атрибут тега или сам тег из html.
   // здесь в скобках обращаемся по типу тега (MatPaginator,...) и (MatSort,...) но можно и по названию тега:
-  // ('matPaginator',...), а в html в теге прописать в теге название: #matPaginator)
+  // ('matPaginator',...), а в html в теге прописать в теге название-альяс: #matPaginator)
   //эти переменные ссылаются на теги mat-paginator и matSort указанные в html компоненте
   //и теперь им можно присвоить в dataSource.sort и dataSource.paginator эти переменные в методе addTableObjects()
   //далее надо заимплементить интерфейс AfterViewInit(сработает после инициализации) и чз него запустить addTableObjects()
@@ -46,26 +46,40 @@ export class TasksComponent implements OnInit{
   private paginator: MatPaginator;          //то эта переменная paginator будет связанна с тегом <mat-paginator
   @ViewChild(MatSort, {static: false}) //здесь MatSort это атрибут matSort в теге <table
   private sort: MatSort;               //то эта переменная sort будет связанна с атрибутом matSort в теге <table
+
   //СРАБАТЫВАЕТ ngOnInit() И ИНИЦИАЛИЗИРУЮТСЯ: dataSource.data, dataSource.sort, dataSource.paginator, dataSource.sortingDataAccessor
   private addTableObjects() {
+
+    setTimeout(function (){}, 100)
+
     this.dataSource.sort = this.sort; // компонент для сортировки данных (если необходимо)
     this.dataSource.paginator = this.paginator; // обновить компонент постраничности (кол-во записей, страниц)
+
+    // console.log('coll addTableObjects()')
+    // console.log('this.dataSource.sort = this.sort;')
+    // console.log(this.dataSource.sort)
+    // console.log('this.dataSource.paginator = this.paginator;')
+    // console.log(this.dataSource.paginator)
   }
 
 
-  //вызовется сразу после инициализации представления(объектов и переменных) и его дочек
-  //те на этом этапе можно будет обращаться к сылкам в html
+  //вызовется сразу после инициализации представления(объектов и переменных)
+  //и его дочек. Помогает  для первоначальной сортировки и пагинации
+  //инициализировать dataSource.paginator и dataSource.sort
+  //те на этом этапе можно будет уже обращаться к ссылкам в html.
   //ЭТОТ МЕТОД РЕАЛИЗУЕМ ОТ ИНТЕРФЕЙСА : AfterViewInit
-  // ngAfterViewInit(): void {
-  //   this.addTableObjects();
-  // }
+  ngAfterViewInit(): void {
+    this.addTableObjects();
+  }
 
   //----------------------------------------------------------------------------------------
 
   //хотим этот массив передавать во вьюху
   //это текущие таски для отображения на странице
   //напрямую не присваиваем значения в переменную, только через @Input
-  // @Input() перенесли в сеттер чтобы еще и fillTable() из сеттера запускать
+  // @Input() перенесли в сеттер, чтобы еще и fillTable() из сеттера запускать,
+  // а в этом fillTable() переиницализируем все поля dataSource для обновленного
+  //массива с тасками(когда отфильтровали, дабавили, удалили, изменили таску это надо)
   tasks: Task[];
   // tasks: Task[] = [];
   // текущие задачи для отображения на странице
@@ -119,24 +133,31 @@ export class TasksComponent implements OnInit{
     //                                           this.dataSource.data = tasks;});
 
     // датасорс обязательно нужно создавать для таблицы, в него присваивается любой источник (БД, массивы, JSON и пр.)
-    // this.dataSource = new MatTableDataSource();
+    this.dataSource = new MatTableDataSource<Task>();
     // this.dataSource.data = this.tasks;
 
 
     // датасорс обязательно нужно создавать для таблицы, в него присваивается любой источник (БД, массивы, JSON и пр.)
     // this.dataSource = new MatTableDataSource();//я инициализировал при декларации выше
     //и вызываем такой метод:
-    this.fillTable();
+
+      this.fillTable();
+
   }
 
 
   // показывает задачи с применением всех текущий условий (категория, поиск, фильтры и пр.)
   public fillTable() {
 
-//сначала сделаем проверку что dataSource != null чтобы не получить undefined
+//сначала сделаем проверку что dataSource != null (те new сказали) чтобы не получить undefined
     if (!this.dataSource) {
       return;
     }
+
+    // console.log('call dataSource START');
+    // console.log(this.dataSource.data);
+
+    setTimeout(function (){}, 100)
 
     // обновить источник данных (т.к. данные массива tasks обновились)
     this.dataSource.data = this.tasks;
@@ -172,8 +193,14 @@ export class TasksComponent implements OnInit{
     };
 
 
-    console.log('call dataSource');
-    console.log(this.dataSource.data);
+    // console.log('call dataSource END');
+    // console.log(this.dataSource.data);
+    // console.log('call dataSource.sortingDataAccessor');
+    // console.log(this.dataSource.sortingDataAccessor);
+    // console.log('call dataSource.paginator');
+    // console.log(this.dataSource.paginator);
+    // console.log('call dataSource.sort');
+    // console.log(this.dataSource.sort);
 
   }
 

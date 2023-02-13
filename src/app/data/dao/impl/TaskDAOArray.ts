@@ -26,7 +26,7 @@ export class TaskDAOArray implements TaskDAO {
   delete(id: number): Observable<Task> {
     // console.log('coll TaskDAOArray-DeleteTask-ID')
     // console.log(id)
-    const taskTmp: Task | any  = TestData.tasks.find(t => t.id === id); // удаляем по id
+    const taskTmp: Task | any = TestData.tasks.find(t => t.id === id); // удаляем по id
     // console.log('coll TaskDAOArray-DeleteTask-taskTmp')
     // console.log(taskTmp)
     // console.log(taskTmp instanceof Task) //всегда false ?
@@ -62,6 +62,7 @@ export class TaskDAOArray implements TaskDAO {
     //return undefined; пока метод не реализован - возвращаем Observable с абы чем
     return of(this.searchTodos(category, searchText, status, priority));
   }
+
   private searchTodos(category: Category, searchText?: string, status?: boolean, priority?: Priority): Task[] {
     //заводим новый массив с тасками, присваивая ему уже имеющийся массив с тасками
     let allTasks = TestData.tasks;
@@ -71,24 +72,25 @@ export class TaskDAOArray implements TaskDAO {
       allTasks = allTasks.filter(task => task.category === category);
     }
 
-    // возвращаем отфильтрованный массив
+    // возвращаем отфильтрованный массив,
+    //а если в параметры метода пришел null, тогда возвращается массив
+    //со всеми имеющимися категориями - без фильтрации
     return allTasks;
   }
-
 
 
   //обновление задачи из диалогового окна
   //в параметры метода приходит таска с обновленными данными(id только не изменяется никогда)
   update(task: Task): Observable<Task> {
+    console.log('update:task:data')
+    console.log(task)
     //находим старую задачу, которую хотим обновить по id и записываем ее в переменную taskTmp
     const taskTmp = TestData.tasks.find(t => t.id === task.id); // обновляем по id
     //удаляем(splice) эту задачу - с какого индекса, сколько удалить, чем заменить
     if (taskTmp instanceof Task) {
       TestData.tasks.splice(TestData.tasks.indexOf(taskTmp), 1, task);
     }
-    //возвращаем  Observable<Task>
+    //возвращаем обновленную Observable<Task>
     return of(task);
-
   }
-
 }

@@ -552,6 +552,13 @@ export class AppComponent {
  *       а в categories.component.html применится активный стиль к выбранной категории.
  */
 
+/**
+ *     В список категорий добавили виртуальную категорию: Все  :
+ *     СМ categories.component.html
+ */
+
+
+
 
 
 

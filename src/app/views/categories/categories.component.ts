@@ -28,7 +28,7 @@ export class CategoriesComponent implements OnInit{
   // (для выделения выбранного пункта из списка ul-li)
   // [ngClass]="{'active': category !== selectedCategory
   @Input()
-  selectedCategory: Category  | undefined;
+  selectedCategory: Category  | any;
 
   //инжектим с помощью конструктора из контекста наш единственный сервис
   //(теперь далее к нему можно обращаться через this)
@@ -48,11 +48,18 @@ export class CategoriesComponent implements OnInit{
   //ДЛЯ ПРИМЕРА: вызывается автоматически после инициализации компонента
   ngOnInit(): void {
     // console.log(this.categories)
+    this.selectedCategory = null;
+    console.log('call ngOnInit()')
+    console.log(this.selectedCategory)
   }
 
   //метод вызываем из html кликом (причем название метода придумываем при работе с html файлом)
   //метод получает категорию по которой кликнули мышкой (обратная связь с пользователем)
-  showTaskByCategory(category: Category){
+  showTaskByCategory(category?: Category | any){
+
+    console.log('showTaskByCategory() START')
+    console.log(this.selectedCategory)
+
     // если не изменилось значение, ничего не делать (чтобы лишний раз не делать запрос данных)
     if (this.selectedCategory === category) {
       return;
