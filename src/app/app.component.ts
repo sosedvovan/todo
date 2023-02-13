@@ -514,3 +514,34 @@ export class AppComponent {
  *         интерполяция теперь будет выглядеть так : {{task.date | taskDate}}
  *
  */
+
+
+/**
+ *    В таблицу тасок добавляем иконки редактирования,
+ *    удаления и чекбокс - (выполненна задача или не выполненна)
+ *    1. В app.module.ts добавили зависимость:
+ *    2. В tasks.component.css добавили стилей для новых компонентов :
+ *       .delete-icon, .edit-icon, .mat-header-cell
+ *    3. В tasks.component.ts в массив displayedColumns
+ *       не забыли добавить новые колонки для таблицы тасок : 'operations', 'select'
+ *    4. далее СМ в tasks.component.html на : <ng-container matColumnDef="operations">
+ *      и на <ng-container matColumnDef="select">
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

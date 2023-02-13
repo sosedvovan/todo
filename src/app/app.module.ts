@@ -27,6 +27,7 @@ import {TaskDatePipe} from './pipe/task-date-pipe.pipe';
 //а по умолчанию в Angular используется английская локаль
 import {registerLocaleData} from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
+import {MatCheckboxModule} from "@angular/material/checkbox";
 registerLocaleData(localeRu);
 
 @NgModule({
@@ -54,7 +55,8 @@ registerLocaleData(localeRu);
     MatOptionModule,
     MatSelectModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatCheckboxModule
   ],
   providers: [],
   entryComponents: [

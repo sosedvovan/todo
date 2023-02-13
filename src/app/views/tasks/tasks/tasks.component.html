@@ -106,10 +106,88 @@
         </td>
       </ng-container>
 
-<!--СЛЕДУЮЩИЕ 2-Е СТРОЧКИ ЗАПУСКАЮТ МЕХАНИЗМ ОТОБРАЖЕНИЯ КОНТЕЙНЕРОВ
-1-Я tr - ЗАПУСКАЕТ ЗАГОЛОВОК ТАБЛИЦЫ
-2-Я tr - ДЕЛАЕТ СТРОКИ (ВСЕ ЯЧЕЙКИ ОПИСАННЫЕ ВЫШЕ В ОДНОЙ ИТЕРАЦИИ) ИЗ ВСЕХ ТАСКОВ-->
-<!--displayedColumns - ЭТО СПЕЦ МАССИВ В КЛАССЕ С НАИМЕНОВАНИЕМ СТОЛБЦОВ      -->
+
+      <!--доступные действия над задачей-->
+<!--это 2-е иконки - редактировать задачу и удалить задачу      -->
+<!--matColumnDef="operations" - operations это название столбца в массиве displayedColumns      -->
+<!--<th mat-header-cell *matHeaderCellDef></th> - тег для заголовка,
+     но мы заголовок не указали в этой колонке, *matHeaderCellDef - директива материального заголовка      -->
+<!--В <td:  class="col-operations" - стиль из этого компонента для ширины столбца
+            [class.completed]="task.completed" применится перечеркивание если задача завершена
+            *matCellDef="let task" - объявили переменную, чтобы дальше с ней работать в итерации-->
+      <ng-container matColumnDef="operations">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td class="col-operations" mat-cell *matCellDef="let task" [class.completed]="task.completed">
+
+          <!--Далее две кнопки иконочного стиля(mat-icon-button)
+               сама иконка задается словами delete и edit
+               class="delete-icon" - из css этого класса
+               метод openDeleteDialog(task) - откроет диалоговое окно подтверждения удаления-->
+          <button mat-icon-button (click)="openDeleteDialog(task)"
+                  class="delete-icon"
+          >
+            <mat-icon aria-hidden="false">delete</mat-icon>
+          </button>
+
+          <!--при клике вызывается уже старый метод openEditTaskDialog(task)
+               кот откроет диалоговое окно для редактирования-->
+          <button mat-icon-button (click)="openEditTaskDialog(task)"
+                  class="edit-icon"
+          >
+
+            <mat-icon aria-hidden="false">edit</mat-icon>
+          </button>
+
+        </td>
+      </ng-container>
+
+
+      <!--            галочка для выполнения/активации задачи-->
+<!--matColumnDef="select" - select это название столбца в массиве displayedColumns       -->
+<!--*matHeaderCellDef директива для названия загоровка столбца(здесь без названия)      -->
+<!--col-select в нашем css этой компоненты      -->
+<!--*matCellDef="let task" задали переменную для итерации      -->
+
+      <ng-container matColumnDef="select">
+
+        <th mat-header-cell *matHeaderCellDef></th>
+
+        <td class="col-select text-right" mat-cell *matCellDef="let task">
+
+          <!--САМ ЧЕКБОКС      -->
+          <!--$event.stopPropagation() - системный метод говорит перестать выполнять все
+               цепочки дальнейших действий над строкой-->
+          <!--(change)="$event ? onToggleStatus(task) : null" - вызывается тогда,
+                когда меняется галочка : если галочка поставленна(событие $event существует)
+                тогда вызываем метод onToggleStatus(task) иначе ничего не делаем.
+                В onToggleStatus(task) - ставим task.completed на противоположный  и emit() делаем-->
+          <!--[checked]="task.completed" - для первоначального отображения выбранности галочки
+                или не выбранности-->
+          <mat-checkbox
+
+            (click)="$event.stopPropagation()"
+
+            (change)="$event ? onToggleStatus(task) : null"
+
+            [checked]="task.completed"
+          >
+
+          </mat-checkbox>
+
+
+        </td>
+      </ng-container>
+
+
+
+
+
+
+      <!--СЛЕДУЮЩИЕ 2-Е СТРОЧКИ ЗАПУСКАЮТ МЕХАНИЗМ ОТОБРАЖЕНИЯ КОНТЕЙНЕРОВ
+      1-Я tr - ЗАПУСКАЕТ ЗАГОЛОВОК ТАБЛИЦЫ
+      2-Я tr - ДЕЛАЕТ СТРОКИ (ВСЕ ЯЧЕЙКИ ОПИСАННЫЕ ВЫШЕ В ОДНОЙ ИТЕРАЦИИ) ИЗ ВСЕХ ТАСКОВ-->
+<!--displayedColumns - ЭТО СПЕЦ МАССИВ В КЛАССЕ С НАИМЕНОВАНИЕМ СТОЛБЦОВ-определяет
+    порядок и наличие столбцов в таблице      -->
 <!--*matRowDef="let row; СОЗДАЛИ ЭТУ ПЕРЕМЕННУЮ ЧТОБЫ ИМЕТЬ В ДАЛЬНЕЙШЕМ ДОСТУП К КАЖДОЙ СТРОКЕ      -->
       <!--  заголовок таблицы-->
       <tr *matHeaderRowDef="displayedColumns; " mat-header-row></tr>
