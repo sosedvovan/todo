@@ -94,10 +94,15 @@
       </ng-container>
 
       <!--6-я колонка: категория-->
+<!--(click)="!task.completed && task.category && onSelectCategory(task.category)" -
+      ячейку сделали кликабельной - при условии что таска не завершена и таске
+      назначена категория вызываем метод onSelectCategory в котором посылаем emit
+      с данной категорией в главную компоненту-->
       <ng-container matColumnDef="category">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Категория</th>
         <td *matCellDef="let task" class="col-category"
             [ngClass]="{'completed': task.completed, 'novalue': task.category == null, 'link': !task.completed && task.category}"
+            (click)="!task.completed && task.category && onSelectCategory(task.category)"
             mat-cell
         >
 

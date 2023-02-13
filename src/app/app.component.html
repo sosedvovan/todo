@@ -135,7 +135,10 @@
     и в родительском app.component.ts запустится метод onSelectCategory($event)-->
     <div class="col-lg-2 col-md-6 mb-md-0 mb-4">
       <app-categories [categories]="categories"
-                      (selectCategory)="onSelectCategory($event)"></app-categories>
+                      [selectedCategory]="selectedCategory"
+                      (selectCategory)="onSelectCategory($event)">
+
+      </app-categories>
     </div>
 
     <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
@@ -144,6 +147,7 @@
           <app-tasks [tasks]="tasks"
                      (updateTask)="onUpdateTask($event)"
                      (deleteTask)="onDeleteTask($event)"
+                     (selectCategory)="onSelectCategory($event)"
           ></app-tasks>
         </div>
       </div>

@@ -43,3 +43,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .green {
   background-color: green !important;
 }
+
+.link {
+  text-decoration: underline !important;
+  cursor: pointer;
+}

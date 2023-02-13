@@ -528,6 +528,30 @@ export class AppComponent {
  *      и на <ng-container matColumnDef="select">
  */
 
+/**
+ *     В таблице тасок делаем колонку с категориями кликабельной
+ *     (при клике по категории показываются таски только этой категории
+ *     и в списке категорий слева который, выбранная категория выделяется)
+ *     1. В tasks.component.html в колонку <ng-container matColumnDef="category">
+ *       добавим клик- событие :
+ *       (click)="!task.completed && task.category && onSelectCategory(task.category)"
+ *       СМ в tasks.component.html на это
+ *
+ *       Метод onSelectCategory() передаст событие : selectCategory.emit(category)
+ *       (добавили  поле @Output() selectCategory = new EventEmitter<Category>();)
+ *       в главную компоненту app.component.html через (selectCategory)="onSelectCategory($event)"
+ *       что запустит метод onSelectCategory($event) в app.component.ts что запустит в дб фильтрацию
+ *       тасок по категории и отображение тасок только с выбранной категорией.
+ *       Так же в этом методе задается значение полю : this.selectedCategory = category;
+ *       И нам надо эту переменную передать в categories.component.ts чтобы в
+ *       левом списке категорий эта выбранная категория стала активным стилем
+ *       Передаем чз app.component.html в котором : [selectedCategory]="selectedCategory"
+ *       а в categories.component.ts поле selectedCategory: Category  | undefined;
+ *       надо теперь пометить как : @Input() (те еще и из вне получает значение)
+ *       То в объекте categories.component.ts обновится поле selectedCategory
+ *       а в categories.component.html применится активный стиль к выбранной категории.
+ */
+
 
 
 

@@ -27,6 +27,7 @@ export class CategoriesComponent implements OnInit{
   //хотим чтобы такая переменная была видна во вьюхе
   // (для выделения выбранного пункта из списка ul-li)
   // [ngClass]="{'active': category !== selectedCategory
+  @Input()
   selectedCategory: Category  | undefined;
 
   //инжектим с помощью конструктора из контекста наш единственный сервис
