@@ -74,16 +74,18 @@
           <!--         кнопка редактирования категории в том же теге <a -->
           <span class="edit-category-icon-area">
 
+<!--при нажатии на иконку карандаша вызывается метод openEditDialog()
+    открывающий диалоговое окно edit-category-dialog-->
             <mat-icon
               *ngIf="indexMouseMove === index"
-
+              (click)="$event.stopPropagation(); openEditDialog(category)"
 
               class="edit-category-icon"
             >edit
             </mat-icon>
           </span>
         </a>
-        <!--              (click)="$event.stopPropagation(); openEditDialog(category)"-->
+        <!--              -->
       </li>
     </ul>
   </div>

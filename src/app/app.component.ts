@@ -36,7 +36,7 @@ export class AppComponent {
   categories: Category[];
 
   //завели эту переменную - она придет из @Output() из дочки
-  selectedCategory: Category;
+  selectedCategory: Category | any;
 
   //в конструкторе инджектим наш инджектабельный сервис, чтобы получать данные
   // фасад для работы с данными
@@ -129,6 +129,30 @@ export class AppComponent {
       ).subscribe(tasks => {
         this.tasks = tasks;
       });
+    });
+  }
+
+  // удаление категории (при нажатии на карандаш)
+  public onDeleteCategory(category: Category) {
+    //В dataHandler вызываем deleteCategory (удаляем из дб и в возврате получаем Observable<Category>)
+    //на Observable<Category> подписываемся-subscribe:
+    //выставляем selectedCategory в null и в метод onSelectCategory подаем этот null
+    //чтобы отобразить список всех тасок(это виртуальная категория ВСЕ)
+    this.dataHandler.deleteCategory(category.id).subscribe(cat => {
+      this.selectedCategory = null; // открываем категорию "Все"
+      //показываем обновленный список
+      this.onSelectCategory(this.selectedCategory);
+    });
+  }
+
+  // обновлении категории (при нажатии на карандаш)
+  public onUpdateCategory(category: Category) {
+    //В dataHandler вызываем deleteCategory (удаляем из дб и в возврате получаем Observable<Category>)
+    //на Observable<Category> подписываемся-subscribe:
+    //в метод onSelectCategory подаем категорию которую обновляли
+    //то отображаем список тасок только от этой обновленной категории
+    this.dataHandler.updateCategory(category).subscribe(() => {
+      this.onSelectCategory(this.selectedCategory);
     });
   }
 
@@ -571,6 +595,42 @@ export class AppComponent {
  *     2. В categories.component.html - добавляем код для иконки и функционал,
  *        чтобы она отображалась в браузере, только тогда, когда наводим мыкку.
  *        СМ categories.component.html
+ */
+
+
+/**
+ *     Реализовать редактирование и удаление категории при нажатии
+ *     на иконку редактирования(откроется диалоговое окно EditCategoryDialog ).
+ *     При удалении - у всех задач,
+ *     которые использовали данную категорию, должно проставиться
+ *     null (каскадное удаление).
+ *     1. В папке dialog создадим новый компонент EditCategoryDialog
+ *        для диалогового окна:
+ *        dialog->new->AngularSchematic->component
+ *     2. Не забудем добавить вручную EditCategoryDialogComponent в app.module.ts
+ *        в раздел  entryComponents: [...]
+ *     3. В categories.component.html добавляем вызов метода,
+ *        который откроет диалоговое окно редактирования категории:
+ *        (click)="$event.stopPropagation(); openEditDialog(category)"
+ *     4. В categories.component.ts добавляем метод openEditDialog(category),
+ *        который откроет диалоговое окно и далее(после закрытия диалогового окна)-
+ *        обработает результат - с помощью  @Output() полей класса
+ *        отправит событие в главный компонент для сохранения изменений в дб:
+ *             @Output()
+ *             deleteCategory = new EventEmitter<Category>();
+ *             @Output()
+ *             updateCategory = new EventEmitter<Category>();
+ *     5. В app.component.html принимаем эти события, вызывающие
+ *        соответствующие методы в app.component.ts
+ *         (deleteCategory)="onDeleteCategory($event)"
+ *         (updateCategory)="onUpdateCategory($event)"
+ *     6. В app.component.ts пишем эти 2-а метода:
+ *             onDeleteCategory($event) и
+ *             onUpdateCategory($event)
+ *        эти методы сохраняют изменения в дб и переподписывают
+ *        отображаемый массив тасок - tasks на нужный массив(все таски или
+ *        отфильтрованные по категории отобразятся)
+ *
  */
 
 

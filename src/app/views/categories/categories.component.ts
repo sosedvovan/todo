@@ -1,6 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Category} from "../../model/Category";
 import {DataHandlerService} from "../../service/data-handler.service";
+import {EditCategoryDialogComponent} from "../../dialog/edit-category-dialog/edit-category-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
 
 
 @Component({
@@ -30,9 +32,20 @@ export class CategoriesComponent implements OnInit{
   @Input()
   selectedCategory: Category  | any;
 
+
+  // удалили категорию
+  @Output()
+  deleteCategory = new EventEmitter<Category>();
+
+  // изменили категорию
+  @Output()
+  updateCategory = new EventEmitter<Category>();
+
   //инжектим с помощью конструктора из контекста наш единственный сервис
   //(теперь далее к нему можно обращаться через this)
-  constructor(private dataHandler: DataHandlerService) {
+  constructor(private dataHandler: DataHandlerService,
+              // внедряем MatDialog, чтобы работать с диалоговыми окнами)
+              private dialog: MatDialog)  {
     //и у него получаем нужный массив:
     // this.categories = this.dataHandler.getCategories();
 
@@ -87,6 +100,40 @@ export class CategoriesComponent implements OnInit{
   public showEditIcon(index: number | any) {
     this.indexMouseMove = index;
 
+  }
+
+  // диалоговое окно для редактирования категории при нажатии
+  // на иконку карандаша в левом списке категорий
+  public openEditDialog(category: Category) {
+    //открываем диалоговое окно EditCategoryDialogComponent и
+    //передаем в него data: [...] - 2-е стринги для отображения в нем и его размер
+    const dialogRef = this.dialog.open(EditCategoryDialogComponent, {
+      data: [category.title, 'Редактирование категории'],
+      width: '400px'
+    });
+
+    //при закрытии диалогового окна(нажатие какой то кнопки в нем)
+    //здесь обрабатываем результат
+    dialogRef.afterClosed().subscribe(result => {
+
+      // нажали удалить
+      if (result === 'delete') {
+
+        this.deleteCategory.emit(category); // вызываем внешний обработчик
+
+        return;
+      }
+
+      // нажали сохранить - тогда в result придет строка с category.title
+      // и мы проверим что это действительно стринга пришла
+      //так еще можно сказать: if (result as string) {...
+      if (typeof (result) === 'string') {
+        category.title = result as string; // Кастинг: result as string
+
+        this.updateCategory.emit(category); // вызываем внешний обработчик
+        return;
+      }
+    });
   }
 
 

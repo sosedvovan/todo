@@ -5,9 +5,9 @@ export class Task {
     id: number;
     title: string;
     completed: boolean;
-    priority?: Priority;
-    category?: Category;
-    date?: Date;
+    priority?: Priority | any;
+    category?: Category | any;
+    date?: Date | any;
 
     constructor(id: number, title: string, completed: boolean, priority?: Priority, category?: Category, date?: Date) {
         this.id = id;
