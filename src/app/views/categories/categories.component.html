@@ -23,20 +23,20 @@
       <!-- виртуальная категория 'Все' (тк такой категории в class TestData не создавали
             а в метод вместо категории посылаем null)-->
       <li class="nav-item category" (click)="showTaskByCategory(null)" >
-        <a class="nav-link pointer text-white bg-gradient-primary" [ngClass]="{'noactive': selectedCategory === null}">
-          <!--          название категории-->
-          <span>Все категории</span>
+        <a class="nav-link pointer text-white bg-gradient-primary" [ngClass]="{'active': selectedCategory === null}">
+          <!--          название категории (можно в дальнейшем стилизовать с помощью класса)-->
+          <span class="all-category-title">Все категории</span>
         </a>
       </li>
 
 
-      <br>
+
       <!--линии разделяет "ВСЕ категории" от "существующих"-->
-      <hr class="horizontal light mt-0 mb-2"><br><br>
+      <hr class="horizontal light mt-2 mb-2">
       <hr class="horizontal light mt-0 mb-2">
       <hr class="horizontal light mt-0 mb-2">
 <!--      <div class="line"></div>-->
-      <br>
+
 
 
 
@@ -45,13 +45,45 @@
        выражение [class.active]="category === selectedCategory" аналогично
        выражению [ngClass]="{'active': category === selectedCategory}"
        -->
+<!--ДЛЯ ОТОБРАЖЕНИЯ ИКОНКИ РЕДАКТИРОВАНИЯ КАТЕГОРИИ(ПОЯВЛЯЕТСЯ ПРИ НАВЕДЕНИИ МЫШИ :
+      let index = index - заводим системный index(те каждой ячейки с категорией
+      будет присвоен свой индекс).
+      (mouseleave)="showEditIcon(null)" - метод вызывается при убирании мышки с категории
+      (mouseenter)="showEditIcon(index)" - метод вызывается при наведении мышки на категорию -
+      в этом методе: метод showEditIcon(index) получает индекс ячейки
+      на которую навели мышкой и записывает его в переменную indexMouseMove.
+      Далее в теге <span с кнопкой редактирования категории :
+      *ngIf="indexMouseMove === index" - (помним, что каждая ячейка в колонке имеет свой индекс - index)
+      и в этом условии мы показываем иконку только в той ячейки, index которой совпадает
+      со значением переменной indexMouseMove(а совпвдение в том случае - если на ячейку навели курсор).
+
+      -->
       <li class="nav-item pointer"
-          *ngFor="let category of categories"
-          (click)="showTaskByCategory(category)">
-        <a class="nav-link text-white bg-gradient-primary"
-           [ngClass]="{'active': category !== selectedCategory, 'noactive': category === selectedCategory}">
-          <span class="nav-link-text ms-1">{{category.title}}</span>
+          *ngFor="let category of categories let index = index "
+          (click)="showTaskByCategory(category)"
+
+          (mouseleave)="showEditIcon(null)"
+          (mouseenter)="showEditIcon(index)">
+
+        <a class="nav-link text-white bg-gradient-primary all-category-title"
+           [ngClass]="{ 'active': category === selectedCategory}">
+
+          <!--          название категории в теге <a -->
+          <span class="nav-link-text ms-1 category-title">{{category.title}}</span>
+
+          <!--         кнопка редактирования категории в том же теге <a -->
+          <span class="edit-category-icon-area">
+
+            <mat-icon
+              *ngIf="indexMouseMove === index"
+
+
+              class="edit-category-icon"
+            >edit
+            </mat-icon>
+          </span>
         </a>
+        <!--              (click)="$event.stopPropagation(); openEditDialog(category)"-->
       </li>
     </ul>
   </div>

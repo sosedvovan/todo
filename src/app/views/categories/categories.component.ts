@@ -49,8 +49,8 @@ export class CategoriesComponent implements OnInit{
   ngOnInit(): void {
     // console.log(this.categories)
     this.selectedCategory = null;
-    console.log('call ngOnInit()')
-    console.log(this.selectedCategory)
+    // console.log('call ngOnInit()')
+    // console.log(this.selectedCategory)
   }
 
   //метод вызываем из html кликом (причем название метода придумываем при работе с html файлом)
@@ -77,6 +77,15 @@ export class CategoriesComponent implements OnInit{
     //в вызываемый метод Сервиса попадет категория по которой кликнул пользователь
     //и в Observable (Издателе) обновятся раздаваемые им данные (отфильтруются по кликнутой категории)
     // this.dataHandler.fillTasksByCategory(category);
+
+  }
+
+// для отображения иконки редактирования при наведении на категорию
+  public indexMouseMove: number | any;
+
+  // сохраняет индекс записи категории, над который в данный момент проходит мышка (и там отображается иконка редактирования)
+  public showEditIcon(index: number | any) {
+    this.indexMouseMove = index;
 
   }
 

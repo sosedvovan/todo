@@ -53,7 +53,7 @@
 <!--(click)="openEditTaskDialog(task)" при клике по одной таске вызываем метод класса     -->
 <!--.pointer - стиль в глобальных стилях - мышка превращ в руку при наведении      -->
       <ng-container matColumnDef="title">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header> Название</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header [ngClass]="'color-header-text'"> Название</th>
         <td *matCellDef="let task"
             (click)="openEditTaskDialog(task)"
             [class.completed]="task.completed" class="col-title pointer" mat-cell>
@@ -67,7 +67,7 @@
 <!--[ngClass]="... - массив с нашими стилями(.селекторами) и условиями их применения     -->
 <!--task.date | date: "medium" - это Pipe - спец класс, через который проходят данные и как то изменяютя      -->
       <ng-container matColumnDef="date">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header> Срок</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header [ngClass]="'color-header-text'"> Срок</th>
         <td *matCellDef="let task" [ngClass]="{'completed': task.completed, 'novalue': task.date == null}"
             class="col-date"
             mat-cell>
@@ -81,7 +81,7 @@
 
       <!--5-я колонка: приоритет-->
       <ng-container matColumnDef="priority">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header> Приоритет</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header [ngClass]="'color-header-text'"> Приоритет</th>
         <td *matCellDef="let task" class="col-priority"
             [ngClass]="{'completed': task.completed, 'novalue': task.priority == null}"
             mat-cell
@@ -99,7 +99,7 @@
       назначена категория вызываем метод onSelectCategory в котором посылаем emit
       с данной категорией в главную компоненту-->
       <ng-container matColumnDef="category">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header> Категория</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header [ngClass]="'color-header-text'"> Категория</th>
         <td *matCellDef="let task" class="col-category"
             [ngClass]="{'completed': task.completed, 'novalue': task.category == null, 'link': !task.completed && task.category}"
             (click)="!task.completed && task.category && onSelectCategory(task.category)"
