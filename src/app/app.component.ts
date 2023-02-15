@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 import {Category} from "./model/Category";
 import {DataHandlerService} from "./service/data-handler.service";
 import {Task} from "./model/Task";
+import {Priority} from "./model/Priority";
 
 @Component({
   selector: 'app-root',
@@ -32,8 +33,9 @@ export class AppComponent {
 
   //в классе родительского компонента заводим 2-е переменные
   //которые хотим "видеть" в дочерних html
-  tasks: Task[];
-  categories: Category[];
+  tasks: Task[]; // все задачи
+  categories: Category[]; // все категории
+  priorities: Priority[]; // все приоритеты
 
   //завели эту переменную - она придет из @Output() из дочки
   selectedCategory: Category | any;
@@ -44,7 +46,7 @@ export class AppComponent {
     private dataHandler: DataHandlerService) {
   }
 
-  //инициализируем и подписываем(subscribe) наши 2-е переменные этого класса
+  //инициализируем и подписываем(subscribe) наши 3-е переменные этого класса
   // на объекты Observable<Task[]> и Observable<Category[]>
   // с помощью методов нашего сервиса getAllTasks() и getAllCategories()
   // которые эти объекты и возвращают
@@ -54,6 +56,7 @@ export class AppComponent {
   ngOnInit(): void {
     this.dataHandler.getAllTasks().subscribe(tasks => this.tasks = tasks);
     this.dataHandler.getAllCategories().subscribe(categories => this.categories = categories);
+    this.dataHandler.getAllPriorities().subscribe(priorities => this.priorities = priorities);
   }
 
 
@@ -155,6 +158,49 @@ export class AppComponent {
       this.onSelectCategory(this.selectedCategory);
     });
   }
+
+////////////////////////////////////////////////////////////////
+ //           фильтрация над таблицей тасок
+////////////////////////////////////////////////////////////////
+  // переменные для поиска - для фильтрации которая над таблицей тасок
+  // приходят из @Output() дамп компонента tasks.component.ts
+  public searchTaskText = ''; // дефолт текущее значение для поиска задач
+                              //чтобы показывались все задачи
+  // фильтрация
+  public priorityFilter: Priority;
+  public statusFilter: boolean;
+
+
+  //методы для  поиска задач  для фильтрации которая над таблицей тасок
+  //по вхождению букв
+  public onSearchTasks(searchString: string) {
+    this.searchTaskText = searchString;
+    this.updateTasks();
+  }
+
+  // фильтрация задач по статусу (все, решенные, нерешенные)
+  public onFilterTasksByStatus(status: boolean) {
+    this.statusFilter = status;
+    this.updateTasks();
+  }
+
+  // фильтрация задач по приоритету
+  public onFilterTasksByPriority(priority: Priority) {
+    this.priorityFilter = priority;
+    this.updateTasks();
+  }
+
+  public updateTasks() {
+    this.dataHandler.searchTasks(
+      this.selectedCategory,
+      this.searchTaskText,
+      this.statusFilter,
+      this.priorityFilter
+    ).subscribe((tasks: Task[]) => {
+      this.tasks = tasks;
+    });
+  }
+/////////////////////////////////////////////////////////////////
 
 }//конец класса
 
@@ -632,6 +678,43 @@ export class AppComponent {
  *        отфильтрованные по категории отобразятся)
  *     7. СМ компоненту - диалоговое окно edit-category-dialog для
  *        понимания ее структуры.
+ */
+
+/**
+ *            Smart and Dumb components
+ *      Smart компонент - управляет другими компонентами, предоставляет
+ *      данные Dumb компонент - получает данные и отображает их,
+ *      обрабатывает действия пользователей и отправляет их на обработку в
+ *      Smart компонент.
+ *      ● Взаимодействие с компонентами преимущественно через декораторы
+ *      @Input и @Output
+ *      ● @Input не должны изменяться внутри dumb компонента
+ *      (это делает smart)
+ *      ● Разделить компоненты-представления (Presentational, Dumb, Pure)
+ *      и компоненты- менеджеры (Smart, Container)
+ */
+
+
+/**
+ *       Фильтрация задач - поля для поиска задач(тасок) над таблицей тасок
+ *       1. В tasks.component.html добавили код для отображения
+ *          полей ввода данных для поиска и кнопка - очистить поля.
+ *          СМ В tasks.component.html
+ *       2. В tasks.component.ts добавили переменные и методы, обслуживающие
+ *          код в представлении html этого компонента, используемые для фильтрации
+ *       3. Также, для взаимодействия с дб, добавили соответствующие
+ *          изменения в smart компонент app.module.ts:
+ *             а именно:
+ *             в app.component.html принимаем из @Output() дампа:
+ *                          (filterByTitle)="onSearchTasks($event)"
+ *                          (filterByStatus)="onFilterTasksByStatus($event)"
+ *                          (filterByPriority)="onFilterTasksByPriority($event)"
+ *                          [priorities]="priorities" - для @Inputput() в tasks.component
+ *                                                      для выпадающего списка в фильтрации
+ *             СМ app.component.html
+ *        4.   в app.component.ts: добавили переменные и методы реагирующие
+ *             на @Output() из dump компоненты tasks.component.ts
+ *             СМ tasks.component.ts и TaskDAOArray.ts
  *
  */
 

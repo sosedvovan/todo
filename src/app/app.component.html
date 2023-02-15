@@ -149,6 +149,13 @@
       <div class="card">
         <div class="card-body px-0 pb-2">
           <app-tasks [tasks]="tasks"
+                     [priorities]="priorities"
+
+                     (filterByTitle)="onSearchTasks($event)"
+                     (filterByStatus)="onFilterTasksByStatus($event)"
+                     (filterByPriority)="onFilterTasksByPriority($event)"
+
+
                      (updateTask)="onUpdateTask($event)"
                      (deleteTask)="onDeleteTask($event)"
                      (selectCategory)="onSelectCategory($event)"

@@ -1,7 +1,160 @@
+<div class="row">
+
+<!--пошла первая строка бутстрапа- 4-ре элемента, каждый занимает по 3 колонки
+  элементы:
+  -поиск задач по буквам - по вхождению
+  -фильтр по статусу
+  -фильтр по приоритету
+  -кнопка - Сбросить фильтры-->
+  <div class="col-md-3 col-sm-12">
+    <!--    поиск задач-->
+
+
+    <mat-form-field>
+      <input
+        #filterInput
+
+        matInput
+
+        placeholder="Поиск в текущей категории"
+
+        [(ngModel)]="searchTaskText"
+
+        (keyup)="onFilterByTitle()"
+
+      >
+<!-- (keydown.escape)="searchTaskText = ''; onFilterByTitle()"     -->
+
+
+      <button
+        *ngIf="filterInput.value.trim().length > 0"
+
+        class="clear-icon size25 gray"
+
+        matSuffix mat-icon-button
+        aria-label="Clear"
+
+        (click)="searchTaskText = ''; onFilterByTitle()"
+      >
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+<!--mat-button  -->
+
+  <div class="col-md-3 col-sm-12">
+
+    <!--    фильтр по статусу -->
+
+    <mat-form-field>
+
+      <mat-select [value]="selectedStatusFilter"
+                  (valueChange)="onFilterByStatus($event)"
+                  placeholder="Фильтр по статусу" #statusFilter>
+
+        <mat-option [value]="null">Все статусы</mat-option>
+        <mat-option [value]="true">Завершенные задачи</mat-option>
+        <mat-option [value]="false">Незавершенные задачи</mat-option>
+      </mat-select>
+<!--      -->
+
+      <button
+        *ngIf="selectedStatusFilter != null"
+        class="clear-icon size25 gray"
+
+        matSuffix mat-icon-button
+        aria-label="Clear"
+
+        (click)="$event.stopPropagation(); onFilterByStatus(null)"
+
+      >
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-form-field>
+    <!--mat-button  -->
+  </div>
+
+
+  <div class="col-md-3 col-sm-12">
+
+    <!--    фильтр по приоритету -->
+
+    <mat-form-field>
+
+
+      <mat-select [value]="selectedPriorityFilter"
+                  (valueChange)="onFilterByPriority($event)"
+                  placeholder="Фильтр по приоритетам">
+        <mat-option [value]="null">Все приоритеты</mat-option>
+        <mat-option *ngFor="let priority of priorities"
+                    [value]="priority">
+                    {{priority.title}}
+        </mat-option>
+      </mat-select>
+<!---->
+
+
+      <button
+        *ngIf="selectedPriorityFilter != null"
+        class="clear-icon size25 gray"
+
+        matSuffix mat-icon-button
+        aria-label="Clear"
+
+        (click)="$event.stopPropagation(); onFilterByPriority(null); "
+
+      >
+        <mat-icon>clear</mat-icon>
+      </button>
+<!--mat-button  -->
+    </mat-form-field>
+
+
+  </div>
+
+
+  <div class="col-md-3 col-sm-12 text-right">
+    <div class="row">
+      <div class="text-left col-6">
+
+        <button
+
+          *ngIf="selectedStatusFilter != null || selectedPriorityFilter != null || (searchTaskText != null && searchTaskText.trim() != '') "
+
+          matSuffix mat-button
+          aria-label="Clear"
+
+
+          (click)="$event.stopPropagation(); onFilterByStatus(null); onFilterByPriority(null); searchTaskText = ''; onFilterByTitle()"
+
+        >
+          Сбросить фильтры
+        </button>
+
+      </div>
+
+      <div class="text-right col-6">
+        <button mat-raised-button color="primary">Добавить</button>
+      </div>
+    </div>
+  </div>
+
+
+
+<!--////////////////////////////////////////////////////////////////////////////-->
+
+
+
+<!--  пошла вторая строка бутстрапа, занимающая 12 колонок и в ней таблица-->
+  <div class="col-md-12 task-list">
+
+<!--заголовок-header всей таблицы тасок-->
 <div class="card">
   <div class="card-header card-header-warning">
     <h4 class="card-title">Список задач</h4>
   </div>
+
+  <!--тело-body всей таблицы тасок-->
   <div class="card-body table-responsive">
 
 <!--    обернем таблицу в этот div - показываем таблицу если есть данные в массиве tasks
@@ -209,5 +362,7 @@
 <!--    этот див покажем вместо таблицы если нет данных для отображения в массиве tasks-->
     <div *ngIf="tasks && tasks.length == 0"><p class="not-found">Ничего не найдено</p></div>
   </div>
+</div>
+</div>
 </div>
 

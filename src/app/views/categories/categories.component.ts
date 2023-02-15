@@ -109,7 +109,7 @@ export class CategoriesComponent implements OnInit{
     //передаем в него data: [...] - 2-е стринги для отображения в нем и его размер
     const dialogRef = this.dialog.open(EditCategoryDialogComponent, {
       data: [category.title, 'Редактирование категории'],
-      width: '400px'
+      width: '500px'
     });
 
     //при закрытии диалогового окна(нажатие какой то кнопки в нем)

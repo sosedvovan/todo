@@ -1,9 +1,7 @@
 import {
-  AfterContentInit,
-  AfterViewChecked,
   AfterViewInit,
   Component, EventEmitter,
-  Injectable, Input,
+  Input,
   OnInit, Output,
   ViewChild
 } from '@angular/core';
@@ -12,11 +10,11 @@ import {DataHandlerService} from "../../../service/data-handler.service";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
-import {DataSource} from "@angular/cdk/collections";
 import {MatDialog} from "@angular/material/dialog";
 import {EditTaskDialogComponent} from "../../../dialog/edit-task-dialog/edit-task-dialog.component";
 import {ConfirmDialogComponent} from "../../../dialog/confirm-dialog/confirm-dialog.component";
 import {Category} from "../../../model/Category";
+import {Priority} from "../../../model/Priority";
 
 @Component({
   selector: 'app-tasks',
@@ -62,6 +60,74 @@ export class TasksComponent implements OnInit, AfterViewInit{
     // console.log(this.dataSource.paginator)
   }
 
+  //////////////////////////////////////////////////
+  //              для полей фильтрации тасок
+  /////////////////////////////////////////////////
+  // поиск - переменные  которые над таблицей с тасками
+  // текущее значение для поиска задач инициализируем из смарт компонента - @Input('priorities')
+  public searchTaskText: string;
+  // по-умолчанию будут показываться задачи по всем статусам
+  // (решенные и нерешенные) поэтому сразу и инициализируем null-ем
+  public selectedStatusFilter: boolean | any = null;
+  // по-умолчанию будут показываться задачи по всем приоритетам
+  //поэтому сразу и инициализируем null-ем
+  public selectedPriorityFilter: Priority | any = null;
+  //посылаем сообщение в smart компонент app.component.ts из onFilterByTitle()->emit(...)
+  @Output()
+  filterByTitle = new EventEmitter<string>();
+  //посылаем сообщение в smart компонент app.component.ts
+  @Output()
+  filterByStatus = new EventEmitter<boolean>();
+  //посылаем сообщение в smart компонент app.component.ts
+  @Output()
+  filterByPriority = new EventEmitter<Priority>();
+
+  // список приоритетов (для фильтрации задач)
+  public priorities: Priority[];
+  //принимаем из смарт компонента
+  @Input('priorities')
+  set setPriorities(priorities: Priority[] | any) {
+    this.priorities = priorities;
+  }
+
+//МЕТОДЫ ФИЛЬТРАЦИИ:
+
+  // фильтрация по названию - по вхождению букв
+  public onFilterByTitle() {
+    this.filterByTitle.emit(this.searchTaskText);
+  }
+
+  // фильтрация по статусу
+  public onFilterByStatus(value: boolean | any) {
+
+    // console.log('selectedStatusFilterSTART:')
+    // console.log(this.selectedStatusFilter)
+    // console.log('value:')
+    // console.log(value)
+
+    // на всякий случай проверяем изменилось ли значение (хотя сам UI компонент должен это делать)
+    if (value !== this.selectedStatusFilter) {
+      this.selectedStatusFilter = value;
+      this.filterByStatus.emit(this.selectedStatusFilter);
+    }
+
+    // console.log('selectedStatusFilterEND:')
+    // console.log(this.selectedStatusFilter)
+  }
+
+
+  // фильтрация по приоритету
+  public onFilterByPriority(value: Priority | any) {
+
+
+    // на всякий случай проверяем изменилось ли значение (хотя сам UI компонент должен это делать)
+    if (value !== this.selectedPriorityFilter) {
+      this.selectedPriorityFilter = value;
+      this.filterByPriority.emit(this.selectedPriorityFilter);
+    }
+  }
+
+  ////////////////////////////////////////////////////////////
 
   //вызовется сразу после инициализации представления(объектов и переменных)
   //и его дочек. Помогает  для первоначальной сортировки и пагинации
@@ -142,6 +208,9 @@ export class TasksComponent implements OnInit, AfterViewInit{
     //и вызываем такой метод:
 
       this.fillTable();
+
+    // console.log('Priority[]')
+    // console.log(this.priorities)
 
   }
 

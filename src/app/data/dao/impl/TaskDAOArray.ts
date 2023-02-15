@@ -57,19 +57,33 @@ export class TaskDAOArray implements TaskDAO {
   }
 
 
-//поиск Observable<Task[]> по всем параметрам(полям)(кроме id и data)
-  search(category: Category, searchText?: string, status?: boolean, priority?: Priority): Observable<Task[]> {
-    //return undefined; пока метод не реализован - возвращаем Observable с абы чем
-    return of(this.searchTodos(category, searchText, status, priority));
+//поиск Observable<Task[]> по параметрам(полям)(кроме id и data)
+  search(category?: Category, searchText?: string, status?: boolean, priority?: Priority): Observable<Task[]> {
+    return of(this.searchTasks(category, searchText, status, priority));
   }
 
-  private searchTodos(category: Category, searchText?: string, status?: boolean, priority?: Priority): Task[] {
+  private searchTasks(category?: Category, searchText?: string, status?: boolean, priority?: Priority): Task[] {
     //заводим новый массив с тасками, присваивая ему уже имеющийся массив с тасками
     let allTasks = TestData.tasks;
+
+    // поочереди применяем все условия (какие не пустые)
 
     //фильтруем уже имеющийся массив с тасками по категории
     if (category != null) {
       allTasks = allTasks.filter(task => task.category === category);
+    }
+    if (status != null) {
+      allTasks = allTasks.filter(task => task.completed === status);
+    }
+    if (priority != null) {
+      allTasks = allTasks.filter(task => task.priority === priority);
+    }
+    // учитываем текст поиска (если '' - возвращаются все значения)
+    if (searchText != null) {
+      allTasks = allTasks.filter(
+        task =>
+          task.title.toUpperCase().includes(searchText.toUpperCase())
+      );
     }
 
     // возвращаем отфильтрованный массив,

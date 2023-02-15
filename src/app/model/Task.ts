@@ -3,8 +3,8 @@ import {Category} from "./Category";
 
 export class Task {
     id: number;
-    title: string;
-    completed: boolean;
+    title: string | any;
+    completed?: boolean | any;
     priority?: Priority | any;
     category?: Category | any;
     date?: Date | any;
