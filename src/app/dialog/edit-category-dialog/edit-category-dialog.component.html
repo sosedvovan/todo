@@ -1,12 +1,20 @@
-<!--создание/редактирование категории-->
+<!--диалоговое окно для создание/редактирование категории-->
+<!--состоит из 2-х частей:
+ <mat-dialog-content> - для ввода информации
+ <mat-dialog-actions> - с кнопками возможных действий - экшен-->
 
 
 <mat-dialog-content>
+<!--  заголовок открывшегося диалогового окна-->
   <p mat-dialog-title>{{dialogTitle}}</p>
 
-
+<!--делаем форму ввода данных по текущей категории для ее редактирования-->
   <mat-form-field>
+<!--    лейбла для поля <input-->
     <mat-label>Название (15 символов)</mat-label>
+
+<!--#inputTitle - альяс ссылающийся на этот тег <input
+    (keydown.enter)="onConfirm()" - клавиша Enter как кнопка ОК-->
     <input
       #inputTitle
 
@@ -17,26 +25,38 @@
 
     />
 
+<!--кнопка clear:
+    *ngIf="categoryTitle.trim().length > 0" - показываем ее если в переменной categoryTitle что то есть
+    (click)="categoryTitle= ''" - при нажатии на clear переменной categoryTitle
+                                  присваиваем пустую строку ''-->
     <button
       *ngIf="categoryTitle.trim().length > 0"
 
       class="clear-icon size25"
-      mat-button matSuffix mat-icon-button aria-label="Clear"
+       matSuffix mat-icon-button aria-label="Clear"
 
       (click)="categoryTitle= ''"
 
     >
+<!-- mat-button убрал из тега <button а то конфликтует с mat-icon-button    -->
       <mat-icon>clear</mat-icon>
     </button>
   </mat-form-field>
 </mat-dialog-content>
 
 
-<!--  кнопки возможных действий-->
+
+
+
+<!--  кнопки возможных действий - экшен-->
 <mat-dialog-actions>
 
   <div class="col-12 text-center">
 
+<!--    кнопка - Сохранить
+     (click)="onConfirm()" - при ее нажатии вызываем метод onConfirm()
+     [disabled]="inputTitle.value.trim().length==0" - кнопка не активна при условии
+     что тег <input (обращаемся по альясу #inputTitle) не содержит текста-->
     <button
       mat-raised-button color="primary"
       (click)="onConfirm()"
@@ -45,6 +65,9 @@
       Сохранить
     </button>
 
+
+<!--    кнопка Отмена
+    при ее нажатии запускает метод onCancel()-->
     <button mat-raised-button (click)="onCancel()">Отмена</button>
 
   </div>
@@ -53,6 +76,8 @@
   <div class="col-12 text-center">
 
 
+    <!--    кнопка Удалить
+    при ее нажатии запускает метод delete()-->
     <button
       mat-button
       (click)="delete()" class="red">
@@ -63,7 +88,6 @@
 
 
   </div>
-
 
 </mat-dialog-actions>
 

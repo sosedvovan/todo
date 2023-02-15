@@ -119,7 +119,9 @@ export class CategoriesComponent implements OnInit{
       // нажали удалить
       if (result === 'delete') {
 
-        this.deleteCategory.emit(category); // вызываем внешний обработчик
+        // вызываем внешний обработчик - отправляемся в главную компоненту
+        //для внесения изменений в дб
+        this.deleteCategory.emit(category);
 
         return;
       }
