@@ -18,10 +18,21 @@ export class TaskDAOArray implements TaskDAO {
   }
 
 
-  add(arg0: Task): Observable<Task> {
-    //return undefined; пока метод не реализован - возвращаем Observable с абы чем
-    return of(TestData.tasks[0]);
+  add(task: Task): Observable<Task> {
+    // если id пустой - генерируем его
+    if (task.id === null || task.id === 0) {
+      task.id = this.getLastIdTask();
+    }
+    TestData.tasks.push(task);
+
+    return of(task);
   }
+
+  // находит последний id (чтобы потом вставить новую запись с id, увеличенным на 1) - в реальной БД это происходит автоматически
+  private getLastIdTask(): number {
+    return Math.max.apply(Math, TestData.tasks.map(task => task.id)) + 1;
+  }
+
 
   delete(id: number): Observable<Task> {
     // console.log('coll TaskDAOArray-DeleteTask-ID')

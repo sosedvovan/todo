@@ -378,4 +378,36 @@ export class TasksComponent implements OnInit, AfterViewInit{
   }
 
 
+  ////////////////////////////////////////////////////////////////////////////////////
+  // диалоговое окно для добавления задачи - когда нажимаем кнопку "Добавить" таску //
+  // (кнопка находится над таблицей тасок - справа)                                 //
+  ////////////////////////////////////////////////////////////////////////////////////
+
+  @Input()
+  selectedCategory: Category;
+
+  @Output()
+  addTask = new EventEmitter<Task>();
+
+  public openAddTaskDialog() {
+
+    // то же самое, что и при редактировании, но только в открывающееся диалоговое окно
+    // передаем пустой объект Task:
+    const task = new Task(null, '', false, null, this.selectedCategory);
+
+    //открываем уже имеющиеся диалоговое окно EditTaskDialogComponent (которое для редактирования таски)
+    //но используем его для создания новой таски. Причем, если если его вызвали когда находились
+    //в одной из категорий, то в поле категория - будет эта категория в которой находимся (this.selectedCategory)
+    const dialogRef = this.dialog.open(EditTaskDialogComponent, {maxWidth: '500px',
+      data: [task, 'Добавление задачи']});
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) { // если нажали ОК и если есть результат - отправили task
+                   // на сохранение в смарт компоненту app.component.ts
+        this.addTask.emit(task);
+      }
+    });
+
+  }
+
 }

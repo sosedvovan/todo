@@ -155,7 +155,8 @@
                      (filterByStatus)="onFilterTasksByStatus($event)"
                      (filterByPriority)="onFilterTasksByPriority($event)"
 
-
+                     [selectedCategory]="selectedCategory"
+                     (addTask)="onAddTask($event)"
                      (updateTask)="onUpdateTask($event)"
                      (deleteTask)="onDeleteTask($event)"
                      (selectCategory)="onSelectCategory($event)"

@@ -34,6 +34,7 @@ export class AppComponent {
   //в классе родительского компонента заводим 3-и переменные
   //которые хотим "видеть" в дочерних html
   //по факту это массивы со всеми нашими имеющимися Entity
+  //передаем их в дочки чз html, а в дочке принимаем с помощью @Impute()
   tasks: Task[]; // все задачи
   categories: Category[]; // все категории
   priorities: Priority[]; // все приоритеты
@@ -217,6 +218,8 @@ export class AppComponent {
     this.updateTasks();
   }
 
+  //универсальный метод - находит таски по заданным(или известным) полям,
+  //и подписывает на них (на массив тасок) поле this.tasks
   public updateTasks() {
     //searchTasks вернет Observable<Task[]>
     this.dataHandler.searchTasks(
@@ -231,6 +234,19 @@ export class AppComponent {
     });
   }
 /////////////////////////////////////////////////////////////////
+// добавление новой задачи (таски)                             //
+/////////////////////////////////////////////////////////////////
+
+  public onAddTask(task: Task) {
+
+    //в параметрах subscribe подписываемся на возврат от метода updateTasks()
+    this.dataHandler.addTask(task).subscribe(result => {
+
+      this.updateTasks();
+
+    });
+
+  }
 
 }//конец класса
 
@@ -745,6 +761,12 @@ export class AppComponent {
  *        4.   в app.component.ts: добавили переменные и методы реагирующие
  *             на @Output() из dump компоненты tasks.component.ts
  *             СМ tasks.component.ts и TaskDAOArray.ts
+ */
+
+
+/**
+ *     Оживляем кнопку "Добавить" таску (кнопка над таблицей с тасками- справа)
+ *     1.
  */
 
 

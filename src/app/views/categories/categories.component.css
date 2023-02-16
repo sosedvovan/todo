@@ -30,4 +30,31 @@
   color: #dadada;
 }
 
+/*перебил бутстраповский класс*/
+.mat-unthemed {
+  background-color:#4caf50 !important;
+}
 
+#categories{
+  width: 100%;
+  /*overflow-x: hidden; !* чтобы не было гориз. прокрутки *!*/
+  /*overflow-y: hidden;*/
+}
+span.add-icon-area {
+  width: 30%;
+  display: inline-block; /* в линию */
+  text-align: left;
+}
+.nav-title {
+  width: 70%;
+  display: inline-block;
+  font-size: 20px;
+  text-align: center;
+  vertical-align: middle
+}
+.add-icon {
+  cursor: pointer;
+  font-size: 30px;
+  vertical-align: middle;
+
+}
