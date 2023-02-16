@@ -10,8 +10,8 @@ import {Priority} from "./model/Priority";
   styleUrls: ['./app.component.css']
 })
 /**
- * Parent - родитель - в нашем случае это этот класс - AppComponent
- * Child - дочерний - в нашем случае TasksComponent
+ * Parent smart - родитель - в нашем случае это этот класс - AppComponent
+ * Child dump - дочерний - в нашем случае TasksComponent
  *
  * Этот класс - AppComponent (parent) :
  * 1.Подписывается на все необходимые данные (subscribe) из DAO
@@ -31,14 +31,12 @@ import {Priority} from "./model/Priority";
 //это класс родительского  компонента
 export class AppComponent {
 
-  //в классе родительского компонента заводим 2-е переменные
+  //в классе родительского компонента заводим 3-и переменные
   //которые хотим "видеть" в дочерних html
+  //по факту это массивы со всеми нашими имеющимися Entity
   tasks: Task[]; // все задачи
   categories: Category[]; // все категории
   priorities: Priority[]; // все приоритеты
-
-  //завели эту переменную - она придет из @Output() из дочки
-  selectedCategory: Category | any;
 
   //в конструкторе инджектим наш инджектабельный сервис, чтобы получать данные
   // фасад для работы с данными
@@ -46,8 +44,8 @@ export class AppComponent {
     private dataHandler: DataHandlerService) {
   }
 
-  //инициализируем и подписываем(subscribe) наши 3-е переменные этого класса
-  // на объекты Observable<Task[]> и Observable<Category[]>
+  //инициализируем и подписываем(subscribe) наши 3-е переменные[] этого класса
+  // на объекты Observable<Task[]> и Observable<Category[]> и Observable<Priorities[]>
   // с помощью методов нашего сервиса getAllTasks() и getAllCategories()
   // которые эти объекты и возвращают
   //то переменные tasks и categories будут содержать в себе актуальные данные
@@ -58,6 +56,14 @@ export class AppComponent {
     this.dataHandler.getAllCategories().subscribe(categories => this.categories = categories);
     this.dataHandler.getAllPriorities().subscribe(priorities => this.priorities = priorities);
   }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // В списке категорий клацнули по одной из категорий ->                                                   //
+  // -> массив с тасками tasks надо отфильтровать по этой категории и переподписать на результат фильтрации //
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  //завели эту переменную - она проинициализируется в следующем методе
+  selectedCategory: Category | any;
 
 
   // изменение категории
@@ -82,7 +88,10 @@ export class AppComponent {
     });
   }
 
-  // обновление задачи из диалогового окна
+  ////////////////////////////////////////////////////////////////
+  // обновление таски-задачи из открывающегося диалогового окна //
+  ////////////////////////////////////////////////////////////////
+
   //метод запускается из html этого класса : (updateTask)="onUpdateTask($event)
   //в параметры из @Output приходит новая таска(которую изменили в диалоговом окне,
   //и которую надо сохранить в дб) и далее..
@@ -108,15 +117,18 @@ export class AppComponent {
     //то метод subscribe(), вызванный на объекте Observable<...> может как и
     //вернуть другой объект Observable<,,,>, так и
     //подписать на Observable<,,,> поле класса.
+
+    //весь код этого метода можно делегировать в метод updateTasks(),
+    //заменив весь код этой строчкой:
+    // this.updateTasks();
   }
 
-  // удаление задачи - в параметры приходит таска, которую надо удалить из дб
+  ////////////////////////////////////////////////////////////////////////////////////
+  // удаление таски-задачи - в параметры приходит таска, которую надо удалить из дб //
+  ////////////////////////////////////////////////////////////////////////////////////
   public onDeleteTask(task: Task) {
 
-    console.log('coll onDeleteTask')
-    console.log(task)
-
-    //удаляем таску с пом метода Сервиса (возвращается Observable<Task>)
+    //удаляем таску с пом метода Сервиса (возвращается Observable<Task> которую удалили)
     this.dataHandler.deleteTask(task.id)
       //на Observable<Task> вызываем subscribe в котором вернется
       //объект Observable<Task[]> (массив со всеми имеющимися тасками)
@@ -133,9 +145,19 @@ export class AppComponent {
         this.tasks = tasks;
       });
     });
+
+    //весь этот код выше можно делегировать в приват метод updateTasks():
+    //в параметрах subscribe(...) говорим, что подписка уже настроена в методе updateTasks()
+    //     this.dataHandler.deleteTask(task.id).subscribe(cat => {
+    //             this.updateTasks()
+    //         });
   }
 
-  // удаление категории (при нажатии на карандаш)
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////
+  // удаление категории (при нажатии на карандаш(который рядом с категорией, откроется диалоговое окно //
+  // в котором есть кнопка "Удалить"))                                                                 //
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
   public onDeleteCategory(category: Category) {
     //В dataHandler вызываем deleteCategory (удаляем из дб и в возврате получаем Observable<Category>)
     //на Observable<Category> подписываемся-subscribe:
@@ -148,16 +170,21 @@ export class AppComponent {
     });
   }
 
-  // обновлении категории (при нажатии на карандаш)
+
+  ////////////////////////////////////////////////////////////////////////////////////
+  // редактирование категории (при нажатии на карандаш, который рядом с категорией) //
+  ////////////////////////////////////////////////////////////////////////////////////
   public onUpdateCategory(category: Category) {
     //В dataHandler вызываем deleteCategory (удаляем из дб и в возврате получаем Observable<Category>)
     //на Observable<Category> подписываемся-subscribe:
-    //в метод onSelectCategory подаем категорию которую обновляли
+    //в метод onSelectCategory подаем категорию, которую обновляли
+    //и в этом методе onSelectCategory произойдет окончательная переподписка
     //то отображаем список тасок только от этой обновленной категории
     this.dataHandler.updateCategory(category).subscribe(() => {
       this.onSelectCategory(this.selectedCategory);
     });
   }
+
 
 ////////////////////////////////////////////////////////////////
  //           фильтрация над таблицей тасок
@@ -191,11 +218,14 @@ export class AppComponent {
   }
 
   public updateTasks() {
+    //searchTasks вернет Observable<Task[]>
     this.dataHandler.searchTasks(
       this.selectedCategory,
       this.searchTaskText,
       this.statusFilter,
       this.priorityFilter
+      //на Observable<Task[]> подписываем поле tasks этого класса
+      //это поле tasks получает дочерний компонент чз @Input()
     ).subscribe((tasks: Task[]) => {
       this.tasks = tasks;
     });
@@ -715,7 +745,6 @@ export class AppComponent {
  *        4.   в app.component.ts: добавили переменные и методы реагирующие
  *             на @Output() из dump компоненты tasks.component.ts
  *             СМ tasks.component.ts и TaskDAOArray.ts
- *
  */
 
 
