@@ -21,8 +21,12 @@ import {Priority} from "../../../model/Priority";
   templateUrl: './tasks.component.html',
   styleUrls: ['./tasks.component.css']
 })
-//это дочерний компонент
+//это дочерний компонент dump
 export class TasksComponent implements OnInit, AfterViewInit{
+
+  ////////////////////////////////
+  //    настаиваем таблицу      //
+  ////////////////////////////////
 
   //подготавливаем данные для таблицы-матЕриал с тасками(+для сортировки и пагинации):
   //перечисляем поля таблицы (те, что отображают поля тасок - должны совпадать с названиями переменных
@@ -46,22 +50,123 @@ export class TasksComponent implements OnInit, AfterViewInit{
   private sort: MatSort;               //то эта переменная sort будет связанна с атрибутом matSort в теге <table
 
   //СРАБАТЫВАЕТ ngOnInit() И ИНИЦИАЛИЗИРУЮТСЯ: dataSource.data, dataSource.sort, dataSource.paginator, dataSource.sortingDataAccessor
+
   private addTableObjects() {
 
-    setTimeout(function (){}, 100)
+    setTimeout(function (){}, 0)
 
     this.dataSource.sort = this.sort; // компонент для сортировки данных (если необходимо)
     this.dataSource.paginator = this.paginator; // обновить компонент постраничности (кол-во записей, страниц)
-
-    // console.log('coll addTableObjects()')
-    // console.log('this.dataSource.sort = this.sort;')
-    // console.log(this.dataSource.sort)
-    // console.log('this.dataSource.paginator = this.paginator;')
-    // console.log(this.dataSource.paginator)
   }
 
+
+
+  //ГЛАВНЫЙ МАССИВ КОМПОНЕНТЫ: Получаем массив с тасками из смарт-компонента
+  //(массив будет содержать в себе все таски или только отфильтрованными таски)
+  //Этот массив будет видеть вьюха (во вьюхе итерируемся по этому массиву для отображения таблицы с тасками).
+  //Это текущие таски для отображения на странице.
+  //Напрямую не присваиваем значения в переменную, только через @Input.
+  // @Input() перенесли в сеттер, чтобы еще и fillTable() из сеттера запускать,
+  // а в этом fillTable() переиницализируем все поля dataSource для обновленного
+  //массива с тасками(когда отфильтровали, добавили, удалили, изменили таску это надо)
+  //для правильной работы пагинации и сортировки
+  tasks: Task[];
+  // tasks: Task[] = [];
+  @Input('tasks')
+  public set setTasks(tasks: Task[]) {
+    this.tasks = tasks;
+    this.fillTable();
+  }
+
+  //инджектим наш сервис и у него получаем нужный массив
+  //так же инджектим : работу с диалоговым окном
+  constructor(private dataHandler: DataHandlerService,
+              private dialog: MatDialog) {
+
+  }
+
+  //метод вызывается до отрисовки визуальных компонентов(html) и подходит для
+  //инициализации объектов и переменных.
+  //подписываемся. от taskSubject получаем новые данные tasks=> из сервиса и присваиваем
+  //их полю этого класса - this.tasks = tasks, которое видно в html и полю dataSource
+  ngOnInit(): void {
+    // this.dataHandler.taskSubject.subscribe(tasks => {this.tasks = tasks;
+    //                                                             this.dataSource.data = tasks;});
+    //начали использовать дао -> подписываемся на возврат из метода: getAllTasks(): Observable<Task[]>
+    //а не на taskSubject = new BehaviorSubject<Task[]>(TestData.tasks);
+    // this.dataHandler.getAllTasks().subscribe(tasks => {this.tasks = tasks;
+    //                                           this.dataSource.data = tasks;});
+
+    // датасорс обязательно нужно создавать для таблицы, в него присваивается любой источник (БД, массивы, JSON и пр.)
+    this.dataSource = new MatTableDataSource<Task>();
+    // this.dataSource.data = this.tasks;
+
+
+    // датасорс обязательно нужно создавать для таблицы, в него присваивается любой источник (БД, массивы, JSON и пр.)
+    // this.dataSource = new MatTableDataSource();//я инициализировал при декларации выше
+    //и вызываем такой метод:
+
+    this.fillTable();
+
+    // console.log('Priority[]')
+    // console.log(this.priorities)
+
+  }
+
+
+  // показывает задачи с применением всех текущий условий (категория, поиск, фильтры и пр.)
+  public fillTable() {
+//сначала сделаем проверку что dataSource != null (те new сказали) чтобы не получить undefined
+    if (!this.dataSource) {
+      return;
+    }
+
+    // обновить источник данных (т.к. данные массива tasks обновились)
+    this.dataSource.data = this.tasks;
+
+    //обновим сортировку и пагинацию (но и без этого работает?)
+    this.addTableObjects();
+
+    //следующий код даст значение полю dataSource.sortingDataAccessor(для правильной работы сортировки):
+    //то dataSource будет знать по каким полям сортировать объект task при нажатии
+    // на стрелочки сортировки над разными колонками таблицы (типа компаратору говорим по каким полям сравниваем).
+    // когда получаем новые данные..
+    // чтобы можно было сортировать по столбцам "категория" и "приоритет", т.к. там не примитивные типы, а объекты
+    // @ts-ignore - показывает ошибку для типа даты, но так работает, т.к. можно возвращать любой тип
+    this.dataSource.sortingDataAccessor = (task, colName) => {
+      // по каким полям выполнять сортировку для каждого столбца
+      switch (colName) {
+        case 'priority': {
+          return task.priority ? task.priority.id : null;
+        }
+        case 'category': {
+          return task.category ? task.category.title : null;
+        }
+        case 'date': {
+          return task.date ? task.date : null;
+        }
+
+        //title обязательное поле - на null проверять не надо
+        case 'title': {
+          return task.title;
+        }
+      }
+    };
+
+  }
+
+  //Вызовется сразу после инициализации представления(объектов и переменных)
+  //и его дочек. Помогает  для первоначальной сортировки и пагинации
+  //инициализировать dataSource.paginator и dataSource.sort
+  //те на этом этапе можно будет уже обращаться к ссылкам в html.
+  //ЭТОТ МЕТОД РЕАЛИЗУЕМ ОТ ИНТЕРФЕЙСА : AfterViewInit
+  ngAfterViewInit(): void {
+    this.addTableObjects();
+  }
+
+
   //////////////////////////////////////////////////
-  //              для полей фильтрации тасок
+  //              для полей фильтрации тасок     //
   /////////////////////////////////////////////////
   // поиск - переменные  которые над таблицей с тасками
   // текущее значение для поиска задач инициализируем из смарт компонента - @Input('priorities')
@@ -127,157 +232,18 @@ export class TasksComponent implements OnInit, AfterViewInit{
     }
   }
 
-  ////////////////////////////////////////////////////////////
-
-  //вызовется сразу после инициализации представления(объектов и переменных)
-  //и его дочек. Помогает  для первоначальной сортировки и пагинации
-  //инициализировать dataSource.paginator и dataSource.sort
-  //те на этом этапе можно будет уже обращаться к ссылкам в html.
-  //ЭТОТ МЕТОД РЕАЛИЗУЕМ ОТ ИНТЕРФЕЙСА : AfterViewInit
-  ngAfterViewInit(): void {
-    this.addTableObjects();
-  }
-
-  //----------------------------------------------------------------------------------------
-
-  //хотим этот массив передавать во вьюху
-  //это текущие таски для отображения на странице
-  //напрямую не присваиваем значения в переменную, только через @Input
-  // @Input() перенесли в сеттер, чтобы еще и fillTable() из сеттера запускать,
-  // а в этом fillTable() переиницализируем все поля dataSource для обновленного
-  //массива с тасками(когда отфильтровали, дабавили, удалили, изменили таску это надо)
-  tasks: Task[];
-  // tasks: Task[] = [];
-  // текущие задачи для отображения на странице
-  // напрямую не присваиваем значения в переменную, только через @Input
-  @Input('tasks')
-  public set setTasks(tasks: Task[]) {
-    this.tasks = tasks;
-    this.fillTable();
-  }
-
-
-  //переменная updateTask должна хранить ссылку на EventEmitter<Task>
-  //тип передаваемого параметра - <Task>
-  //@Output() запускается с помощью : this.updateTask.emit(task); (необязательно и автоматом срабатывает?)
-  //и отправляет (task) в родительский html где : (updateTask)="onUpdateTask($event)"
-  //и уже запускается метод onUpdateTask в родительском компоненте
-  @Output()
-  updateTask = new EventEmitter<Task>();
-
-  @Output()
-  deleteTask = new EventEmitter<Task>();
-
-// нажали на категорию из списка задач
-  @Output()
-  selectCategory = new EventEmitter<Category>();
+  //////////////////////////////////////////////////////////////////////////////////////////////
+    //для галочки(выполнено не выполнено) - меняем булеан на противоположный вызывая из вьюхи //
+  // toggleTaskCompleted(task: Task) {                                                        //
+  //   task.completed = !task.completed;                                                      //
+  // }                                                                                        //
+  //--------------------------------------------------------------------------------------------
 
 
 
-  // инджектим наш сервис и у него получаем нужный массив
-  // constructor(private dataHandler: DataHandlerService) {
-  //   this.tasks = dataHandler.getTasks();
-  // }
-
-  //инджектим наш сервис и у него получаем нужный массив
-  //так же инджектим : работу с диалоговым окном
-  constructor(private dataHandler: DataHandlerService,
-              private dialog: MatDialog) {
-
-  }
-
-  //метод вызывается до отрисовки визуальных компонентов(html) и подходит для
-  //инициализации объектов и переменных.
-  //подписываемся. от taskSubject получаем новые данные tasks=> из сервиса и присваиваем
-  //их полю этого класса - this.tasks = tasks, которое видно в html и полю dataSource
-  ngOnInit(): void {
-    // this.dataHandler.taskSubject.subscribe(tasks => {this.tasks = tasks;
-    //                                                             this.dataSource.data = tasks;});
-    //начали использовать дао -> подписываемся на возврат из метода: getAllTasks(): Observable<Task[]>
-    //а не на taskSubject = new BehaviorSubject<Task[]>(TestData.tasks);
-    // this.dataHandler.getAllTasks().subscribe(tasks => {this.tasks = tasks;
-    //                                           this.dataSource.data = tasks;});
-
-    // датасорс обязательно нужно создавать для таблицы, в него присваивается любой источник (БД, массивы, JSON и пр.)
-    this.dataSource = new MatTableDataSource<Task>();
-    // this.dataSource.data = this.tasks;
-
-
-    // датасорс обязательно нужно создавать для таблицы, в него присваивается любой источник (БД, массивы, JSON и пр.)
-    // this.dataSource = new MatTableDataSource();//я инициализировал при декларации выше
-    //и вызываем такой метод:
-
-      this.fillTable();
-
-    // console.log('Priority[]')
-    // console.log(this.priorities)
-
-  }
-
-
-  // показывает задачи с применением всех текущий условий (категория, поиск, фильтры и пр.)
-  public fillTable() {
-
-//сначала сделаем проверку что dataSource != null (те new сказали) чтобы не получить undefined
-    if (!this.dataSource) {
-      return;
-    }
-
-    // console.log('call dataSource START');
-    // console.log(this.dataSource.data);
-
-    setTimeout(function (){}, 100)
-
-    // обновить источник данных (т.к. данные массива tasks обновились)
-    this.dataSource.data = this.tasks;
-
-    //обновим сортировку и пагинацию (но и без этого работает?)
-    this.addTableObjects();
-
-
-    //следующий код даст значение полю dataSource.sortingDataAccessor(для правильной работы сортировки):
-    //то dataSource будет знать по каким полям сортировать объект task при нажатии
-    // на стрелочки сортировки над разными колонками таблицы (типа компаратору говорим по каким полям сравниваем).
-    // когда получаем новые данные..
-    // чтобы можно было сортировать по столбцам "категория" и "приоритет", т.к. там не примитивные типы, а объекты
-    // @ts-ignore - показывает ошибку для типа даты, но так работает, т.к. можно возвращать любой тип
-    this.dataSource.sortingDataAccessor = (task, colName) => {
-      // по каким полям выполнять сортировку для каждого столбца
-      switch (colName) {
-        case 'priority': {
-          return task.priority ? task.priority.id : null;
-        }
-        case 'category': {
-          return task.category ? task.category.title : null;
-        }
-        case 'date': {
-          return task.date ? task.date : null;
-        }
-
-        //title обязательное поле - на null проверять не надо
-        case 'title': {
-          return task.title;
-        }
-      }
-    };
-
-
-    // console.log('call dataSource END');
-    // console.log(this.dataSource.data);
-    // console.log('call dataSource.sortingDataAccessor');
-    // console.log(this.dataSource.sortingDataAccessor);
-    // console.log('call dataSource.paginator');
-    // console.log(this.dataSource.paginator);
-    // console.log('call dataSource.sort');
-    // console.log(this.dataSource.sort);
-
-  }
-
-
-    //для галочки(выполнено не выполнено) - меняем булеан на противоположный вызывая из вьюхи
-  // toggleTaskCompleted(task: Task) {
-  //   task.completed = !task.completed;
-  // }
+  ////////////////////////////////////////////////////////////////
+  // возвращает цвет для ячеек первого столбца в таблице тасок //
+  ///////////////////////////////////////////////////////////////
 
   // в зависимости от статуса задачи - вернуть цвет названия
   public getPriorityColor(task: Task) {
@@ -301,6 +267,22 @@ export class TasksComponent implements OnInit, AfterViewInit{
     return '#fff'; // TODO вынести цвета в константы (magic strings, magic numbers)
 
   }
+
+
+  /////////////////////////////////////////////////////////////////////////////////////////////
+  // открываем диалоговое окно для редактирования таски при нажатии на таску или на карандаш //
+  /////////////////////////////////////////////////////////////////////////////////////////////
+
+  //переменная updateTask хранит ссылку на EventEmitter<Task>
+  //тип передаваемого параметра - <Task>
+  //@Output() запускается с помощью : this.updateTask.emit(task); (необязательно и автоматом срабатывает?)
+  //и отправляет (task) в родительский html где : (updateTask)="onUpdateTask($event)"
+  //и уже запускается метод onUpdateTask в родительском компоненте
+  @Output()
+  updateTask = new EventEmitter<Task>();
+
+  @Output()
+  deleteTask = new EventEmitter<Task>();
 
   //!!!НАДО ДОБАВИТЬ MatDialogModule В app.module.ts
   // диалоговое редактирования для добавления задачи
@@ -349,11 +331,13 @@ export class TasksComponent implements OnInit, AfterViewInit{
     });
   }
 
-  // ngAfterViewChecked(): void {
-  //   this.dataSource.data = this.tasks;
-  // }
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // открываем диалоговое окно для подтверждения удаления таски при нажатии на "Удалить" в первом диалоговом окне //
+  // и на иконку "корзина" в самой таблице тасок                                                                  //
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // диалоговое окно подтверждения удаления когда клацнули по иконки удаления
+  // диалоговое окно подтверждения удаления когда клацнули по иконки удаления в первом диалоговом окне
+  // и на иконку "корзина" в самой таблице тасок
   public openDeleteDialog(task: Task) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       maxWidth: '500px',
@@ -362,25 +346,33 @@ export class TasksComponent implements OnInit, AfterViewInit{
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) { // если нажали ОК тогда с пом @Output() посылаем в главный компонент
+      if (result) { // если нажали ОК тогда с пом @Output() deleteTask - посылаем в главный компонент
                     //app.component.ts событие, кот там запустит метод для внесения изменений в дб
         this.deleteTask.emit(task);
       }
     });
   }
 
+  ////////////////////////////////////////////////////////////////////////////////
+  // меняем чекбокс и кликаем на ячейку с категорией таски в таблице всех тасок //
+  ////////////////////////////////////////////////////////////////////////////////
+
 //при изменении чекбокса (выбран не выбран)
-  //меняем в таске булен поле completed на противоположное
-  // и делаем emit(task) - посылаем действие в главную компоненту
+  //меняем в таске булин поле completed на противоположное
+  // и делаем emit(task) - посылаем действие в главную компоненту (emit() запускает @Output updateTask(...) - переиспользуем)
   //для обновления в дб и в отображении в браузере
   public onToggleStatus(task: Task) {
     task.completed = !task.completed;
     this.updateTask.emit(task);
   }
 
-  //при клике по категории в столбце категорий
+  // нажали на категорию из списка задач
+  @Output()
+  selectCategory = new EventEmitter<Category>();
+
+  //при клике по категории в столбце категорий (отобразим только таски из этой категории)
   //посылаем emit-selectCategory с данной категорией в главную компоненту
-  //в app.component.html указали
+  //в app.component.html (emit() запускает @Output)
   public onSelectCategory(category: Category) {
     this.selectCategory.emit(category);
   }

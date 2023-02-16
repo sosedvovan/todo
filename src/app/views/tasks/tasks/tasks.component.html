@@ -1,3 +1,4 @@
+<!--включили строки бутстрапа-->
 <div class="row">
 
 <!--пошла первая строка бутстрапа- 4-ре элемента, каждый занимает по 3 колонки
@@ -9,45 +10,58 @@
   <div class="col-md-3 col-sm-12">
     <!--    поиск задач-->
 
-
+<!--материальная форма (в ней одно поле ввода и саб-кнопка очистки)-->
     <mat-form-field>
+<!--поле <input:
+      #filterInput - альяс, чтобы обратится к этому тегу в дальнейшем
+      matInput- сделали форму материальной
+      [(ngModel)]="searchTaskText" - это поле ввода будет работать через переменную searchTaskText из класса
+      (keyup)="onFilterByTitle()" - по нажатии любой клавиши в поле ввода срабатывает метод onFilterByTitle()
+      (keydown.escape)="searchTaskText = ''; onFilterByTitle()" - нажатие на escape очищает поле ввода и далее
+      вызывается метод onFilterByTitle()
+      -->
       <input
         #filterInput
-
         matInput
-
         placeholder="Поиск в текущей категории"
-
         [(ngModel)]="searchTaskText"
-
         (keyup)="onFilterByTitle()"
+        (keydown.escape)="searchTaskText = ''; onFilterByTitle()">
 
-      >
-<!-- (keydown.escape)="searchTaskText = ''; onFilterByTitle()"     -->
-
-
+<!--кнопка - в поле ввода для очистки поля от введенного в него текста
+     <mat-icon>clear</mat-icon> - подгружает иконку крестика-->
       <button
         *ngIf="filterInput.value.trim().length > 0"
-
         class="clear-icon size25 gray"
-
         matSuffix mat-icon-button
         aria-label="Clear"
-
-        (click)="searchTaskText = ''; onFilterByTitle()"
-      >
+        (click)="searchTaskText = ''; onFilterByTitle()">
         <mat-icon>clear</mat-icon>
       </button>
     </mat-form-field>
   </div>
-<!--mat-button  -->
+<!--mat-button вынес сюда в комменты, а то подчеркивает красным -->
 
-  <div class="col-md-3 col-sm-12">
+<!--    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\-->
+
+    <div class="col-md-3 col-sm-12">
+
+<!--    https://stackoverflow.com/questions/47568626/how-do-i-create-a-callback-on-material-angular-select
+        это про то, как mat-select использовать-->
 
     <!--    фильтр по статусу -->
-
+      <!--материальная форма (в ней один выпадающий список)-->
     <mat-form-field>
 
+<!--создаем выпадающий список:
+    [value]="selectedStatusFilter" это дефолтное будево значение заданное с помощью переменной класса
+    selectedStatusFilter первоначально инициализируем = null чтобы при первоначальной загрузки страницы
+      срабатывала строчка:
+      (valueChange)="onFilterByStatus($event)" -> запускался метод onFilterByStatus(null) с null в аргументах
+      и в таблице тасок отображались таски со всеми возможными статусами(а не только true или false)
+      ПРИНЦИП РАБОТЫ ЭТОГО ВЫПАДАЮЩЕГО СПИСКА:
+      при выборе из выпадающего списка(valueChange) срабатывает метод onFilterByStatus($event), в
+      аргументы которого попадает текущее [value] (а дефолт-первоначальное [value] уже имеется)-->
       <mat-select [value]="selectedStatusFilter"
                   (valueChange)="onFilterByStatus($event)"
                   placeholder="Фильтр по статусу" #statusFilter>
@@ -56,31 +70,38 @@
         <mat-option [value]="true">Завершенные задачи</mat-option>
         <mat-option [value]="false">Незавершенные задачи</mat-option>
       </mat-select>
-<!--      -->
 
+<!--это саб кнопка для выпадающего списка - запускает метод onFilterByStatus(null) с null в аргументах
+      при нажатии на нее, и в таблице тасок отображались таски со всеми возможными статусами
+      (а не только true или false)
+      <mat-icon>clear</mat-icon> - подгружает иконку крестика-->
       <button
         *ngIf="selectedStatusFilter != null"
         class="clear-icon size25 gray"
-
         matSuffix mat-icon-button
         aria-label="Clear"
-
-        (click)="$event.stopPropagation(); onFilterByStatus(null)"
-
-      >
+        (click)="$event.stopPropagation(); onFilterByStatus(null)">
         <mat-icon>clear</mat-icon>
       </button>
     </mat-form-field>
-    <!--mat-button  -->
+    <!--mat-button вынес сюда в комменты, а то подчеркивает красным -->
   </div>
 
+  <!--    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\-->
 
   <div class="col-md-3 col-sm-12">
 
     <!--    фильтр по приоритету -->
 
+    <!--материальная форма (в ней один выпадающий список)-->
+<!--выпадающий список выбора аналогичен предыдущему-выше,
+    также для [value] есть дефолтное значение с котрым запускается метод onFilterByPriority($event)
+     при загрузки страницы
+     Сам список формируется следующим образом:
+     первоя строка вернет [value]="null" (те покажем таски со всеми приоритетами без фильтрации по этому полю
+     далее список формируем с помощью системной директивы *ngFor итерируясь по массиву priorities,
+     полученному через @Input() от смарт компоненты)-->
     <mat-form-field>
-
 
       <mat-select [value]="selectedPriorityFilter"
                   (valueChange)="onFilterByPriority($event)"
@@ -93,46 +114,49 @@
       </mat-select>
 <!---->
 
-
+<!--саб-кнопка сброса на дефолт-выбор. аналогично той которая выше(см выше)
+<mat-icon>clear</mat-icon> - подгружает иконку крестика-->
       <button
         *ngIf="selectedPriorityFilter != null"
         class="clear-icon size25 gray"
-
         matSuffix mat-icon-button
         aria-label="Clear"
-
-        (click)="$event.stopPropagation(); onFilterByPriority(null); "
-
-      >
+        (click)="$event.stopPropagation(); onFilterByPriority(null); ">
         <mat-icon>clear</mat-icon>
       </button>
 <!--mat-button  -->
     </mat-form-field>
 
-
   </div>
 
+  <!--    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\-->
 
+<!-- 2-е кнопки - Сбросить фильтры и Добавить-->
+
+<!--  так же занимает три колонки-->
   <div class="col-md-3 col-sm-12 text-right">
+<!-- и внутри этих трех колонок запустим еще строку бутстрапа(для 2-х кнопок по col-6)-->
     <div class="row">
+
       <div class="text-left col-6">
 
+<!--*ngIf - кнопка видна при условии, если в одном из выпадающих списках поиска установленны какие то значения
+         или в поле ввода поиска по вхождению что то написано и это не пробелы(не равно пустой строке)
+         (click) - при нажатии на эту кнопку останавливаются все запланированные действия ($event.stopPropagation();),
+                   значения в выпадающих списках для поиска по статусу и приоритету сбрасывается на null,
+                   переменная для поиска по вхождению приравнивается к '' и запускаем метод onFilterByTitle()(поиск по вхождению)
+         -->
         <button
-
           *ngIf="selectedStatusFilter != null || selectedPriorityFilter != null || (searchTaskText != null && searchTaskText.trim() != '') "
-
           matSuffix mat-button
           aria-label="Clear"
-
-
-          (click)="$event.stopPropagation(); onFilterByStatus(null); onFilterByPriority(null); searchTaskText = ''; onFilterByTitle()"
-
-        >
+          (click)="$event.stopPropagation(); onFilterByStatus(null); onFilterByPriority(null); searchTaskText = ''; onFilterByTitle()">
           Сбросить фильтры
         </button>
 
       </div>
 
+<!--      кнопка добавить ...-->
       <div class="text-right col-6">
         <button mat-raised-button color="primary">Добавить</button>
       </div>
@@ -145,7 +169,7 @@
 
 
 
-<!--  пошла вторая строка бутстрапа, занимающая 12 колонок и в ней таблица-->
+<!--  пошла вторая строка бутстрапа, занимающая 12 колонок и в ней таблица с тасками на все 12 колонок - col-md-12-->
   <div class="col-md-12 task-list">
 
 <!--заголовок-header всей таблицы тасок-->
