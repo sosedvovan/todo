@@ -3,6 +3,7 @@ import {Category} from "../../model/Category";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {EditCategoryDialogComponent} from "../../dialog/edit-category-dialog/edit-category-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
+import {OperType} from "../../dialog/OperType";
 
 
 @Component({
@@ -108,7 +109,7 @@ export class CategoriesComponent implements OnInit{
     //открываем диалоговое окно EditCategoryDialogComponent и
     //передаем в него data: [...] - 2-е стринги для отображения в нем и его размер
     const dialogRef = this.dialog.open(EditCategoryDialogComponent, {
-      data: [category.title, 'Редактирование категории'],
+      data: [category.title, 'Редактирование категории', OperType.EDIT],
       width: '500px'
     });
 
@@ -138,5 +139,25 @@ export class CategoriesComponent implements OnInit{
     });
   }
 
+  ///////////////////////////////////////////////////////////////////
+  // диалоговое окно для добавления категории при нажатии кнопки + //
+  ///////////////////////////////////////////////////////////////////
+
+  // добавили категорию - отослали в смарт компонент результат работы
+  // открывшегося диалогового окна
+  @Output()
+  addCategory = new EventEmitter<string>(); // передаем только название новой категории
+
+  // диалоговое окно для добавления категории при нажатии кнопки +
+  public openAddDialog() {
+
+    const dialogRef = this.dialog.open(EditCategoryDialogComponent, {data: ['', 'Добавление категории', OperType.ADD], width: '400px'});
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.addCategory.emit(result as string); // вызываем внешний обработчик
+      }
+    });
+  }
 
 }

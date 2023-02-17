@@ -1,6 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {OperType} from "../OperType";
 
 @Component({
   selector: 'app-edit-category-dialog',
@@ -28,13 +29,15 @@ export class EditCategoryDialogComponent implements OnInit {
   // (data: [category.title, 'Редактирование категории'])
   public dialogTitle: string; // текст для диалогового окна
   public categoryTitle: string; // текст для названия категории (при редактировании или добавлении)
+  public operType: OperType; // тип операции
 
   ngOnInit() {
 
     // иницииализируем - получаем переданные в диалоговое окно данные (data: [category.title, 'Редактирование категории'])
     this.categoryTitle = this.data[0];
     this.dialogTitle = this.data[1];
-
+    // @ts-ignore
+    this.operType = this.data[2]; // тип операции
   }
 
   // нажали ОК в edit-category-dialog.component.html
@@ -75,7 +78,9 @@ export class EditCategoryDialogComponent implements OnInit {
         this.dialogRef.close('delete'); // нажали удалить
       }
     });
+  }
 
-
+  public canDelete(): boolean {
+    return this.operType === OperType.EDIT;
   }
 }

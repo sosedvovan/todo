@@ -15,6 +15,7 @@ import {EditTaskDialogComponent} from "../../../dialog/edit-task-dialog/edit-tas
 import {ConfirmDialogComponent} from "../../../dialog/confirm-dialog/confirm-dialog.component";
 import {Category} from "../../../model/Category";
 import {Priority} from "../../../model/Priority";
+import {OperType} from "../../../dialog/OperType";
 
 @Component({
   selector: 'app-tasks',
@@ -399,7 +400,7 @@ export class TasksComponent implements OnInit, AfterViewInit{
     //но используем его для создания новой таски. Причем, если если его вызвали когда находились
     //в одной из категорий, то в поле категория - будет эта категория в которой находимся (this.selectedCategory)
     const dialogRef = this.dialog.open(EditTaskDialogComponent, {maxWidth: '500px',
-      data: [task, 'Добавление задачи']});
+      data: [task, 'Добавление задачи', OperType.ADD]});
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) { // если нажали ОК и если есть результат - отправили task
@@ -409,5 +410,7 @@ export class TasksComponent implements OnInit, AfterViewInit{
     });
 
   }
+
+
 
 }

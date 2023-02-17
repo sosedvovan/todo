@@ -5,6 +5,7 @@ import {DataHandlerService} from "../../service/data-handler.service";
 import {Category} from "../../model/Category";
 import {Priority} from "../../model/Priority";
 import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
+import {OperType} from "../OperType";
 
 @Component({
   selector: 'app-edit-task-dialog',
@@ -28,6 +29,9 @@ export class EditTaskDialogComponent implements OnInit {
 //-создаем переменную-массив по которому будем итерироваться в html для выпадающего списка
 // для выбора приоритета для таски:
   public priorities: Priority[];
+
+  //Енам для определения add or edit
+  public operType: OperType;  // тип операции
 
 
   //эту переменную завели в html: [(ngModel)]="tmpTitle"
@@ -64,6 +68,8 @@ export class EditTaskDialogComponent implements OnInit {
   ngOnInit() {
     this.task = this.data[0]; // задача для редактирования/создания
     this.dialogTitle = this.data[1]; // текст для диалогового окна
+    // @ts-ignore
+    this.operType = this.data[2]; // тип операции
 
     // инициализация начальных значений (записывам в отдельные переменные
     // чтобы можно было отменить изменения, а то будут сразу записываться в задачу)
@@ -145,5 +151,14 @@ export class EditTaskDialogComponent implements OnInit {
   // делаем статус задачи "незавершенным" (активируем)
   public activate() {
     this.dialogRef.close('activate')
+  }
+
+ //для кнопки "Удалить": для определения типа операции - создаем или редактируем по енаму
+  public canDelete(): boolean {
+    return this.operType === OperType.EDIT;
+  }
+  //для кнопки "Активировать таску": для определения типа операции - создаем или редактируем по енаму
+  public canActivateDesactivate(): boolean {
+    return this.operType === OperType.EDIT;
   }
 }

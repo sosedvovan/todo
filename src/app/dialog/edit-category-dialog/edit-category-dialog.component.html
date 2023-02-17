@@ -80,7 +80,8 @@
     при ее нажатии запускает метод delete()-->
     <button
       mat-button
-      (click)="delete()" class="red">
+      (click)="delete()" class="red"
+      *ngIf="canDelete()">
 
       Удалить
 

@@ -248,6 +248,14 @@ export class AppComponent {
 
   }
 
+  // добавление категории
+  public onAddCategory(title: string) {
+    this.dataHandler.addCategory(title).subscribe(() => this.updateCategories());
+  }
+  private updateCategories() {
+    this.dataHandler.getAllCategories().subscribe(categories => this.categories = categories);
+  }
+
 }//конец класса
 
 
@@ -765,9 +773,78 @@ export class AppComponent {
 
 
 /**
- *     Оживляем кнопку "Добавить" таску (кнопка над таблицей с тасками- справа)
- *     1.
+ *     Оживляем кнопку "Добавить" таску (кнопка над таблицей с тасками - справа)
+ *     1. В tasks.component.html создаем кнопку и привязываем к ней событие, запускающее
+ *        метод класса: (click)="openAddTaskDialog()"
+ *     2. В tasks.component.ts реализуем метод openAddTaskDialog(), который открывает
+ *        диалоговое окно: edit-task-dialog
+ *     3. После создания таски в диалоговом окне и нажатия "Сохранить" - событие
+ *        отправляется в смарт компонент - запуская там метод: onAddTask(task: Task) -
+ *        в которм происходит сохранение таски в дб и переподписка на обновленный массив
+ *        со всеми тасками.
  */
+
+/**
+ *     ● Реализовать добавление категории (по аналогии с редактированием категории)
+ *       Оживляем кнопку +  :
+ *       1. В categories.component.html в кнопку add допишем вызов метода: (click)="openAddDialog()"
+ *       2. В tasks.component.ts реализуем этот метод:
+ *          открыли окно,
+ *          получили из него result,
+ *          отослали result на обраьотку в смарт компонент:
+ *              @Output()
+ *              addCategory = new EventEmitter<string>();
+ *        3. В смарт компоненте app.component.ts :
+ *             в его html : (addCategory)="onAddCategory($event)"
+ *             в его классе реализуем onAddCategory($event) -
+ *             сохранение категории в дб
+ *
+ *     ● Кнопки “удалить”, “активировать”, “завершить” не должны показываться при
+ *     добавлении нового элемента (задачи, категории)
+ *     1. В categories.component.ts в методе открывающем диалоговое окно EditCategoryDialogComponent :
+ *        openEditDialog() отправим в окно еще и Енам OperType:
+ *        data: [category.title, 'Редактирование категории', OperType.EDIT].
+ *
+ *        То же самое в tasks.component.ts в методе: openAddTaskDialog(),
+ *        который открывает диалоговое окно EditTaskDialogComponent :
+ *        data: [task, 'Добавление задачи', OperType.ADD]});
+ *     2. А в компонентах диалоговых окон(EditCategoryDialog и EditTaskDialog) отлавливаем эти Енамы:
+ *           В EditCategoryDialog:
+ *           добавляем переменную: private operType: OperType; // тип операции
+ *           инициализируем ее:
+ *           в  ngOnInit() {this.operType = this.data[2];} // тип операции
+ *           и имеется метод, который возвращает труе, если это режим редактирования:
+ *               private canDelete(): boolean {
+ *               return this.operType === OperType.EDIT;
+ *               }
+ *           В EditTaskDialog: аналогично
+ *       3. В html файлах этих диалоговых окон на кнопки которые надо
+ *          скрыть если окно используется для создания нового добавим условие
+ *          для видимости кнопки :
+ *              <button
+ *                 *ngIf="canDelete()"  //условие видимости кнопки "удалить"
+ *                 (click)="delete()"
+ *                 class="red" mat-button>
+ *                  Удалить </button>
+ *
+ *
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

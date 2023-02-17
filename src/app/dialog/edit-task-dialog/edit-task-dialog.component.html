@@ -131,7 +131,7 @@
       <mat-icon>clear</mat-icon>
 
     </button>
-<!--mat-button  и mat-icon-button  как то коефликтуют и
+<!--mat-button  и mat-icon-button  как то конфликтуют и
 подчеркивается красным, но работает-->
 
   </mat-form-field>
@@ -165,7 +165,9 @@
       </button>
 
       <!--кнопка отмена - вызывает метод onCancel()-->
-      <button (click)="onCancel()" mat-raised-button>Отмена</button>
+      <button (click)="onCancel()" mat-raised-button>
+        Отмена
+      </button>
 
     </div>
 
@@ -179,14 +181,15 @@
           (click) вызывает соответствующий метод в классе этого компонента-->
       <button
         mat-button class="green"
-        *ngIf="!task.completed"
+        *ngIf="!task.completed  && canActivateDesactivate()"
         (click)="complete()">
         Завершить задачу
       </button>
+
       <button
         mat-button class="green"
         (click)="activate()"
-        *ngIf="task.completed">
+        *ngIf="task.completed  && canActivateDesactivate()">
         Активировать
       </button>
 
@@ -197,7 +200,8 @@
       <button
         mat-button
         class="red"
-        (click)="delete()">
+        (click)="delete()"
+        *ngIf="canDelete()">
         Удалить задачу
       </button>
     </div>
