@@ -78,15 +78,18 @@ export class AppComponent {
     //получаем из дао массив с тасками, относящимися только к этой категории
     //и переподписываем поле этого класса на этот массив с отфильтрованными тасками
     //то на странице будут отображаться таски, только с этой категорией
-    this.dataHandler.searchTasks(
-      this.selectedCategory
-      // ,
-      // null,
-      // null,
-      // null
-    ).subscribe(tasks => {
-      this.tasks = tasks;
-    });
+    // this.dataHandler.searchTasks(
+    //   this.selectedCategory
+    //   // ,
+    //   // null,
+    //   // null,
+    //   // null
+    // ).subscribe(tasks => {
+    //   this.tasks = tasks;
+    // });
+
+    //закомментированное заменили на:
+    this.updateTasks();
   }
 
   ////////////////////////////////////////////////////////////////
@@ -130,28 +133,30 @@ export class AppComponent {
   public onDeleteTask(task: Task) {
 
     //удаляем таску с пом метода Сервиса (возвращается Observable<Task> которую удалили)
-    this.dataHandler.deleteTask(task.id)
-      //на Observable<Task> вызываем subscribe в котором вернется
-      //объект Observable<Task[]> (массив со всеми имеющимися тасками)
-      .subscribe(() => {
-      this.dataHandler.searchTasks(
-        this.selectedCategory
-        // ,
-        // null,
-        // null,
-        // null
-        //подписываем поле этого класса на возврат
-        //из предидущего метода (Observable<Task[]> - на массив всех тасок)
-      ).subscribe(tasks => {
-        this.tasks = tasks;
-      });
-    });
+    // this.dataHandler.deleteTask(task.id)
+    //   //на Observable<Task> вызываем subscribe в котором вернется
+    //   //объект Observable<Task[]> (массив со всеми имеющимися тасками)
+    //   .subscribe(() => {
+    //   this.dataHandler.searchTasks(
+    //     this.selectedCategory
+    //     // ,
+    //     // null,
+    //     // null,
+    //     // null
+    //     //подписываем поле этого класса на возврат
+    //     //из предидущего метода (Observable<Task[]> - на массив всех тасок)
+    //   ).subscribe(tasks => {
+    //     this.tasks = tasks;
+    //   });
+    // });
 
     //весь этот код выше можно делегировать в приват метод updateTasks():
     //в параметрах subscribe(...) говорим, что подписка уже настроена в методе updateTasks()
-    //     this.dataHandler.deleteTask(task.id).subscribe(cat => {
-    //             this.updateTasks()
-    //         });
+    //- те подписываемся в методе updateTasks()
+        this.dataHandler.deleteTask(task.id).subscribe(cat => {
+                this.updateTasks()
+            });
+
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -166,8 +171,9 @@ export class AppComponent {
     //чтобы отобразить список всех тасок(это виртуальная категория ВСЕ)
     this.dataHandler.deleteCategory(category.id).subscribe(cat => {
       this.selectedCategory = null; // открываем категорию "Все"
-      //показываем обновленный список
-      this.onSelectCategory(this.selectedCategory);
+      //показываем обновленный список используя новый появившийся метод onSearchCategory()
+      // this.onSelectCategory(this.selectedCategory);//или this.onSelectCategory(null);
+      this.onSearchCategory(this.searchCategoryText);
     });
   }
 
@@ -182,7 +188,9 @@ export class AppComponent {
     //и в этом методе onSelectCategory произойдет окончательная переподписка
     //то отображаем список тасок только от этой обновленной категории
     this.dataHandler.updateCategory(category).subscribe(() => {
-      this.onSelectCategory(this.selectedCategory);
+      //показываем обновленный список используя новый появившийся метод onSearchCategory()
+      // this.onSelectCategory(this.selectedCategory);
+      this.onSearchCategory(this.searchCategoryText);
     });
   }
 
@@ -255,6 +263,28 @@ export class AppComponent {
   private updateCategories() {
     this.dataHandler.getAllCategories().subscribe(categories => this.categories = categories);
   }
+
+  /////////////////////////////////////////////////
+  //  для поиска категории в поле ввода вхождения//
+  /////////////////////////////////////////////////
+
+  // текущее значение для поиска категорий
+  public searchCategoryText = '';
+
+  // поиск категории (в аргументы приходит то что ввели в поле ввода вхождения)
+  public onSearchCategory(title: string) {
+
+    this.searchCategoryText = title;
+
+    //на возврате из метода  searchCategories: (Observable<Category[]>)
+    //подписываем поле этого класа: categories[] на этот Observable<Category[]>
+    this.dataHandler.searchCategories(title).subscribe(categories => {
+      this.categories = categories;
+    });
+  }
+
+
+
 
 }//конец класса
 
@@ -826,9 +856,30 @@ export class AppComponent {
  *                 (click)="delete()"
  *                 class="red" mat-button>
  *                  Удалить </button>
- *
- *
  */
+
+/**    (65)Реализуем поиск категорий в поле ввода по вхождению
+ *     1. В categories.component.html добавим див
+ *        с инпутом для поиска категорий
+ *     2. В categories.component.ts реализуем вызываемый из html
+ *        метод search() из которого обращаемся к смарт компоненте
+ *        для поиска в дб и переподписки + добавим необходимые поля класса
+ *     3. Если мы нашли категорию и удалили ее, то она должна сразу исчезнуть
+ *        и сразу должен обновиться отфильтрованный по вхождению список категорий на странице:
+ *        для этого сделали правки в app.component.ts:
+ *          в методах onDeleteCategory() и onUpdateCategory()
+ *          для переподписки используем наш новый метод onSearchCategory()
+ *          вместо метода onSelectCategory() (а если и дальше вызывать
+ *          onSelectCategory(), тогда эта удаленная или обновленная категория будет и дальше
+ *          находится в отфильтрованном по вхождению списке категорий)
+ *          (можно делать только обновление одной записи)
+ */
+
+  /**    (66)Реализуем надпись - ничего не найденно, если ввели во вхождении не то
+   *     1. В app.component.html под полосой - разделителем добавили див:
+   *        <div *ngIf="categories.length === 0" ><p class="not-found">Ничего не найдено</p></div>
+   *
+   */
 
 
 

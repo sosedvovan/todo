@@ -62,8 +62,13 @@ export class CategoryDAOArray implements CategoryDAO {
     ////////////////////////////////////////////////////////////////////////////////////////
 
     search(title: string): Observable<Category[]> {
-      //return undefined; пока метод не реализован - возвращаем Observable с абы чем
-      return of(TestData.categories);
+      //у массива вызываем метод filter
+      return of(TestData.categories.filter(
+        //останутся только те категории у которых title совпадает с переданным title-ом
+        //оба делаем в верхнем регистре а в includes оставляем только по вхождению
+        cat => cat.title.toUpperCase().includes(title.toUpperCase()))
+        //сортируем лексикографически
+        .sort((c1, c2) => c1.title.localeCompare(c2.title)));
     }
 
 

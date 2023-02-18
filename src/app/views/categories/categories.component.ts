@@ -18,7 +18,7 @@ export class CategoriesComponent implements OnInit{
   //это текущие категории для отображения на странице
   //с помощью директивы @Input() принимаем массив categories из родительского html
   @Input()
-  categories: Category[] | undefined;
+  categories: Category[] | any;
 
   // выбрали категорию из списка
   //когда emit() запускает этот @Output() - в родительском app.component.html
@@ -159,5 +159,29 @@ export class CategoriesComponent implements OnInit{
       }
     });
   }
+
+  ///////////////////////////////////////////////
+  // поле ввода вхождения для поиска категории //
+  ///////////////////////////////////////////////
+
+  // поиск категории запускаем с помощью emit()
+  @Output()
+  searchCategory = new EventEmitter<string>(); // передаем строку для поиска
+
+  // текущее значение для поиска категорий (переменную придумали в html)
+  public searchCategoryTitle: string;
+
+  // поиск категории (запускаем нажатием клавиши в поле поиска  вхождения для категории)
+  public search() {
+    //если переменная стала null - (нажали на суб-кнопку очистки)
+    //тогда выходим из этого метода
+    if (this.searchCategoryTitle == null ) {
+      return;
+    }
+    //emit запускает @Output()
+    this.searchCategory.emit(this.searchCategoryTitle);
+
+  }
+
 
 }

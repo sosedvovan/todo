@@ -109,8 +109,9 @@ export class TasksComponent implements OnInit, AfterViewInit{
 
     this.fillTable();
 
-    // console.log('Priority[]')
-    // console.log(this.priorities)
+    // Вместо fillTable() можно вызвать:
+    // this.onSelectCategory(null); //показать все категории
+    //так мы будем работать не на уровне методов а на уровне компонентов
 
   }
 

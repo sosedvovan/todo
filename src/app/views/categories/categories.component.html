@@ -29,6 +29,51 @@
 
     <ul class="navbar-nav">
 
+
+      <!--      поиск категорий -->
+      <div class="search-category-area">
+
+        <mat-form-field class="example-full-width">
+<!--поле ввода вхождения для категории
+#inputSearchCategory - альяс для пивязки саб-кнопки сброса в поле ввода
+(keydown.escape)="searchCategoryTitle = ''; search()" - очистка поля ввода при нажатии escape
+(keyup)="search()" - при поднятии клавиши(нажатии) запускается метод
+[(ngModel)]="searchCategoryTitle" используем переменную класса searchCategoryTitle
+ для двусторонего биндинга-->
+          <input
+            #inputSearchCategory
+            (keydown.escape)="searchCategoryTitle = ''; search()"
+            (keyup)="search()"
+            [(ngModel)]="searchCategoryTitle"
+
+            matInput
+            maxlength="256"
+            placeholder="Поиск категорий"
+
+          />
+
+<!--          суб-кнопка- очистить поле ввода
+(click)="searchCategoryTitle = ''; search()" - очищает поле ввода, запускаем метод
+*ngIf="inputSearchCategory.value.trim().length > 0" - отображаем субкнопку если в альясе что то есть-->
+          <button
+            (click)="searchCategoryTitle = ''; search()"
+            *ngIf="inputSearchCategory.value.trim().length > 0" aria-label="Clear"
+            class="search-category-button size25 gray"
+            mat-icon-button
+            matSuffix
+          >
+            <mat-icon>clear</mat-icon>
+          </button>
+<!--  mat-button        -->
+
+        </mat-form-field>
+
+      </div>
+
+
+
+
+
 <!--      слово:ВСЕ-->
       <!-- виртуальная категория 'Все' (тк такой категории в class TestData не создавали
             а в метод вместо категории посылаем null)-->
@@ -48,6 +93,8 @@
 <!--      <div class="line"></div>-->
 
 
+<!--      если ничего не нашли в поле ввода поиска по вхождению-->
+      <div *ngIf="categories.length === 0" ><p class="not-found">Ничего не найдено</p></div>
 
 
       <!--  .pointer ЭТО НАШ СТИЛЬ В ФАЙЛЕ СТИЛЕЙ ДЛЯ ЭТОГО КОМПОНЕНТА
