@@ -58,3 +58,7 @@ span.add-icon-area {
   vertical-align: middle;
 
 }
+
+.sidebar-background {
+  background-image: url(../../../assets/img/home-decor-1.jpg) !important;
+}
