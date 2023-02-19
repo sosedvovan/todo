@@ -29,6 +29,8 @@ import {registerLocaleData} from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import { EditCategoryDialogComponent } from './dialog/edit-category-dialog/edit-category-dialog.component';
+import { FooterComponent } from './views/footer/footer.component';
+import { AboutDialogComponent } from './dialog/about-dialog/about-dialog.component';
 registerLocaleData(localeRu);
 
 @NgModule({
@@ -39,7 +41,9 @@ registerLocaleData(localeRu);
     EditTaskDialogComponent,
     ConfirmDialogComponent,
     TaskDatePipe,
-    EditCategoryDialogComponent
+    EditCategoryDialogComponent,
+    FooterComponent,
+    AboutDialogComponent
   ],
   imports: [
     MatTableModule,
