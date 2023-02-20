@@ -3,20 +3,12 @@
   <app-header></app-header>
 <!--</nav>-->
 
-<!--    ПОКАЗЫВАЕМ СТАТИСТИКУ
-передаем :
-сколько задач всего в категории
-сколько завершенных
-сколько незавершенных-->
-<app-stat
-  [totalTasksInCategory]="totalTasksCountInCategory"
-  [completeTasksInCategory]="completedCountInCategory"
-  [uncompleteTasksInCategory]="uncompletedCountInCategory"
-></app-stat>
 
 
+<!--ГЛАВНЫЙ row-->
 <div class="row mb-4">
-  <!--ЭТО HTML ГЛАВНОГО КОМПАНЕНТА, КОТОРЫЙ АККУМУЛИРУЕТ В СЕБЕ ДОЧЕРНИЕ КОМПАНЕНТЫ-->
+
+  <!--ЭТО HTML ГЛАВНОГО КОМПОНЕНТА, КОТОРЫЙ АККУМУЛИРУЕТ В СЕБЕ ДОЧЕРНИЕ КОМПАНЕНТЫ-->
   <!--ЗДЕСЬ В ТЕГАХ <app-... ПЕРЕДАЕМ В КЛАССЫ ДОЧЕК МАССИВЫ categories И tasks   -->
   <!--А В КЛАССАХ ДОЧЕК ПРИМЕМ ЭТИ МАССИВЫ С ПОМ ДЕКОРАТОРА @Input() -->
 
@@ -38,30 +30,59 @@
     </app-categories>
   </div>
 
+  <!--  10-ЯТЬ КОЛОНОК - В НИХ РАСПОЛОЖИМ САБ-row -->
+  <div class="col-lg-10">
 
-  <!--    ПОКАЗЫВАЕМ ТАБЛИЦУ С ТАСКАМИ-->
-  <div class="col-lg-7 col-md-6 mb-md-0 mb-4">
-    <div class="card">
-      <div class="card-body px-0 pb-2">
-        <app-tasks [tasks]="tasks"
-                   [priorities]="priorities"
+<!--САБ row-->
+    <div class="row mb-4 my-z-index">
 
-                   (filterByTitle)="onSearchTasks($event)"
-                   (filterByStatus)="onFilterTasksByStatus($event)"
-                   (filterByPriority)="onFilterTasksByPriority($event)"
-
-                   [selectedCategory]="selectedCategory"
-                   (addTask)="onAddTask($event)"
-                   (updateTask)="onUpdateTask($event)"
-                   (deleteTask)="onDeleteTask($event)"
-                   (selectCategory)="onSelectCategory($event)"
-        ></app-tasks>
+<!--ВСЯ 1-Я СТРОКА ДЛЯ СТАТИСТИКИ      -->
+      <div class="col-lg-12">
+        <!--    ПОКАЗЫВАЕМ СТАТИСТИКУ
+        передаем :
+        сколько задач всего в категории
+        сколько завершенных
+        сколько незавершенных-->
+        <app-stat
+          [totalTasksInCategory]="totalTasksCountInCategory"
+          [completeTasksInCategory]="completedCountInCategory"
+          [uncompleteTasksInCategory]="uncompletedCountInCategory"
+        ></app-stat>
       </div>
+
+      <!--ВСЯ 2-Я СТРОКА ДЛЯ ТАБЛИЦЫ ТАСОК      -->
+      <div class="col-lg-12">
+        <!--    ПОКАЗЫВАЕМ ТАБЛИЦУ С ТАСКАМИ-->
+        <div class="card">
+          <div class="card-body px-0 pb-2">
+            <app-tasks [tasks]="tasks"
+                       [priorities]="priorities"
+
+                       (filterByTitle)="onSearchTasks($event)"
+                       (filterByStatus)="onFilterTasksByStatus($event)"
+                       (filterByPriority)="onFilterTasksByPriority($event)"
+
+                       [selectedCategory]="selectedCategory"
+                       (addTask)="onAddTask($event)"
+                       (updateTask)="onUpdateTask($event)"
+                       (deleteTask)="onDeleteTask($event)"
+                       (selectCategory)="onSelectCategory($event)"
+            ></app-tasks>
+          </div>
+        </div>
+      </div>
+
     </div>
+
   </div>
 
-<!--  две колонки пусть будут пустые-->
-  <div class="col-lg-1"></div>
+
+  <!--    ПОКАЗЫВАЕМ ТАБЛИЦУ С ТАСКАМИ-->
+<!--  <div class="col-lg-7 col-md-6 mb-md-0 mb-4">-->
+<!--   -->
+<!--  </div>-->
+
+
 
 </div>
 

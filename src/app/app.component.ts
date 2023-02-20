@@ -57,6 +57,9 @@ export class AppComponent {
     this.dataHandler.getAllTasks().subscribe(tasks => this.tasks = tasks);
     this.dataHandler.getAllCategories().subscribe(categories => this.categories = categories);
     this.dataHandler.getAllPriorities().subscribe(priorities => this.priorities = priorities);
+
+    //инициализируем переменные которые для статистики
+    this.updateStat()
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////

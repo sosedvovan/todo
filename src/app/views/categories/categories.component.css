@@ -62,3 +62,7 @@ span.add-icon-area {
 .sidebar-background {
   background-image: url(../../../assets/img/home-decor-1.jpg) !important;
 }
+
+.my-height {
+  height: 100%; !important;
+}
