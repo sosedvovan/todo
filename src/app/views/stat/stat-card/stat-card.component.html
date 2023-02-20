@@ -1,0 +1,27 @@
+<!--универсальная карточка для отображения статистики
+    скопировали ее из шаблона бутстрапа и вставили свои нужные атрибуты Ангуляра
+[ngClass]="{'completed-card': completed} - добавляем стиль по условию -
+завершена ли задача.
+*ngIf="countTotal">из {{countTotal}} - показываем этот <span по условию-->
+
+<div class="card card-stats"  [ngClass]="{'completed-card': completed}">
+
+  <div class="card-header card-header-warning card-header-icon">
+    <div class="card-icon">
+<!--      название иконки-->
+      <i class="material-icons">{{iconName}}</i>
+    </div>
+    <p class="card-category"></p>
+<!--сколько всего тасков переданно из стольки
+   а если в % показываем, то countTotal будет = null-->
+    <h3 class="card-title">{{count1}} <span *ngIf="countTotal">из {{countTotal}}</span>
+    </h3>
+  </div>
+
+  <div class="card-footer">
+    <div class="stats">
+<!--общий title - что именно мы отображаем      -->
+      <p class="stat-card-title">{{title}}</p>
+    </div>
+  </div>
+</div>

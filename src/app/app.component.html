@@ -3,12 +3,16 @@
   <app-header></app-header>
 <!--</nav>-->
 
-<!--    ПОКАЗЫВАЕМ СТАТИСТИКУ-->
-<app-stat>
+<!--    ПОКАЗЫВАЕМ СТАТИСТИКУ
+передаем :
+сколько задач всего в категории
+сколько завершенных
+сколько незавершенных-->
+<app-stat
   [totalTasksInCategory]="totalTasksCountInCategory"
   [completeTasksInCategory]="completedCountInCategory"
   [uncompleteTasksInCategory]="uncompletedCountInCategory"
-</app-stat>
+></app-stat>
 
 
 <div class="row mb-4">

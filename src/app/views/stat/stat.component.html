@@ -1,1 +1,50 @@
-<p>stat works!</p>
+<div>
+  <div class="row">
+
+<!--компонент-карточку stat-card показываем 4-ре раза подряд-->
+
+<!--В компонент-карточку stat-card передаем следующие данные    -->
+    <app-stat-card
+      class='col-lg-3 col-md-6 col-sm-6'
+      title="Завершенные задачи"
+      iconName="done"
+      [count1]="completeTasksInCategory"
+      [countTotal]="totalTasksInCategory"
+      [completed]="true"
+    >
+    </app-stat-card>
+
+    <app-stat-card
+      class='col-lg-3 col-md-6 col-sm-6'
+      title="Незавершенные задачи"
+      iconName="thumb_down_alt"
+      [count1]="uncompleteTasksInCategory"
+      [countTotal]="totalTasksInCategory"
+    >
+    </app-stat-card>
+
+
+<!--[count1]="completeTasksInCategory ? (completeTasksInCategory/totalTasksInCategory | percent) : '0 %'" -
+    - используем деление: если есть завершенные задачи в категории
+    тогда делим их на количество всех задач в категории и берем процент-->
+    <app-stat-card
+      class='col-lg-3 col-md-6 col-sm-6 completed-card'
+      title="Процент завершенных задач"
+      iconName="poll"
+      [count1]="completeTasksInCategory ? (completeTasksInCategory/totalTasksInCategory | percent) : '0 %'"
+      [completed]="true"
+
+    >
+    </app-stat-card>
+
+<!--а здесь делим uncompleteTasksInCategory-->
+    <app-stat-card
+      class='col-lg-3 col-md-6 col-sm-6'
+      title="Процент незавершенных задач"
+      iconName="thumb_down_alt"
+      [count1]="uncompleteTasksInCategory ? (uncompleteTasksInCategory/totalTasksInCategory | percent) : '0 %'">
+    </app-stat-card>
+
+
+  </div>
+</div>

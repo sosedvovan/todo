@@ -47,25 +47,27 @@ export class TaskDAOArray implements TaskDAO {
     return of(taskTmp);
   }
 
+  //--------статискика-----------------------------
+  // кол-во завершенных задач в заданной категории (если category === null, то для всех категорий)
   getCompletedCountInCategory(category: Category): Observable<number> {
-    //return undefined; пока метод не реализован - возвращаем Observable с абы чем
-    return of(1);
+    return of(this.searchTasks(category, null, true, null).length);
   }
 
-  getTotalCount(): Observable<number> {
-    //return undefined; пока метод не реализован - возвращаем Observable с абы чем
-    return of(1);
+  // кол-во незавершенных задач в заданной категории (если category === null, то для всех категорий)
+  getUncompletedCountInCategory(category: Category | any): Observable<number> {
+    return of(this.searchTasks(category, null, false, null).length);
   }
 
+  // кол-во всех задач в заданной категории (если category === null, то для всех категорий)
   getTotalCountInCategory(category: Category): Observable<number> {
-    //return undefined; пока метод не реализован - возвращаем Observable с абы чем
-    return of(1);
+    return of(this.searchTasks(category, null, null, null).length);
   }
 
-  getUncompletedCountInCategory(category: Category): Observable<number> {
-    //return undefined; пока метод не реализован - возвращаем Observable с абы чем
-    return of(1);
+  // кол-во всех задач в общем
+  getTotalCount(): Observable<number> {
+    return of(TestData.tasks.length);
   }
+//--------------------------------------------------
 
 
 //поиск Observable<Task[]> по параметрам(полям)(кроме id и data)
@@ -73,7 +75,7 @@ export class TaskDAOArray implements TaskDAO {
     return of(this.searchTasks(category, searchText, status, priority));
   }
 
-  private searchTasks(category?: Category, searchText?: string, status?: boolean, priority?: Priority): Task[] {
+  private searchTasks(category?: Category, searchText?: string | any, status?: boolean | any, priority?: Priority | any): Task[] {
     //заводим новый массив с тасками, присваивая ему уже имеющийся массив с тасками
     let allTasks = TestData.tasks;
 

@@ -3,6 +3,7 @@ import {Category} from "./model/Category";
 import {DataHandlerService} from "./service/data-handler.service";
 import {Task} from "./model/Task";
 import {Priority} from "./model/Priority";
+import {zip} from "rxjs";
 
 @Component({
   selector: 'app-root',
@@ -89,7 +90,8 @@ export class AppComponent {
     // });
 
     //закомментированное заменили на:
-    this.updateTasks();
+    // this.updateTasks(); //закоментили тк статистику добавили
+    this.updateTasksAndStat();
   }
 
   ////////////////////////////////////////////////////////////////
@@ -100,31 +102,38 @@ export class AppComponent {
   //в параметры из @Output приходит новая таска(которую изменили в диалоговом окне,
   //и которую надо сохранить в дб) и далее..
   public onUpdateTask(task: Task) {
-    //используем метод updateTask() передав ему новую таску
-    //чтобы ее сохранить и из возврата метода получить Observable<Task>
-    this.dataHandler.updateTask(task)//вернет Observable<Task>
-      //на полученной Observable<Task> вызовем subscribe()
-      //и этом subscribe() переделаем издателя из Observable<Task> на издателя Observable<Task[]>
-      .subscribe(() => {
-        //и тут же обновляем список задач (получаем новый обновленный массив)
-        this.dataHandler.searchTasks(
-          this.selectedCategory//по любому иже инициирована клацнутой до таски категорией
-          // ,
-          // null,
-          // null,
-          // null
-          //и далее метод subscribe() переподпишет поле этого класса tasks на Observable<Task[]>
-        ).subscribe(tasks => {
-          this.tasks = tasks;
-        });
-      });
-    //то метод subscribe(), вызванный на объекте Observable<...> может как и
-    //вернуть другой объект Observable<,,,>, так и
-    //подписать на Observable<,,,> поле класса.
+
+    // //используем метод updateTask() передав ему новую таску
+    // //чтобы ее сохранить и из возврата метода получить Observable<Task>
+    // this.dataHandler.updateTask(task)//вернет Observable<Task>
+    //   //на полученной Observable<Task> вызовем subscribe()
+    //   //и этом subscribe() переделаем издателя из Observable<Task> на издателя Observable<Task[]>
+    //   .subscribe(() => {
+    //     //и тут же обновляем список задач (получаем новый обновленный массив)
+    //     this.dataHandler.searchTasks(
+    //       this.selectedCategory//по любому иже инициирована клацнутой до таски категорией
+    //       // ,
+    //       // null,
+    //       // null,
+    //       // null
+    //       //и далее метод subscribe() переподпишет поле этого класса tasks на Observable<Task[]>
+    //     ).subscribe(tasks => {
+    //       this.tasks = tasks;
+    //     });
+    //   });
+    // //то метод subscribe(), вызванный на объекте Observable<...> может как и
+    // //вернуть другой объект Observable<,,,>, так и
+    // //подписать на Observable<,,,> поле класса.
 
     //весь код этого метода можно делегировать в метод updateTasks(),
-    //заменив весь код этой строчкой:
+    //заменив весь код в subscribe() этой строчкой:
     // this.updateTasks();
+
+    this.dataHandler.updateTask(task).subscribe(cat => {
+      // this.updateTasks(); //закоментили тк статистику добавили
+      this.updateTasksAndStat();
+    });
+
   }
 
   ////////////////////////////////////////////////////////////////////////////////////
@@ -154,7 +163,8 @@ export class AppComponent {
     //в параметрах subscribe(...) говорим, что подписка уже настроена в методе updateTasks()
     //- те подписываемся в методе updateTasks()
         this.dataHandler.deleteTask(task.id).subscribe(cat => {
-                this.updateTasks()
+                // this.updateTasks() //закоментитли тк статистику добавили
+          this.updateTasksAndStat()
             });
 
   }
@@ -250,7 +260,8 @@ export class AppComponent {
     //в параметрах subscribe подписываемся на возврат от метода updateTasks()
     this.dataHandler.addTask(task).subscribe(result => {
 
-      this.updateTasks();
+      // this.updateTasks(); //закомент тк добавили статистику
+      this.updateTasksAndStat()
 
     });
 
@@ -284,6 +295,46 @@ export class AppComponent {
   }
 
 
+  ///////////////////////////////////////////////////
+  // статистика                                    //
+  ///////////////////////////////////////////////////
+
+  // статистика - каждый раз, когда происходит КРУД действия
+  // над тасками эти 4-ре переменных пересчитываются
+  // с помощью вызова метода updateTasksAndStat() в КРУД
+  //методах выше (вместо updateTasks()) кроме поиска и обновления
+  public totalTasksCountInCategory: number;
+  public completedCountInCategory: number;
+  public uncompletedCountInCategory: number;
+  public uncompletedTotalTasksCount: number;
+
+// показывает задачи с применением всех текущий условий (категория, поиск, фильтры и пр.)
+  public updateTasksAndStat() {
+
+    this.updateTasks(); // обновить список задач
+
+    // обновить переменные для статистики
+    this.updateStat();
+
+  }
+
+  // обновить статистику - добываем данные для статистики из дб
+  // zip(из реакт) - получаем сразу 4-ре обзервербла и сразу на них
+  // подписываем (но можно было бы и каждый вызов чз subscribe сделать)
+  public updateStat() {
+    zip(
+      this.dataHandler.getTotalCountInCategory(this.selectedCategory),
+      this.dataHandler.getCompletedCountInCategory(this.selectedCategory),
+      this.dataHandler.getUncompletedCountInCategory(this.selectedCategory),
+      this.dataHandler.getUncompletedTotalCount())
+
+      .subscribe(array => {
+        this.totalTasksCountInCategory = array[0];
+        this.completedCountInCategory = array[1];
+        this.uncompletedCountInCategory = array[2];
+        this.uncompletedTotalTasksCount = array[3]; // нужно для категории Все
+      });
+  }
 
 
 }//конец класса
@@ -882,38 +933,35 @@ export class AppComponent {
 
 /**
  *     (68)Добавляем статистику
+ *     (сначала создали компонент в папке stat: stat.component.ts
+ *     этот компонент будет содержать в себе 4-е других
+ *     компонента-карточки (1-у карточку показываем 4 раза)
+ *     далее в этой же папке stat создадим еще компанент-карточку:
+ *     stat-card : stat-card.component.ts)
  *     1.  В app.component.html передаем данные в компоненту со статистикой:
  *         stat.component.ts:
+ *            <app-stat>
+ *            [totalTasksInCategory]="totalTasksCountInCategory"
+ *            [completeTasksInCategory]="completedCountInCategory"
+ *            [uncompleteTasksInCategory]="uncompletedCountInCategory"
+ *            </app-stat>
+ *          то передаем :
+ *              сколько задач всего в категории
+ *              сколько завершенных
+ *              сколько незавершенных
+ *          Эти переменные расчитываются в смарт app.component.ts
+ *       2. А в классе: app.component.ts из дб добудем эти переменные
+ *          для статистики
+
+ *       3. В карточке: stat-card.component.html
+ *          пропишем див из шаблона с нашими дополнительными
+ *          атрибутами и стилями
+ *       4. В самом stat.component.html отобразим эту карточку
+ *          4-ре раза подряд.
+ *          а в его классе stat.component.ts получим данные
+ *          из смарт: app.component.ts
  *
  */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
