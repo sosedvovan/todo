@@ -878,8 +878,14 @@ export class AppComponent {
   /**    (66)Реализуем надпись - ничего не найденно, если ввели во вхождении не то
    *     1. В app.component.html под полосой - разделителем добавили див:
    *        <div *ngIf="categories.length === 0" ><p class="not-found">Ничего не найдено</p></div>
-   *
    */
+
+/**
+ *     (68)Добавляем статистику
+ *     1.  В app.component.html передаем данные в компоненту со статистикой:
+ *         stat.component.ts:
+ *
+ */
 
 
 
