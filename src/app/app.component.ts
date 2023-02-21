@@ -963,7 +963,17 @@ export class AppComponent {
  *          4-ре раза подряд.
  *          а в его классе stat.component.ts получим данные
  *          из смарт: app.component.ts
- *
+ */
+
+/**
+ *     В Хедере сделали кнопки(пока не оживили)
+ *     1. В header.component.html скопировали строчку из шаблона,
+ *        добавив отображение названия категории с пом интерполяции
+ *     2. В классе header.component.ts с помощью декоратора @Input
+ *        принимаем название категории из смарт компаненты : app.component.html :
+ *        [categoryName]="selectedCategory ? selectedCategory.title: 'Все'"
+ *        те если selectedCategory не пустая передаем title категории,
+ *        иначе передаем 'Все'
  */
 
 

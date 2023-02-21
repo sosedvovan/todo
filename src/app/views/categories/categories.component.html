@@ -35,7 +35,7 @@
 
   <div class="w-auto" id="sidenav-collapse-main">
 
-    <ul class="navbar-nav">
+    <ul class="navbar-nav   p-2">
 
 
       <!--      поиск категорий -->
@@ -85,10 +85,10 @@
 <!--      слово:ВСЕ-->
       <!-- виртуальная категория 'Все' (тк такой категории в class TestData не создавали
             а в метод вместо категории посылаем null)-->
-      <li class="nav-item category" (click)="showTaskByCategory(null)" >
-        <a class="nav-link pointer text-white bg-gradient-primary" [ngClass]="{'active': selectedCategory === null}">
+      <li class="nav-item pointer" (click)="showTaskByCategory(null)" >
+        <a class="nav-link text-white bg-gradient-primary all-category-title" [ngClass]="{'active': selectedCategory === null}">
           <!--          название категории (можно в дальнейшем стилизовать с помощью класса)-->
-          <span class="all-category-title">Все категории</span>
+          <span class="nav-link-text ms-1 category-title">Все категории</span>
         </a>
       </li>
 

@@ -1,90 +1,98 @@
-<!--    ПОКАЗЫВАЕМ ХЕДЕР-->
-<!--<nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">-->
-  <app-header></app-header>
-<!--</nav>-->
+<div class="container-fluid">
 
+  <!--ГЛАВНЫЙ row-->
+  <div class="row mb-4">
 
+    <!--ЭТО HTML ГЛАВНОГО КОМПОНЕНТА, КОТОРЫЙ АККУМУЛИРУЕТ В СЕБЕ ДОЧЕРНИЕ КОМПАНЕНТЫ-->
+    <!--ЗДЕСЬ В ТЕГАХ <app-... ПЕРЕДАЕМ В КЛАССЫ ДОЧЕК МАССИВЫ categories И tasks   -->
+    <!--А В КЛАССАХ ДОЧЕК ПРИМЕМ ЭТИ МАССИВЫ С ПОМ ДЕКОРАТОРА @Input() -->
 
-<!--ГЛАВНЫЙ row-->
-<div class="row mb-4">
+    <!--    ПОКАЗЫВАЕМ ЛЕВЫЙ СПИСОК С КАТЕГОРИЯМИ-->
+    <!--[categories]="categories" это передаем к дочернему в @Input()    -->
+    <!--(selectCategory)="onSelectCategory($event)" это получаем из дочернего @Output()
+        и в родительском app.component.ts запустится метод onSelectCategory($event)-->
+    <div class="col-lg-2 col-md-6 mb-md-0 mb-4">
+      <app-categories [categories]="categories"
+                      [selectedCategory]="selectedCategory"
 
-  <!--ЭТО HTML ГЛАВНОГО КОМПОНЕНТА, КОТОРЫЙ АККУМУЛИРУЕТ В СЕБЕ ДОЧЕРНИЕ КОМПАНЕНТЫ-->
-  <!--ЗДЕСЬ В ТЕГАХ <app-... ПЕРЕДАЕМ В КЛАССЫ ДОЧЕК МАССИВЫ categories И tasks   -->
-  <!--А В КЛАССАХ ДОЧЕК ПРИМЕМ ЭТИ МАССИВЫ С ПОМ ДЕКОРАТОРА @Input() -->
+                      (deleteCategory)="onDeleteCategory($event)"
+                      (updateCategory)="onUpdateCategory($event)"
+                      (addCategory)="onAddCategory($event)"
 
-  <!--    ПОКАЗЫВАЕМ ЛЕВЫЙ СПИСОК С КАТЕГОРИЯМИ-->
-  <!--[categories]="categories" это передаем к дочернему в @Input()    -->
-  <!--(selectCategory)="onSelectCategory($event)" это получаем из дочернего @Output()
-      и в родительском app.component.ts запустится метод onSelectCategory($event)-->
-  <div class="col-lg-2 col-md-6 mb-md-0 mb-4">
-    <app-categories [categories]="categories"
-                    [selectedCategory]="selectedCategory"
+                      (searchCategory)="onSearchCategory($event)"
+                      (selectCategory)="onSelectCategory($event)">
 
-                    (deleteCategory)="onDeleteCategory($event)"
-                    (updateCategory)="onUpdateCategory($event)"
-                    (addCategory)="onAddCategory($event)"
+      </app-categories>
+    </div>
 
-                    (searchCategory)="onSearchCategory($event)"
-                    (selectCategory)="onSelectCategory($event)">
+    <!--  10-ЯТЬ КОЛОНОК - В НИХ РАСПОЛОЖИМ САБ-row -->
+    <div class="col-lg-10">
 
-    </app-categories>
-  </div>
+      <!--САБ row-->
+      <div class="row mb-4 my-z-index">
 
-  <!--  10-ЯТЬ КОЛОНОК - В НИХ РАСПОЛОЖИМ САБ-row -->
-  <div class="col-lg-10">
+        <!--ВСЯ 1-Я СТРОКА ДЛЯ  ХЕДЕРА     -->
+        <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
+          <!--    ПОКАЗЫВАЕМ ХЕДЕР
+      если selectedCategory не пустая передаем title категории, иначе передаем 'Все'-->
+          <app-header
+            [categoryName]="selectedCategory ? selectedCategory.title: 'Все'"
+          ></app-header>
+        </div>
 
-<!--САБ row-->
-    <div class="row mb-4 my-z-index">
+        <!--ВСЯ 2-Я СТРОКА ДЛЯ СТАТИСТИКИ      -->
+        <div class="col-lg-12">
+          <!--    ПОКАЗЫВАЕМ СТАТИСТИКУ
+          передаем :
+          сколько задач всего в категории
+          сколько завершенных
+          сколько незавершенных-->
+          <app-stat
+            [totalTasksInCategory]="totalTasksCountInCategory"
+            [completeTasksInCategory]="completedCountInCategory"
+            [uncompleteTasksInCategory]="uncompletedCountInCategory"
+          ></app-stat>
+        </div>
 
-<!--ВСЯ 1-Я СТРОКА ДЛЯ СТАТИСТИКИ      -->
-      <div class="col-lg-12">
-        <!--    ПОКАЗЫВАЕМ СТАТИСТИКУ
-        передаем :
-        сколько задач всего в категории
-        сколько завершенных
-        сколько незавершенных-->
-        <app-stat
-          [totalTasksInCategory]="totalTasksCountInCategory"
-          [completeTasksInCategory]="completedCountInCategory"
-          [uncompleteTasksInCategory]="uncompletedCountInCategory"
-        ></app-stat>
-      </div>
+        <!--ВСЯ 3-Я СТРОКА ДЛЯ ТАБЛИЦЫ ТАСОК      -->
+        <div class="col-lg-12">
+          <!--    ПОКАЗЫВАЕМ ТАБЛИЦУ С ТАСКАМИ-->
+          <div class="card">
+            <div class="card-body px-0 pb-2">
+              <app-tasks [tasks]="tasks"
+                         [priorities]="priorities"
 
-      <!--ВСЯ 2-Я СТРОКА ДЛЯ ТАБЛИЦЫ ТАСОК      -->
-      <div class="col-lg-12">
-        <!--    ПОКАЗЫВАЕМ ТАБЛИЦУ С ТАСКАМИ-->
-        <div class="card">
-          <div class="card-body px-0 pb-2">
-            <app-tasks [tasks]="tasks"
-                       [priorities]="priorities"
+                         (filterByTitle)="onSearchTasks($event)"
+                         (filterByStatus)="onFilterTasksByStatus($event)"
+                         (filterByPriority)="onFilterTasksByPriority($event)"
 
-                       (filterByTitle)="onSearchTasks($event)"
-                       (filterByStatus)="onFilterTasksByStatus($event)"
-                       (filterByPriority)="onFilterTasksByPriority($event)"
-
-                       [selectedCategory]="selectedCategory"
-                       (addTask)="onAddTask($event)"
-                       (updateTask)="onUpdateTask($event)"
-                       (deleteTask)="onDeleteTask($event)"
-                       (selectCategory)="onSelectCategory($event)"
-            ></app-tasks>
+                         [selectedCategory]="selectedCategory"
+                         (addTask)="onAddTask($event)"
+                         (updateTask)="onUpdateTask($event)"
+                         (deleteTask)="onDeleteTask($event)"
+                         (selectCategory)="onSelectCategory($event)"
+              ></app-tasks>
+            </div>
           </div>
         </div>
+
       </div>
 
     </div>
 
+    <!--  строка на 12 столбцов для футера-->
+    <div class="col-lg-12">
+      <app-footer></app-footer>
+    </div>
+
+
+    <!--    ПОКАЗЫВАЕМ ТАБЛИЦУ С ТАСКАМИ-->
+    <!--  <div class="col-lg-7 col-md-6 mb-md-0 mb-4">-->
+    <!--   -->
+    <!--  </div>-->
+
+
   </div>
-
-
-  <!--    ПОКАЗЫВАЕМ ТАБЛИЦУ С ТАСКАМИ-->
-<!--  <div class="col-lg-7 col-md-6 mb-md-0 mb-4">-->
-<!--   -->
-<!--  </div>-->
-
-
-
 </div>
 
 
-<app-footer></app-footer>
