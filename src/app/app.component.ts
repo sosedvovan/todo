@@ -339,6 +339,20 @@ export class AppComponent {
       });
   }
 
+ //////////////////////////////////////////////////
+ //  оживляем ссылку скрыть/показать статистику  //
+ //////////////////////////////////////////////////
+
+  // показать/скрыть статистику
+  // эту переменную отправим в компоненту статистики
+  // она первоначально = true
+  public showStat = true;
+
+  // показать-скрыть статистику
+  //в методе инициализируем переменную showStat
+  public toggleStat(showStat: boolean) {
+    this.showStat = showStat;
+  }
 
 }//конец класса
 
@@ -966,7 +980,7 @@ export class AppComponent {
  */
 
 /**
- *     В Хедере сделали кнопки(пока не оживили)
+ *     (69) В Хедере сделали кнопки(пока не оживили)
  *     1. В header.component.html скопировали строчку из шаблона,
  *        добавив отображение названия категории с пом интерполяции
  *     2. В классе header.component.ts с помощью декоратора @Input
@@ -976,9 +990,139 @@ export class AppComponent {
  *        иначе передаем 'Все'
  */
 
+/**
+ *     (70) В Хедере сделали ссылку показать/скрыть статистику
+ *     (те из компоненты хедера будем воздействовать на компоненту
+ *     статистики, передавая данные через смарт компоненту
+ *     ПО ПРИНЦИПУ ЗАМКНУТОГО КОЛЬЦА)
+ *     1. В header.component.html добавим саму ссылку:
+ *           <p class="link navbar-brand" (click)="onToggleStat()" *ngIf="showStat">Скрыть статистику</p>
+ *            <p class="link navbar-brand" (click)="onToggleStat()" *ngIf="!showStat">Показать статистику </p>
+ *     2. А в классе header.component.ts для этой ссылки добавим метод
+ *        onToggleStat() и переменные:
+ *
+ *            @Input()
+ *            private showStat: boolean;  //получаем из смарта
+ *                                        //по принципу замкнутого кольца
+ *            @Output()
+ *            toggleStat = new EventEmitter<boolean>();  //отправляем в смарт
+ *                                                       //по принципу замкнутого кольца
+ *            private onToggleStat() {
+ *            this.toggleStat.emit(!this.showStat); // вкл/выкл статистику
+ *            }
+ *     3.   @Output() получаем в смарте : app.component.html :
+ *               <app-header
+ *                     (toggleStat)="toggleStat($event)"
+ *                     [showStat]="showStat"
+ *               ></app-header>
+ *     4.  В app.component.ts соответственно есть метод toggleStat($event)
+ *         который инициирует поле класса-смарта:
+ *
+ *             // показать-скрыть статистику
+ *             private toggleStat(showStat: boolean) {
+ *             this.showStat = showStat;
+ *             }
+ *
+ *         и соответственно сама иницииризированная переменная:
+ *
+ *             // показать/скрыть статистику
+ *             private showStat = true;
+ *
+ *         эту переменную отправим в компоненту статистики
+ *         она первоначально = true:
+ *         В app.component.html:
+ *             <app-stat [showStat]="showStat"> </app-stat>
+ *
+ *     5.  В компоненте статистики: в stat.component.ts
+ *         примем эту переменную:
+ *             @Input()
+ *             showStat: boolean; // показать или скрыть статистику
+ *         и используем ее в stat.component.html
+ *         обернув там все в такой див:
+ *
+ *            <div *ngIf="showStat">...</div>
+ *
+ *     6. И ЗАМКНУЛИ КРУГ. И ВЕСЬ ПРИКОЛ В ТОМ, ЧТО СМАРТ app.component.html
+ *        раздает [showStat]="showStat" и в хедер и в статистику.
+ *
+ *     7. ДРУГИМИ СЛОВАМИ:
+ *
+ *        -Начинаем круг в app.component.ts
+ *         создавая переменную:
+ *
+ *             private showStat = true;
+ *
+ *        -В app.component.html раздаем:
+ *
+ *         [showStat]="showStat" и в хедер и в статистику
+ *
+ *         и соответственно и там и там принимаем с помощью:
+ *
+ *          @Input()
+ *          showStat: boolean;
+ *
+ *          ТО ЗА ЭТОЙ БУЛЕВОЙ ПЕРЕМЕННОЙ БУДУТ СЛЕДИТЬ ДВЕ КОМПАНЕНТЫ- ХЕДЕР И СТАТ
+ *          И МЕНЯЯ ЭТУ ПЕРЕМЕННУЮ В ХЕДЕРЕ (ЖМАКАЯ ССЫЛКУ), ОНА МЕНЯЕТСЯ И В СТАТ
+ *
+ *          -далее в хедере: header.component.html мы будем менять значение этой переменной
+ *           кликая по ссылке: показать/скрыть статистику:
+ *
+ *               <p class="link navbar-brand" (click)="onToggleStat()" *ngIf="showStat">Скрыть статистику</p>
+ *               <p class="link navbar-brand" (click)="onToggleStat()" *ngIf="!showStat">Показать статистику </p>
+ *
+ *           в header.component.ts соответственно запускается метод  onToggleStat()
+ *           в котором !showStat переменной (передаем false)
+ *
+ *               public onToggleStat() {
+ *               this.toggleStat.emit(!this.showStat); // вкл/выкл статистику
+ *               }
+ *
+ *           и она отправляет false в смарт с помощью
+ *
+ *               @Output()
+ *               toggleStat = new EventEmitter<boolean>();
+ *
+ *           -в смарте app.component.html ловим эту переменную false от хедера:
+ *
+ *                (toggleStat)="toggleStat($event)"
+ *
+ *            и в классе смарта app.component.ts в методе toggleStat($event)
+ *
+ *                public toggleStat(showStat: boolean) {
+ *                this.showStat = showStat;
+ *                }
+ *
+ *             метод принимает false и значение первоначальносозданной переменной
+ *             showStat становится из true в false
+ *
+ *            -и тк за этой переменной следит еще и компонента stat.component.ts
+ *             с помощью
+ *
+ *             @Input()
+ *             showStat: boolean;
+ *
+ *             то отображение всей компаненты зависит от значения этой булевой переменной:
+ *
+ *                 <div *ngIf="showStat"> ...
+ */
 
 
+/**
+ *
+ *     1.2.3.4.5.6.7.
+ */
 
+
+/**
+ *
+ *     1.2.3.4.5.6.7.
+ */
+
+
+/**
+ *
+ *     1.2.3.4.5.6.7.
+ */
 
 
 

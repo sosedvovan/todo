@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 @Component({
   selector: 'app-header',
@@ -15,6 +15,21 @@ export class HeaderComponent implements OnInit{
   }
 
   ngOnInit() {
+  }
+
+/////////////////////////////////
+// показать/скрыть статистику  //
+/////////////////////////////////
+
+  @Input()
+  public showStat: boolean;
+
+  @Output()
+  toggleStat = new EventEmitter<boolean>();
+
+  //showStat меняет на !showStat и отправляет в смарт
+  public onToggleStat() {
+    this.toggleStat.emit(!this.showStat); // вкл/выкл статистику
   }
 
 

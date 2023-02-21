@@ -37,6 +37,8 @@
       если selectedCategory не пустая передаем title категории, иначе передаем 'Все'-->
           <app-header
             [categoryName]="selectedCategory ? selectedCategory.title: 'Все'"
+            (toggleStat)="toggleStat($event)"
+            [showStat]="showStat"
           ></app-header>
         </div>
 
@@ -51,6 +53,7 @@
             [totalTasksInCategory]="totalTasksCountInCategory"
             [completeTasksInCategory]="completedCountInCategory"
             [uncompleteTasksInCategory]="uncompletedCountInCategory"
+            [showStat]="showStat"
           ></app-stat>
         </div>
 
