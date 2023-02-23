@@ -35,6 +35,13 @@ import { AboutDialogComponent } from './dialog/about-dialog/about-dialog.compone
 import { HeaderComponent } from './views/header/header.component';
 import { StatComponent } from './views/stat/stat.component';
 import { StatCardComponent } from './views/stat/stat-card/stat-card.component';
+import { PrioritiesComponent } from './views/priorities/priorities.component';
+
+
+import { SettingsDialogComponent } from './dialog/settings-dialog/settings-dialog.component';
+import {ColorPickerModule} from "ngx-color-picker";
+
+
 registerLocaleData(localeRu);
 
 @NgModule({
@@ -50,7 +57,9 @@ registerLocaleData(localeRu);
     AboutDialogComponent,
     HeaderComponent,
     StatComponent,
-    StatCardComponent
+    StatCardComponent,
+    PrioritiesComponent,
+    SettingsDialogComponent
   ],
   imports: [
     MatTableModule,
@@ -69,7 +78,8 @@ registerLocaleData(localeRu);
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    ColorPickerModule
   ],
   providers: [],
   entryComponents: [

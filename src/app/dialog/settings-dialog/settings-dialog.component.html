@@ -1,0 +1,30 @@
+<!--это СМАРТ-ДАМП диалоговое окно настроек приложения
+получает сам из дб массив priorities
+и отправляет его в компоненту priorities, где
+реализован выбор из цветовой палитры
+и показывает сам компоненту priorities <app-priorities...-->
+
+<!--ОБЛАСТЬ КОНТЕНТА-->
+<mat-dialog-content>
+
+  <p mat-dialog-title class="settings-title with-subtitle">Настройка приоритетов</p>
+  <p class="little subtitle">* При изменении - цвет сразу будет отображаться в таблице</p>
+
+
+  <!--  список приоритетов с цветами-->
+  <app-priorities
+    [priorities]="priorities"
+  ></app-priorities>
+
+<!--СЮДА МОЖНО ДОБАВИТЬ КОМПАНЕНТЫ С ДРУГИМИ НАСТРОЙКАМИ-->
+
+</mat-dialog-content>
+
+
+<!--ОБЛАСТЬ ЭКШЕНОВ-->
+<!--  кнопки возможных действий-->
+<mat-dialog-actions>
+
+  <button mat-raised-button color="primary" (click)="onClose()">Закрыть</button>
+
+</mat-dialog-actions>

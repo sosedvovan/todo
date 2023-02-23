@@ -1,0 +1,40 @@
+<div class="vertical-middle priorities" *ngFor="let priority of priorities, let index = index">
+
+  <div class="row align-self-baseline">
+
+    <div class="col-7 ">
+      <a class="pointer" > {{priority.title}}</a>
+
+    </div>
+
+    <div class="col-2 text-right">
+
+
+
+<!--colorPicker :
+    <input - но можно взять любой тег
+    [(colorPicker)]="priority.color" - priority.color меняем через двусторонний биндинг -
+    то цвет сразу попадает в priority.color (а можно сделать через кнопку "сохранить")
+    [style.background]="priority.color" - цвет самого кругляшка
+    class="color-circle" - в css сделали этот кругляшок-->
+      <input [(colorPicker)]="priority.color" [style.background]="priority.color" class="color-circle" >
+
+
+    </div>
+
+    <div class="col-1 text-left">
+      <p class="pointer gray">
+        <mat-icon>delete</mat-icon>
+      </p>
+    </div>
+
+    <div class="col-1 text-left">
+      <p class="pointer gray" >
+        <mat-icon>edit</mat-icon>
+      </p>
+    </div>
+
+
+  </div>
+
+</div>

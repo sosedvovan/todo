@@ -356,6 +356,11 @@ export class AppComponent {
 
 }//конец класса
 
+/**
+ *   Подключение библиотек #022
+ *    ng add @ng-bootstrap/ng-bootstrap
+ *    ng add @angular/material
+ */
 
 /**  В файле app.module.ts: Импорт:
  *       ● MatTableModule
@@ -1108,8 +1113,74 @@ export class AppComponent {
 
 
 /**
+ *     (71)Выбираем цвет приоритета(оживляем шестеренку настроек)
  *
- *     1.2.3.4.5.6.7.
+ *     https://www.npmjs.com/package/ng-color-picker
+ *     npm i --save ng-color-picker
+ *     --save - пропишет в наших модулях эту библиотеку
+ *     <input [(colorPicker)]="color" [style.background]="color" [value]="color"/>
+ *     <input [colorPicker]="color" (colorPickerChange)="color=$event" [style.background]="color" [value]="color"/>
+ *     export class AppComponent {
+ *     private color: string = "#127bdc";
+ *     constructor(private cpService: ColorPickerService) {
+ *     }
+ *
+ *     1. Библиотеку установил командами:
+ *
+ *      //    //разрешил понижать версию node при установке старых библиотек
+ *      //    npm config set legacy-peer-deps true
+ *      //   npm cache clean --force  //очистил кеш
+ *      //    npm i --save ng-color-picker //выполнил свою команду
+ *
+ *      //    далее полезли ошибки компиляции. Исправил их:
+ *      //    в файле:
+ *      //    node_modules/ng-color-picker/lib/src/color-picker.directive.d.ts
+ *      //    удалил первую строчку:
+ *      //    /// <reference types="core-js" />
+ *      //    далее оказалось что ng-color-picker не совместим с текущей CLI
+ *
+ *         РЕШЕНИЕ:
+ *          установил (ngx а не ng)ngx-color-picker командой:
+ *          npm install ngx-color-picker --save
+ *
+ *          в самой библиотеке и в моем Ангуляре
+ *          В package.json проверим, что данная библиотека
+ *          прописалась (чтобы загружалась вместе с проектом)
+ *
+ *          А в app.module.ts добавим вручную
+ *          (чтобы была доступна во всех компонентах):
+ *
+ *          import {ColorPickerModule} from "ngx-color-picker";
+ *              ...
+ *              imports: [ColorPickerModule]
+ *
+ *     2.  Создали новую компонентеу Priorities
+ *     чтобы в ней отображать список приоритетов(в
+ *     открывающемся диалоговом окне)
+ *
+ *     3.  Вызываем это окно нажав на шестеренку.
+ *         Оживляем шестеренку:
+ *         в header.component.html :
+ *
+ *            <button mat-icon-button  (click)="showSettings()" class="header-icon">
+ *                 <mat-icon  >settings</mat-icon>
+ *             </button>
+ *
+ *         то вызывается метод showSettings() в классе header.component.ts
+ *         и открывается диалоговое окно SettingsDialogComponent
+ *         (которое мы сейчас создадим) :
+ *
+ *              private showSettings() {
+ *              const dialogRef = this.dialog.open(SettingsDialogComponent,
+ *               {
+ *               autoFocus: false,
+ *               width: '500px'
+ *               });
+ *
+ *     4.  В папке dialog создадим компоненту-окно SettingsDialogComponent.
+ *     5.
+ *     6.
+ *     7.
  */
 
 
