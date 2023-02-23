@@ -9,6 +9,7 @@ import {DataHandlerService} from "../../service/data-handler.service";
   styleUrls: ['./settings-dialog.component.css']
 })
 
+//СМАРТ для priorities.component.ts(те принимает от него @Output())
 // диалоговое окно настроек приложения
 // т.к. настройки не привязаны к другим компонентам (окнам),
 // то он самостоятельно может загружать нужные данные с помощью
@@ -35,4 +36,21 @@ export class SettingsDialogComponent implements OnInit {
 
   }
 
+
+  // т.к. мы меняем значения в массивах, то изменения сразу отражаются на списке задач (не требуется доп. обновления)
+
+  // добавили приоритет
+  public onAddPriority(priority: Priority): void {
+    this.dataHandler.addPriority(priority).subscribe();
+  }
+
+  // удалили приоритет
+  public onDeletePriority(priority: Priority): void {
+    this.dataHandler.deletePriority(priority.id).subscribe();
+  }
+
+  // обновили приоритет
+  public onUpdatePriority(priority: Priority): void {
+    this.dataHandler.updatePriority(priority).subscribe();
+  }
 }

@@ -12,24 +12,24 @@
 
 
 <!--colorPicker :
-    <input - но можно взять любой тег
+    <span - но можно взять любой тег
     [(colorPicker)]="priority.color" - priority.color меняем через двусторонний биндинг -
     то цвет сразу попадает в priority.color (а можно сделать через кнопку "сохранить")
     [style.background]="priority.color" - цвет самого кругляшка
     class="color-circle" - в css сделали этот кругляшок-->
-      <input [(colorPicker)]="priority.color" [style.background]="priority.color" class="color-circle" >
-
+      <span [(colorPicker)]="priority.color" [style.background]="priority.color" class="color-circle pointer" >
+      </span>
 
     </div>
 
     <div class="col-1 text-left">
-      <p class="pointer gray">
+      <p (click)="delete(priority)" class="pointer gray">
         <mat-icon>delete</mat-icon>
       </p>
     </div>
 
     <div class="col-1 text-left">
-      <p class="pointer gray" >
+      <p (click)="onEditPriority(priority)" class="pointer gray" >
         <mat-icon>edit</mat-icon>
       </p>
     </div>
@@ -38,3 +38,7 @@
   </div>
 
 </div>
+
+<p (click)="onAddPriority()" class="link little">
+  Добавить приоритет
+</p>
